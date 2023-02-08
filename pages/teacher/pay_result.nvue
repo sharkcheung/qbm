@@ -1,0 +1,47 @@
+<template>
+	<view class="pay-result-box">
+		<view class="result-msg">{{ order.result }}</view>
+		<view class="result-tip">请等待数字顾问与您联系！</view>
+		<view class="result-button"><u-button type="info" text="返回" @click="back"></u-button></view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				order: {
+					result: '支付成功！'
+				}
+			}
+		},
+		methods: {
+			back() {
+				uni.navigateBack()
+			},
+		}
+	}
+</script>
+
+<style lang="scss">
+	.pay-result-box {
+		padding: 40rpx;
+		text-align: center;
+		.result-msg {
+			font-size: 36rpx;
+			font-weight: bold;
+			margin-bottom: 12rpx;
+		}
+		.result-tip {
+			color: #666;
+			margin-bottom: 20rpx;
+		}
+		.result-button {
+			flex-direction: row;
+			gap: 10rpx;
+			.u-button--square {
+				border-radius: 20rpx;
+			}
+		}
+	}
+</style>

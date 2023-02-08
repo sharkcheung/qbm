@@ -1,0 +1,52 @@
+<template>
+	<view>
+		
+		<u-tabbar :value="currentTab" :placeholder="false">
+			<u-tabbar-item v-for="(item,index) in tabList" @click="changeTab(item)" :text="item.name" :icon="item.icon" :key="index"></u-tabbar-item>
+		</u-tabbar>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				tabList: [
+					{
+						name: '首页',
+						icon: 'home',
+						path: 'pages/home'
+					},
+					{
+						name: '明星老师',
+						icon: 'photo',
+						path: 'pages/teacher/index'
+					},
+					{
+						name: '精选课程',
+						icon: 'play-right',
+						path: 'pages/course/index'
+					},
+					{
+						name: '我的',
+						icon: 'account',
+						path: 'pages/my/index'
+					}
+				],
+				currentTab: 2,
+			};
+		},
+		methods:{
+			changeTab(item) {
+				uni.$u.route({
+					type: 'switchTab',
+					url: item.path
+				})
+			},
+		}
+	}
+</script>
+
+<style lang="scss">
+
+</style>

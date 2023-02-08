@@ -1,0 +1,255 @@
+<template>
+	<div>
+		<u-sticky bgColor="#fff">
+		<u-tabs :list="listTab" @click="clickTab"></u-tabs>
+		</u-sticky>
+		<template v-if="current==0">
+			<view class="teacher-container">
+				<view class="teacher-top">
+					<u-avatar shape="circle" size="100" :src="info.avatar_url" customStyle="margin: 0px 25px 5px 10px"></u-avatar>
+					<view class="teacher-top-title">
+						<view class="teacher-name">{{ info.teacher_name }}</view>
+						<text v-for="(item_title, idx) in info.title" :key="idx">{{ item_title }}</text>
+					</view>
+				</view>
+				<view class="item-box">
+					<view class="item-title">简介：</view>
+					<view class="item-value">{{ info.teacher_desc }}</view>
+				</view>
+				<view class="item-box teacher-skill">
+					<view class="item-title">擅长：</view>
+					<view class="item-value"><u-tag v-for="(item_item, index_item) in info.item" :key="index_item" :text="item_item" plain size="mini" type="warning"></u-tag></view>
+				</view>
+				<view class="item-box teacher-mark">
+					<view class="item-title">评分：</view>
+					<view class="item-value"><u-rate :value="info.mark" readonly activeColor="#f9ae3d"></u-rate></view>
+				</view>
+				<view class="teacher-bottom">可免费约聊时长：{{ info.duration }} 分钟</view>
+			</view>
+			<view class="button-group">
+				<u-button type="primary" text="我要约聊" @click="goPage('/pages/teacher/order', { type:1 })"></u-button>
+				<u-button type="warning" text="我要内训" @click="goPage('/pages/teacher/order', { type:1 })"></u-button>
+				<u-button type="error" text="我要辅导" @click="goPage('/pages/teacher/order', { type:1 })"></u-button>
+			</view>
+			<view class="comment-box">
+				<view class="comment-top">
+					<view class="comment-top-left">
+						<u-avatar shape="circle" size="20" :src="info.comment.avatar_url" customStyle="margin: 0px 5px 0px 0px"></u-avatar>
+						{{ info.comment.nick_name }}
+					</view>
+					<view class="comment-top-right">{{ info.comment.create_time }}</view>
+				</view>
+				<view class="comment-content">{{ info.comment.content }}</view>
+			</view>
+			<view class="comment-view-all">查看全部评价</view>
+		</template>
+		<template v-if="current==1">
+			
+			<view class="comment-box comment-item" v-for="(item, index) in commentList" :key="index">
+				<view class="comment-top">
+					<view class="comment-top-left">
+						<u-avatar shape="circle" size="20" :src="item.avatar_url" customStyle="margin: 0px 5px 0px 0px"></u-avatar>
+						{{ item.nick_name }}
+					</view>
+					<view class="comment-top-right">{{ item.create_time }}</view>
+				</view>
+				<view class="comment-content">{{ item.content }}</view>
+			</view>
+		</template>
+		<view class="bottom-button-box">
+			<view class="bottom-button-group">
+				<u-button icon="share" type="primary" text="推荐好友"></u-button>
+				<u-button icon="coupon" type="warning" text="生成海报"></u-button>
+			</view>
+			<u-safe-bottom></u-safe-bottom>
+		</view>
+	</div>
+</template>
+
+<script>
+export default {
+	data() {
+		return {
+			current: 0,
+			commentList: [
+				{
+					avatar_url: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+					nick_name: '张**',
+					create_time: '2022-12-12',
+					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
+				},
+				{
+					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+					nick_name: '张**',
+					create_time: '2022-12-12',
+					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
+				},
+				{
+					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+					nick_name: '张**',
+					create_time: '2022-12-12',
+					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
+				},
+				{
+					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+					nick_name: '张**',
+					create_time: '2022-12-12',
+					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
+				},
+				{
+					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+					nick_name: '张**',
+					create_time: '2022-12-12',
+					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
+				},
+				{
+					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+					nick_name: '张**',
+					create_time: '2022-12-12',
+					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
+				},
+				{
+					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+					nick_name: '张**',
+					create_time: '2022-12-12',
+					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
+				},
+				{
+					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+					nick_name: '张**',
+					create_time: '2022-12-12',
+					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
+				},
+			],
+			info: {
+				comment: {
+					avatar_url: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+					nick_name: '张**',
+					create_time: '2022-12-12',
+					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
+				},
+				avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+				teacher_name: '刘老师',
+				title: ['原百度华北战区总经理', '原某上市公司互联网顾问'],
+				teacher_desc: '数十年培训经验，培养出上万于精英，现遍布全国各地',
+				item: ['全域规划', '私域运营', '活动策划', '文案创意'],
+				mark: 4,
+				type: [1, 2, 3, 4],
+				duration: 60
+			},
+			listTab: [
+				{
+					name: '老师简介'
+				},
+				{
+					name: '用户口碑'
+				},
+				{
+					name: '老师视频'
+				}
+			]
+		};
+	},
+	methods:{
+		clickTab(item) {
+			this.current = item.index
+			console.log(item)
+		},
+		goPage(path, params) {
+			uni.$u.route({
+				url: path,
+				params: params
+			})
+		}
+	}
+};
+</script>
+
+<style lang="scss">
+.teacher-container {
+	padding: 24rpx;
+	background-color: #f5f5f5;
+	.item-box {
+		flex-direction: row;
+		margin-top: 20rpx;
+		.item-value {
+			flex: 1;
+		}
+	}
+	.teacher-top {
+		margin-top: 20rpx;
+		flex-direction: row;
+		.teacher-top-title {
+			.teacher-name {
+				margin-bottom: 20rpx;
+				font-weight: bold;
+				font-size: 36rpx;
+			}
+			font-size: 32rpx;
+			text {
+				font-size: 24rpx;
+				margin-top: 8rpx;
+			}
+		}
+	}
+
+	.teacher-skill {
+		margin-top: 20rpx;
+		padding-bottom: 20rpx;
+		flex-direction: row;
+		.item-value {
+			flex-direction: row;
+			gap: 10rpx;
+		}
+	}
+
+	.teacher-bottom {
+		text-align: center;
+		margin-top: 20rpx;
+	}
+}
+.button-group {
+	flex-direction: row;
+	gap: 20rpx;
+	padding: 32rpx;
+}
+.comment-box {
+	padding: 24rpx;
+	background-color: #f5f5f5;
+	margin: 24rpx;
+	border-radius: 20rpx;
+	.comment-top {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		font-size: 24rpx;
+		.comment-top-left {
+			flex-direction: row;
+		}
+	}
+	.comment-content {
+		margin-top: 20rpx;
+		font-size: 28rpx;
+	}
+}
+.comment-item {
+	margin-bottom: 0;
+}
+.comment-view-all {
+	text-align: center;
+}
+.bottom-button-box {
+	position: fixed;
+	width: 100%;
+	bottom: 0;
+	left: 0;
+	z-index: 999;
+	background-color: #ffffff;
+	.bottom-button-group {
+		flex-direction: row;
+		.u-button--square {
+			border-radius: 0;
+		}
+	}
+}
+</style>

@@ -1,0 +1,90 @@
+<template>
+	<view>
+		<view class="order-pay">
+			<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
+			<u--form labelPosition="left" ref="formOrder" labelWidth="80">
+				<u-form-item label="预约单号" prop="order_num" ref="item1">
+					<u--input v-model="modelOrder.order_num" border="none" disabled disabledColor="#ffffff"></u--input>
+				</u-form-item>
+				<u-form-item label="预约服务" prop="service_name" ref="item1">
+					<u--input v-model="modelOrder.service_name" border="none" disabled disabledColor="#ffffff"></u--input>
+				</u-form-item>
+				<u-form-item label="服务方式" prop="service_mode" ref="item1">
+					<u--input v-model="modelOrder.service_mode" border="none" disabled disabledColor="#ffffff"></u--input>
+				</u-form-item>
+				<u-form-item label="预约老师" prop="teacher_name" ref="item1">
+					<u--input v-model="modelOrder.teacher_name" border="none" disabled disabledColor="#ffffff"></u--input>
+				</u-form-item>
+			</u--form>
+		</view>
+		<view class="bottom-button-box">
+			<view class="bottom-button-group"><view class="fee-box">费用：<text>￥{{ modelOrder.pay_fee }}</text></view><u-button type="primary" text="确认支付" @click="pay"></u-button></view>
+			<u-safe-bottom></u-safe-bottom>
+		</view>
+	</view>
+</template>
+
+<script>
+export default {
+	data() {
+		return {
+			modelOrder: {
+				pay_fee: 15000,
+				order_num: '2023020815063356',
+				teacher_name: '刘老师',
+				service_type: 1,
+				service_name: '数字系统',
+				service_mode: '内训',
+				company_name: '京东集团',
+				industry: '互联网电商',
+				teamInfo: '10万以上员工',
+				start_time: '2006年',
+				intro: '17年引领中国电商'
+			},
+		};
+	},
+	methods: {
+		pay() {
+			uni.$u.route({
+				url: '/pages/teacher/pay_result'
+			})
+		},
+	}
+};
+</script>
+
+<style lang="scss">
+	
+	.order-pay {
+		padding: 32rpx 60rpx;
+	}
+	.bottom-button-box {
+		position: fixed;
+		width: 100%;
+		bottom: 0;
+		left: 0;
+		z-index: 999;
+		background-color: #f4f4f4;
+		padding: 16rpx 0;
+		.bottom-button-group {
+			margin: 0 32rpx;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+			font-size: 24rpx;
+			.u-button--square {
+				border-radius: 20rpx;
+				width: 200rpx;
+			}
+			.fee-box {
+				flex-direction: row;
+				align-items: center;
+				text {
+					font-size: 36rpx;
+					font-weight: bold;
+					color: #ff5500;
+				}
+			}
+		}
+	}
+</style>
