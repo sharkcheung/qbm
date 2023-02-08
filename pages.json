@@ -77,6 +77,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/my/info",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "我的信息",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"subPackages": [{
 		"root": "pages/componentsA",

@@ -1,6 +1,6 @@
 <template>
 	<view class="my-box">
-		<view class="info-box">
+		<view class="info-box" @click="goInfo()">
 			<u-avatar shape="circle" size="60" :src="info.avatar_url" customStyle="margin: 0px 8px 0px 0px"></u-avatar>
 			<view class="info-right">
 				<view class="info-right-title"><text>{{ info.nick_name }}</text>{{ info.mobile }}</view>
@@ -41,6 +41,11 @@
 			this.currentTab = this.$store.$currentTab;
 		},
 		methods: {
+			goInfo() {
+				uni.$u.route({
+					url: '/pages/my/info'
+				})
+			},
 			changeTab(item) {
 				uni.$u.route({
 					type: 'switchTab',

@@ -1,0 +1,160 @@
+<template>
+	<view class="cell-page">
+		<view class="u-page__item">
+			<text class="u-page__item__title">个人信息</text>
+			<u-cell-group>
+				<u-cell
+					:border="false"
+				    title="头像"
+				>
+					<u-avatar slot="value" shape="circle" size="40" :src="info.avatar_url"></u-avatar>
+				</u-cell>
+				<u-cell
+					:border="false"
+				    title="昵称"
+				    :value="info.nick_name"
+				></u-cell>
+				<u-cell
+					:border="false"
+				    title="用户类型"
+				    :value="info.user_type"
+				></u-cell>
+				<u-cell
+					:border="false"
+				    title="用户姓名"
+				    :value="info.user_name"
+				></u-cell>
+				<u-cell
+				    title="企微二维码"
+				>
+					<u--image slot="value" :showLoading="true" :src="info.bqrcode" width="80px" height="80px"></u--image>
+				</u-cell>
+			</u-cell-group>
+		</view>
+		<view class="u-page__item">
+			<text class="u-page__item__title">企业信息</text>
+			<u-cell-group>
+				<u-cell
+					:border="false"
+				    title="公司名称"
+				    :value="info.company_name"
+				></u-cell>
+				<u-cell
+					:border="false"
+				    title="所在地区"
+				    :value="info.area"
+				></u-cell>
+				<u-cell
+					:border="false"
+				    title="公司地址"
+				    :value="info.address"
+				></u-cell>
+				<u-cell
+					:border="false"
+				    title="官网"
+				    :value="info.website"
+				></u-cell>
+				<u-cell
+					:border="false"
+				    title="公众号"
+				    :value="info.official_account"
+				></u-cell>
+				<u-cell
+					:border="false"
+				    title="视频号"
+				    :value="info.video_account"
+				></u-cell>
+			</u-cell-group>
+		</view>
+		<u-gap height="30"></u-gap>
+	</view>
+</template>
+<script>
+	export default {
+		data() {
+			return {
+				info: {
+					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+					nick_name: '刘老师',
+					user_type: '注册用户',
+					user_name: '刘强东',
+					mobile: '13888888888',
+					bqrcode: 'http://qebang.cn/uploads/image/20230208/cac59cf328174f7730e0d1e141b64878.png',
+					company_name: '京东集团',
+					area: '北京',
+					address: '朝阳区一号',
+					website: 'https://jd.com',
+					official_account: '京东',
+					video_account: '京东',
+				},
+			}
+		},
+		methods: {
+			click() {
+				console.log('Cell is clicked.');
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+	.cell-page {
+		padding-bottom: 20px;
+	}
+
+	.cell-box {
+		&__title {
+			font-size: 14px;
+			color: rgb(143, 156, 162);
+			margin: 20px 0px 0px 15px;
+		}
+
+		&__block {
+			// background-color: #fff;
+			margin-top: 20px;
+		}
+	}
+
+	.u-page {
+		padding: 0;
+
+		&__item {
+
+			&__title {
+				color: $u-tips-color;
+				background-color: $u-bg-color;
+				padding: 15px;
+				font-size: 15px;
+
+				&__slot-title {
+					color: $u-primary;
+					font-size: 14px;
+				}
+			}
+		}
+	}
+
+	.u-slot-title {
+		@include flex;
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.u-cell-text {
+		font-size: 15px;
+		line-height: 22px;
+		color: #303133;
+		margin-right: 5px;
+	}
+
+	.u-slot-value {
+		line-height: 17px;
+		text-align: center;
+		font-size: 10px;
+		padding: 0 5px;
+		height: 17px;
+		color: #FFFFFF;
+		border-radius: 100px;
+		background-color: #f56c6c;
+	}
+</style>
