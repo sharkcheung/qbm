@@ -117,6 +117,24 @@
                 }
                 
                 }
+                ,{
+                    "path" : "appraise",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "评价",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+                ,{
+                    "path" : "orderinfo",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "订单详情",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
             ]
 		}
 	],

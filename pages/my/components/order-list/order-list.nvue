@@ -1,0 +1,153 @@
+<template>
+	<view>
+		<view class="order-item" v-for="(item, index) in listData" :key="index" @click="openPage('/pages/my/orderinfo')">
+			<view class="order-item-bottom">
+				<text class="order-num">订单号：{{ item.order_num }}</text>
+				<text>{{ item.create_time }}</text>
+			</view>
+			<view class="order-item-top">
+				<view class="order-item-top-left">
+					<u-avatar shape="circle" size="48" :src="item.avatar_url" customStyle="margin: 0 15px -3px 0"></u-avatar>
+					<view class="order-item-top-left-title">
+						{{ item.service_type_name }}
+						<text>{{ item.teacher_name }}</text>
+					</view>
+				</view>
+				<view class="order-item-top-right"><u--text :text="item.status_name" :color="getColor(item.status)"></u--text></view>
+			</view>
+			<view class="button-group" v-if="item.status == 1 || item.status == 4">
+				<u-button v-if="item.status == 1" type="primary" text="去支付"></u-button>
+				<u-button type="warning" v-if="item.status == 4 && !item.is_evaluated" text="我要评价" @click.native.stop="appraise($event)"></u-button>
+				<u-button type="warning" v-if="item.status == 4 && item.start_time==0" text="结束订单"></u-button>
+			</view>
+			<view class="order-residue-time" v-if="item.status == 3">
+				距离{{ item.order_type_name }}还有：<text>{{ item.start_time }}天</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+export default {
+	name: 'order-list',
+	props: {
+		listData: Array
+	},
+	data() {
+		return {
+			timeData: []
+		};
+	},
+	mounted() {
+		console.log(this.listData);
+	},
+	methods: {
+		appraise(e) {
+			e.preventDefault();
+			this.openPage('/pages/my/appraise')
+		},
+		onChange(e, index) {
+			this.timeData[index] = e
+		},
+		openPage(path) {
+			uni.$u.route({
+				url: path
+			});
+		},
+		getColor(status) {
+			let color = '#303133';
+			switch (status) {
+				case 1:
+					// 待支付
+					color = '#ffaa00';
+					break;
+				case 2:
+					// 待确认
+					color = '#55aa7f';
+					break;
+				case 3:
+					// 待开始
+					color = '#aa5500';
+					break;
+				case 4:
+					// 已结束
+					color = '#ccd0d8';
+					break;
+				default:
+					break;
+			}
+			return color;
+		},
+		getButtonName(status) {
+			let buttonName = '';
+			switch (status) {
+				case 1:
+					// 待支付
+					buttonName = '去支付';
+					break;
+				case 2:
+					// 待确认
+					buttonName = '';
+					break;
+				case 3:
+					// 待开始
+					buttonName = '#aa5500';
+					break;
+				case 4:
+					// 已结束
+					buttonName = '#ccd0d8';
+					break;
+				default:
+					break;
+			}
+			return buttonName;
+		}
+	}
+};
+</script>
+
+<style lang="scss">
+.order-item {
+	padding: 32rpx;
+	border-radius: 16rpx;
+	background-color: #f9f9f9;
+	margin-bottom: 24rpx;
+	.order-item-top {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		.order-item-top-left {
+			flex-direction: row;
+			.order-item-top-left-title {
+				font-size: 32rpx;
+				text {
+					font-size: 24rpx;
+					margin-top: 8rpx;
+					color: #a6a6a6;
+				}
+			}
+		}
+	}
+
+	.order-item-bottom {
+		flex-direction: row;
+		justify-content: space-between;
+		margin-bottom: 32rpx;
+		color: #a6a6a6;
+		font-size: 24rpx;
+	}
+	.button-group {
+		margin-top: 32rpx;
+		flex-direction: row;
+	}
+	.order-residue-time {
+		margin-top: 32rpx;
+		flex-direction: row;
+		font-size: 24rpx;
+		color: #878787;
+		view {
+			flex-direction: row;
+		}
+	}
+}
+</style>

@@ -1,0 +1,128 @@
+<template>
+
+	<view class="appraise-box">
+		<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
+		<u--form labelPosition="left" :model="modelAppraise" ref="formOrder" labelWidth="100">
+			<u-form-item label="老师" prop="teacher_name" ref="itemTeacher_name">
+				<u--input v-model="modelAppraise.teacher_name" border="none" disabled disabledColor="#ffffff">
+				</u--input>
+			</u-form-item>
+			<u-form-item label="预约服务" prop="service_name">
+				<u--input v-model="modelAppraise.service_name" disabled disabledColor="#ffffff" border="none">
+				</u--input>
+			</u-form-item>
+			<u-form-item label="评分" prop="rate" ref="itemRate">
+				<u-rate count="5" size="24" @change="rateChange" v-model="modelAppraise.rate"></u-rate>
+			</u-form-item>
+			<u-form-item label="打赏金额" prop="reward" ref="itemReward">
+				<!-- #ifndef APP-NVUE -->
+				<u-input v-model="modelAppraise.reward" border="none" disabled disabledColor="#ffffff">
+				<!-- #endif -->
+				<!-- #ifdef APP-NVUE -->
+				<u--input v-model="modelAppraise.reward" border="none" disabled disabledColor="#ffffff">
+				<!-- #endif -->
+					<u--text
+						text="￥"
+						slot="prefix"
+					></u--text>
+				<!-- #ifndef APP-NVUE -->
+				</u-input>
+				<!-- #endif -->
+				<!-- #ifdef APP-NVUE -->
+				</u--input>
+				<!-- #endif -->
+			</u-form-item>
+			<u-form-item label="评价视频" prop="video" ref="itemVideo">
+				<u-upload :fileList="fileList2" @afterRead="afterRead" @delete="deletePic" name="2" multiple
+					:maxCount="1" accept="video"></u-upload>
+			</u-form-item>
+			<u-form-item label="评价内容" prop="intro" ref="itemIntro">
+				<u--textarea placeholder="不低于3个字" v-model="modelAppraise.intro" count></u--textarea>
+			</u-form-item>
+		</u--form>
+		<u-button type="primary" text="确认预约" @click="submit"></u-button>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				customStyle: {
+					borderRadius: '20rpx'
+				},
+				fileList2: [],
+				modelAppraise: {
+					teacher_name: '刘老师',
+					service_type: 1,
+					service_name: '数字系统',
+					rate: 1,
+					reward: 0,
+					video: '',
+					intro: ''
+				},
+			};
+		},
+		methods: {
+			rateChange(e) {
+				if (e == 1 || e == 2) {
+					this.modelAppraise.reward = 0
+				} else if (e == 3 || e == 4) {
+					this.modelAppraise.reward = 299
+				} else {
+					this.modelAppraise.reward = 599
+				}
+			},
+			// 删除图片
+			deletePic(event) {
+				this[`fileList${event.name}`].splice(event.index, 1)
+			},
+			// 新增图片
+			async afterRead(event) {
+				// 当设置 mutiple 为 true 时, file 为数组格式，否则为对象格式
+				let lists = [].concat(event.file)
+				let fileListLen = this[`fileList${event.name}`].length
+				lists.map((item) => {
+					this[`fileList${event.name}`].push({
+						...item,
+						status: 'uploading',
+						message: '上传中'
+					})
+				})
+				for (let i = 0; i < lists.length; i++) {
+					const result = await this.uploadFilePromise(lists[i].url)
+					let item = this[`fileList${event.name}`][fileListLen]
+					this[`fileList${event.name}`].splice(fileListLen, 1, Object.assign(item, {
+						status: 'success',
+						message: '',
+						url: result
+					}))
+					fileListLen++
+				}
+			},
+			uploadFilePromise(url) {
+				return new Promise((resolve, reject) => {
+					let a = uni.uploadFile({
+						url: 'http://www.example.com/upload', // 仅为示例，非真实的接口地址
+						filePath: url,
+						name: 'file',
+						formData: {
+							user: 'test'
+						},
+						success: (res) => {
+							setTimeout(() => {
+								resolve(res.data.data)
+							}, 1000)
+						}
+					});
+				})
+			},
+		}
+	}
+</script>
+
+<style lang="scss">
+	.appraise-box {
+		padding: 32rpx;
+	}
+</style>
