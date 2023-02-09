@@ -1,0 +1,119 @@
+<template>
+	<view>
+		<u-sticky bgColor="#fff">
+			<view class="sort-box">
+				<u-tag text="默认排序" size="mini" :plain="sortIndex==0 ? false : true" type="warning" @click="change(0)"></u-tag> <u-tag text="按评分" :plain="sortIndex==1 ? false : true" size="mini" type="warning" @click="change(1)"></u-tag> <u-tag text="按约聊次数" :plain="sortIndex==2 ? false : true" @click="change(2)" size="mini" type="warning"></u-tag>
+			</view>
+		</u-sticky>
+		<view class="teacher-container">
+			<teacher-list :listData="indexList"></teacher-list>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				sortIndex: 0,
+				indexList: [{
+						id: 1,
+						avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+						teacher_name: '刘老师',
+						title: [
+							'原百度华北战区总经理',
+							'原某上市公司互联网顾问'
+						],
+						item: [
+							'全域规划',
+							'私域运营',
+							'活动策划',
+							'文案创意'
+						],
+						mark: 4,
+						type: [
+							1, 2, 3, 4
+						],
+						duration: 60
+					},
+					{
+						id: 2,
+						avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+						teacher_name: '刘老师',
+						title: [
+							'原百度华北战区总经理',
+							'原某上市公司互联网顾问'
+						],
+						item: [
+							'全域规划',
+							'私域运营',
+							'活动策划',
+							'文案创意'
+						],
+						mark: 4,
+						type: [
+							1, 2, 3, 4
+						],
+						duration: 60
+					},
+					{
+						id: 3,
+						avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+						teacher_name: '刘老师',
+						title: [
+							'原百度华北战区总经理',
+							'原某上市公司互联网顾问'
+						],
+						item: [
+							'全域规划',
+							'私域运营',
+							'活动策划',
+							'文案创意'
+						],
+						mark: 4,
+						type: [
+							1, 2, 3, 4
+						],
+						duration: 60
+					},
+					{
+						id: 4,
+						avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+						teacher_name: '刘老师',
+						title: [
+							'原百度华北战区总经理',
+							'原某上市公司互联网顾问'
+						],
+						item: [
+							'全域规划',
+							'私域运营',
+							'活动策划',
+							'文案创意'
+						],
+						mark: 4,
+						type: [
+							1, 2, 3, 4
+						],
+						duration: 60
+					},
+				],
+			};
+		},
+		methods: {
+			change(index) {
+				this.sortIndex = index
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+	.teacher-container {
+		padding: 24rpx;
+	}
+	.sort-box {
+		padding: 24rpx;
+		flex-direction: row;
+		gap: 20rpx;
+	}
+</style>

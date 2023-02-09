@@ -1,0 +1,230 @@
+<template>
+	<div>
+		<view class="swiper-container">
+			<u-swiper :list="list4" keyName="url" :autoplay="false"></u-swiper>
+		</view>
+		<view class="notice-bar-container">
+			<u-notice-bar :text="noticeMsg"></u-notice-bar>
+		</view>
+		<u-gap height="10" bgColor="#efefef"></u-gap>
+		<view class="service-container">
+			<u-grid :border="false" @click="click2">
+				<u-grid-item v-for="(baseListItem, baseListIndex) in baseList" :key="baseListIndex">
+					<u--image shape="circle" :showLoading="true" :src="baseListItem.name" width="60px" height="60px" @click="click"></u--image>
+					<text class="grid-text">{{ baseListItem.title }}</text>
+				</u-grid-item>
+			</u-grid>
+		</view>
+		<u-gap height="10" bgColor="#efefef"></u-gap>
+		<u-sticky bgColor="#fff">
+			<u-tabs :list="list1"></u-tabs>
+		</u-sticky>
+		<view class="teacher-container">
+			<teacher-list :listData="indexList"></teacher-list>
+		</view>
+		<u-tabbar :value="vuex_currentTab" :placeholder="false">
+			<u-tabbar-item v-for="(item,index) in tabList" @click="changeTab(item)" :text="item.name" :icon="item.icon" :key="index"></u-tabbar-item>
+		</u-tabbar>
+	</div>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				tabList: [
+				],
+				current: 0,
+				currentNum: 0,
+				indexList: [{
+						id: 1,
+						avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+						teacher_name: '刘老师',
+						title: [
+							'原百度华北战区总经理',
+							'原某上市公司互联网顾问'
+						],
+						item: [
+							'全域规划',
+							'私域运营',
+							'活动策划',
+							'文案创意'
+						],
+						mark: 4,
+						type: [
+							1, 2, 3, 4
+						],
+						duration: 60
+					},
+					{
+						id: 2,
+						avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+						teacher_name: '刘老师',
+						title: [
+							'原百度华北战区总经理',
+							'原某上市公司互联网顾问'
+						],
+						item: [
+							'全域规划',
+							'私域运营',
+							'活动策划',
+							'文案创意'
+						],
+						mark: 4,
+						type: [
+							1, 2, 3, 4
+						],
+						duration: 60
+					},
+					{
+						id: 3,
+						avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+						teacher_name: '刘老师',
+						title: [
+							'原百度华北战区总经理',
+							'原某上市公司互联网顾问'
+						],
+						item: [
+							'全域规划',
+							'私域运营',
+							'活动策划',
+							'文案创意'
+						],
+						mark: 4,
+						type: [
+							1, 2, 3, 4
+						],
+						duration: 60
+					},
+					{
+						id: 4,
+						avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+						teacher_name: '刘老师',
+						title: [
+							'原百度华北战区总经理',
+							'原某上市公司互联网顾问'
+						],
+						item: [
+							'全域规划',
+							'私域运营',
+							'活动策划',
+							'文案创意'
+						],
+						mark: 4,
+						type: [
+							1, 2, 3, 4
+						],
+						duration: 60
+					},
+				],
+				urls: [
+					'https://cdn.uviewui.com/uview/album/1.jpg',
+					'https://cdn.uviewui.com/uview/album/2.jpg',
+					'https://cdn.uviewui.com/uview/album/3.jpg',
+					'https://cdn.uviewui.com/uview/album/4.jpg',
+					'https://cdn.uviewui.com/uview/album/5.jpg',
+					'https://cdn.uviewui.com/uview/album/6.jpg',
+					'https://cdn.uviewui.com/uview/album/7.jpg',
+					'https://cdn.uviewui.com/uview/album/8.jpg',
+					'https://cdn.uviewui.com/uview/album/9.jpg',
+					'https://cdn.uviewui.com/uview/album/10.jpg',
+				],
+				list1: [{
+						name: '推荐'
+					},
+					{
+						name: '数字系统'
+					},
+					{
+						name: '全域规划'
+					},
+					{
+						name: '私域运营'
+					},
+					{
+						name: '活动策划'
+					},
+					{
+						name: '文案创意'
+					},
+					{
+						name: '服务规范'
+					},
+					{
+						name: '组织结构'
+					},
+					{
+						name: '团队绩效'
+					}
+				],
+				baseList: [{
+						name: 'http://qebang.cn/uploads/image/20230209/551548f86244b0595714a9a8bcba6218.png',
+						title: '约聊'
+					},
+					{
+						name: 'http://qebang.cn/uploads/image/20230209/805734f9913d2e657bc9d70c190484a0.png',
+						title: '内训'
+					},
+					{
+						name: 'http://qebang.cn/uploads/image/20230209/af11c55084d7e061485cfd23aeb88630.png',
+						title: '辅导'
+					}
+				],
+				noticeMsg: '热烈庆祝刘老师入驻',
+				list4: [{
+						url: 'https://cdn.uviewui.com/uview/resources/video.mp4',
+						title: '昨夜星辰昨夜风，画楼西畔桂堂东',
+						poster: 'https://cdn.uviewui.com/uview/swiper/swiper1.png'
+					},
+					{
+						url: 'https://cdn.uviewui.com/uview/swiper/swiper2.png',
+						title: '身无彩凤双飞翼，心有灵犀一点通'
+					},
+					{
+						url: 'https://cdn.uviewui.com/uview/swiper/swiper3.png',
+						title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
+					}
+				]
+			};
+		},
+		created() {
+			this.tabList = this.$configs.tabList;
+		},
+		methods: {
+			changeTab(item) {
+				uni.$u.route({
+					type: 'switchTab',
+					url: item.path
+				})
+			},
+			click1(e) {
+				console.log('click1', e);
+			},
+			click(e) {
+				uni.$u.route({
+					url: '/pages/teacher/list'
+				})
+				console.log('click', e);
+			},
+			click2(name) {
+				this.$refs.uToast.success(`点击了第${name}个`);
+			},
+			scrolltolower() {
+				this.loadmore()
+			},
+
+		}
+	};
+</script>
+
+<style lang="scss" >
+	.service-container {
+		padding: 30rpx 0;
+		.grid-text {
+			margin-top: 8rpx;
+		}
+	}
+	.teacher-container {
+		padding: 24rpx;
+	}
+</style>

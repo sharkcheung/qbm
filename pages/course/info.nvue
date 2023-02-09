@@ -1,0 +1,87 @@
+<template>
+	<view>
+		<video :src="info.video_url"></video>
+		<view class="video-intro">
+			<view class="video-title">{{ info.title }}</view>
+			<view class="video-tip">{{ info.num }}人已学</view>
+		</view>
+		<u-gap height="10" bgColor="#efefef"></u-gap>
+		<view class="video-box">
+			<view class="videl-else">其他课程</view>
+			<video-list :listData="videoList"></video-list>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				info: {
+					title: '企业怎么做数字化转型？',
+					num: 322,
+					video_url: 'https://vd4.bdstatic.com/mda-pb32i8gyccwp5vjc/720p_frame30/h264_cae/1675475266766838206/mda-pb32i8gyccwp5vjc.mp4?v_from_s=hkapp-haokan-hnb&auth_key=1675915698-0-0-d2e0aa7684ba63f1d1daf11ac004315c&bcevod_channel=searchbox_feed&cd=0&pd=1&pt=3&logid=2298851445&vid=5045328126985943265&abtest=&klogid=2298851445'
+				},
+				
+				videoList: [
+					{
+						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+						title: '数字化转型之亢龙有悔',
+						num: '322',
+					},
+					{
+						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+						title: '数字化转型之亢龙有悔',
+						num: '322',
+					},
+					{
+						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+						title: '数字化转型之亢龙有悔',
+						num: '322',
+					},
+					{
+						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+						title: '数字化转型之亢龙有悔',
+						num: '322',
+					},
+					{
+						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+						title: '数字化转型之亢龙有悔',
+						num: '322',
+					},
+					{
+						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+						title: '数字化转型之亢龙有悔',
+						num: '322',
+					},
+					{
+						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+						title: '数字化转型之亢龙有悔',
+						num: '322',
+					},
+				],
+			};
+		}
+	}
+</script>
+
+<style lang="scss">
+	video{
+	  width: 100%;
+	}
+	.video-intro {
+		padding: 32rpx 24rpx;
+		.video-tip {
+			color: #a6a6a6;
+			font-size: 24rpx;
+			margin-top: 12rpx;
+		}
+	}
+	
+	.video-box {
+		padding: 24rpx;
+		.videl-else {
+			margin-bottom: 16rpx;
+		}
+	}
+</style>

@@ -126,13 +126,6 @@ export default {
 					message: '请选择项目启动时间',
 					min: 2,
 					trigger: ['change']
-				},
-				intro: {
-					min: 3,
-					type: 'string',
-					required: true,
-					message: '请填写咨询简述（不少于3字）',
-					trigger: ['blur', 'change']
 				}
 			}
 		};

@@ -1,0 +1,78 @@
+<template>
+	<view>
+		<view class="video-box">
+			<video-list :listData="videoList"></video-list>
+		</view>
+		<u-tabbar :value="currentTab" :placeholder="false">
+			<u-tabbar-item v-for="(item,index) in tabList" @click="changeTab(item)" :text="item.name" :icon="item.icon" :key="index"></u-tabbar-item>
+		</u-tabbar>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				
+				videoList: [
+					{
+						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+						title: '数字化转型之亢龙有悔',
+						num: '322',
+					},
+					{
+						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+						title: '数字化转型之亢龙有悔',
+						num: '322',
+					},
+					{
+						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+						title: '数字化转型之亢龙有悔',
+						num: '322',
+					},
+					{
+						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+						title: '数字化转型之亢龙有悔',
+						num: '322',
+					},
+					{
+						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+						title: '数字化转型之亢龙有悔',
+						num: '322',
+					},
+					{
+						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+						title: '数字化转型之亢龙有悔',
+						num: '322',
+					},
+					{
+						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+						title: '数字化转型之亢龙有悔',
+						num: '322',
+					},
+				],
+				tabList: [
+				],
+				currentTab: 2,
+			};
+		},
+		created() {
+			this.tabList = this.$configs.tabList;
+		},
+		methods:{
+			changeTab(item) {
+				uni.$u.route({
+					type: 'switchTab',
+					url: item.path
+				})
+			},
+		}
+	}
+</script>
+
+<style lang="scss">
+
+.video-box {
+	padding: 24rpx;
+}
+</style>

@@ -56,6 +56,11 @@
 				<view class="comment-content">{{ item.content }}</view>
 			</view>
 		</template>
+		<template v-if="current==2">
+			<view class="video-box">
+				<video-list :listData="videoList"></video-list>
+			</view>
+		</template>
 		<view class="bottom-button-box">
 			<view class="bottom-button-group">
 				<u-button icon="share" type="primary" text="推荐好友"></u-button>
@@ -121,6 +126,43 @@ export default {
 					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
 				},
 			],
+			videoList: [
+				{
+					pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+					title: '数字化转型之亢龙有悔',
+					num: '322',
+				},
+				{
+					pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+					title: '数字化转型之亢龙有悔',
+					num: '322',
+				},
+				{
+					pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+					title: '数字化转型之亢龙有悔',
+					num: '322',
+				},
+				{
+					pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+					title: '数字化转型之亢龙有悔',
+					num: '322',
+				},
+				{
+					pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+					title: '数字化转型之亢龙有悔',
+					num: '322',
+				},
+				{
+					pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+					title: '数字化转型之亢龙有悔',
+					num: '322',
+				},
+				{
+					pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
+					title: '数字化转型之亢龙有悔',
+					num: '322',
+				},
+			],
 			info: {
 				comment: {
 					avatar_url: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
@@ -145,7 +187,7 @@ export default {
 					name: '用户口碑'
 				},
 				{
-					name: '老师视频'
+					name: '视频课程'
 				}
 			]
 		};
@@ -251,5 +293,8 @@ export default {
 			border-radius: 0;
 		}
 	}
+}
+.video-box {
+	padding: 24rpx;
 }
 </style>
