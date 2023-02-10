@@ -2,24 +2,24 @@
 
 	<view class="appraise-box">
 		<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
-		<u--form labelPosition="left" :model="modelAppraise" ref="formOrder" labelWidth="100">
+		<u--form labelPosition="left" :model="modelAppraise" ref="formAppraise" labelWidth="100">
 			<u-form-item label="老师" prop="teacher_name" ref="itemTeacher_name">
-				<u--input v-model="modelAppraise.teacher_name" border="none" disabled disabledColor="#ffffff">
+				<u--input placeholder="" v-model="modelAppraise.teacher_name" border="none" disabled disabledColor="#ffffff">
 				</u--input>
 			</u-form-item>
 			<u-form-item label="预约服务" prop="service_name">
-				<u--input v-model="modelAppraise.service_name" disabled disabledColor="#ffffff" border="none">
+				<u--input placeholder="" v-model="modelAppraise.service_name" disabled disabledColor="#ffffff" border="none">
 				</u--input>
 			</u-form-item>
 			<u-form-item label="评分" prop="rate" ref="itemRate">
-				<u-rate count="5" size="24" @change="rateChange" v-model="modelAppraise.rate"></u-rate>
+				<u-rate count="5" size="24" @change="rateChange" :gutter="6" v-model="modelAppraise.rate"></u-rate>
 			</u-form-item>
-			<u-form-item label="打赏金额" prop="reward" ref="itemReward">
+			<u-form-item label="打赏金额" prop="reward" ref="itemReward" v-if="modelAppraise.rate>0">
 				<!-- #ifndef APP-NVUE -->
-				<u-input v-model="modelAppraise.reward" border="none" disabled disabledColor="#ffffff">
+				<u-input placeholder="" v-model="modelAppraise.reward" border="none" disabled disabledColor="#ffffff">
 				<!-- #endif -->
 				<!-- #ifdef APP-NVUE -->
-				<u--input v-model="modelAppraise.reward" border="none" disabled disabledColor="#ffffff">
+				<u--input placeholder="" v-model="modelAppraise.reward" border="none" disabled disabledColor="#ffffff">
 				<!-- #endif -->
 					<u--text
 						text="￥"
@@ -36,11 +36,13 @@
 				<u-upload :fileList="fileList2" @afterRead="afterRead" @delete="deletePic" name="2" multiple
 					:maxCount="1" accept="video"></u-upload>
 			</u-form-item>
-			<u-form-item label="评价内容" prop="intro" ref="itemIntro">
-				<u--textarea placeholder="不低于3个字" v-model="modelAppraise.intro" count></u--textarea>
+			<u-form-item label="评价内容" prop="content" ref="itemContent">
+				<u--textarea placeholder="不低于3个字" v-model="modelAppraise.content" count></u--textarea>
 			</u-form-item>
 		</u--form>
-		<u-button type="primary" text="确认预约" @click="submit"></u-button>
+		<view class="button-box">
+			<u-button type="primary" text="确认提交" @click="submit"></u-button>
+		</view>
 	</view>
 </template>
 
@@ -48,19 +50,32 @@
 	export default {
 		data() {
 			return {
-				customStyle: {
-					borderRadius: '20rpx'
-				},
 				fileList2: [],
 				modelAppraise: {
 					teacher_name: '刘老师',
 					service_type: 1,
 					service_name: '数字系统',
-					rate: 1,
+					rate: 0,
 					reward: 0,
 					video: '',
-					intro: ''
+					content: ''
 				},
+				rules: {
+					rate: {
+						type: 'number',
+						required: true,
+						message: '请选择评分',
+						min: 1,
+						trigger: ['blur', 'change']
+					},
+					content: {
+						type: 'string',
+						required: true,
+						message: '评价内容不少于3个字',
+						min: 3,
+						trigger: ['change']
+					}
+				}
 			};
 		},
 		methods: {
@@ -117,6 +132,24 @@
 					});
 				})
 			},
+			submit() {
+				// 如果有错误，会在catch中返回报错信息数组，校验通过则在then中返回true
+				this.$refs.formAppraise
+					.validate()
+					.then(res => {
+						uni.$u.route({
+							type: 'reLaunch',
+							url: '/pages/my/appraise/result'
+						})
+					})
+					.catch(errors => {
+						console.log(errors)
+					});
+			},
+		},
+		onReady() {
+			//如果需要兼容微信小程序，并且校验规则中含有方法等，只能通过setRules方法设置规则。
+			this.$refs.formAppraise.setRules(this.rules);
 		}
 	}
 </script>
@@ -124,5 +157,8 @@
 <style lang="scss">
 	.appraise-box {
 		padding: 32rpx;
+	}
+	.button-box {
+		margin-top: 20rpx;
 	}
 </style>

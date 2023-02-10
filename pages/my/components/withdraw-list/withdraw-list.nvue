@@ -1,0 +1,117 @@
+<template>
+	<view>
+		<view class="withdraw-item" v-for="(item, index) in listData" :key="index" @click="openPage('/pages/my/order/info')">
+			<view class="withdraw-item-top">
+				<view class="withdraw-item-top-left">
+					<view class="withdraw-item-top-left-title">
+						提现{{ item.money.toFixed(2) }}
+						<text v-if="item.desc">{{ item.desc }}</text>
+						<text>{{ item.create_time }}</text>
+					</view>
+				</view>
+				<view class="withdraw-item-top-right"><u--text :text="item.status_name" :color="getColor(item.status)"></u--text></view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+export default {
+	name: 'withdraw-list',
+	props: {
+		listData: Array
+	},
+	data() {
+		return {
+			timeData: []
+		};
+	},
+	mounted() {
+	},
+	methods: {
+		appraise(e) {
+			e.preventDefault();
+			this.openPage('/pages/my/appraise/appraise')
+		},
+		onChange(e, index) {
+			this.timeData[index] = e
+		},
+		openPage(path) {
+			uni.$u.route({
+				url: path
+			});
+		},
+		getColor(status) {
+			let color = '#303133';
+			switch (status) {
+				case 1:
+					// 审核中
+					color = '#ffaa00';
+					break;
+				case 2:
+					// 成功
+					color = '#55aa7f';
+					break;
+				case 3:
+					// 失败
+					color = '#aa5500';
+					break;
+				default:
+					break;
+			}
+			return color;
+		},
+	}
+};
+</script>
+
+<style lang="scss">
+.withdraw-item {
+	padding: 32rpx;
+	border-radius: 16rpx;
+	background-color: #f9f9f9;
+	margin-bottom: 24rpx;
+	.withdraw-item-top {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		.withdraw-item-top-left {
+			flex-direction: row;
+			align-items: center;
+			.withdraw-item-top-left-title {
+				font-size: 32rpx;
+				text {
+					font-size: 24rpx;
+					margin-top: 8rpx;
+					color: #a6a6a6;
+				}
+			}
+		}
+		.withdraw-item-top-right {
+			color: #dc9494;
+			
+		}
+	}
+	.withdraw-item-bottom {
+		flex-direction: row;
+		justify-content: space-between;
+		margin-bottom: 32rpx;
+		color: #a6a6a6;
+		font-size: 24rpx;
+	}
+	.button-group {
+		margin-top: 32rpx;
+		flex-direction: row;
+	}
+	.withdraw-residue-time {
+		margin-top: 32rpx;
+		flex-direction: row;
+		font-size: 24rpx;
+		color: #878787;
+		view {
+			flex-direction: row;
+		}
+	}
+}
+</style>

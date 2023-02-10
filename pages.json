@@ -32,112 +32,160 @@
 				"enablePullDownRefresh": false
 			}
 
-		}
-	    ,{
-            "path" : "pages/public/login",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-    ],
-	"subPackages": [{
-			"root": "pages/teacher",
-			"pages": [{
-					"path": "homepage",
-					"style": {
-						"navigationBarTitleText": "老师主页"
-					}
-				}, {
-					"path": "order",
-					"style": {
-						"navigationBarTitleText": "预约下单",
-						"enablePullDownRefresh": false
-					}
+		}, {
+			"path": "pages/public/login",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
 
-				}, {
-					"path": "order_result",
-					"style": {
-						"navigationBarTitleText": "预约结果",
-						"enablePullDownRefresh": false
-					}
-
-				}, {
-					"path": "order_pay",
-					"style": {
-						"navigationBarTitleText": "订单支付",
-						"enablePullDownRefresh": false
-					}
-
-				}, {
-					"path": "pay_result",
-					"style": {
-						"navigationBarTitleText": "支付结果",
-						"enablePullDownRefresh": false
-					}
-
-				}, {
-					"path": "list",
-					"style": {
-						"navigationBarTitleText": "",
-						"enablePullDownRefresh": false
-					}
-
-				}
-			]
-		},{
-			"root": "pages/course",
-			"pages": [{
-					"path": "info",
-					"style": {
-						"navigationBarTitleText": "",
-						"enablePullDownRefresh": false
-					}
-
-				}
-			]
-		},{
-			"root": "pages/my",
-			"pages": [{
-					"path": "info",
-					"style": {
-						"navigationBarTitleText": "我的信息",
-						"enablePullDownRefresh": false
-					}
-
-				}
-			    ,{
-                    "path" : "order",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "我的订单",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "appraise",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "评价",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "orderinfo",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "订单详情",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-            ]
 		}
 	],
+	"subPackages": [{
+		"root": "pages/teacher",
+		"pages": [{
+			"path": "homepage",
+			"style": {
+				"navigationBarTitleText": "老师主页"
+			}
+		}, {
+			"path": "order",
+			"style": {
+				"navigationBarTitleText": "预约下单",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "order_result",
+			"style": {
+				"navigationBarTitleText": "预约结果",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "order_pay",
+			"style": {
+				"navigationBarTitleText": "订单支付",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pay_result",
+			"style": {
+				"navigationBarTitleText": "支付结果",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "list",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}]
+	}, {
+		"root": "pages/course",
+		"pages": [{
+			"path": "info",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}]
+	}, {
+		"root": "pages/my",
+		"pages": [{
+			"path": "info",
+			"style": {
+				"navigationBarTitleText": "我的信息",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "order/order",
+			"style": {
+				"navigationBarTitleText": "我的订单",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "appraise/appraise",
+			"style": {
+				"navigationBarTitleText": "评价",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "order/info",
+			"style": {
+				"navigationBarTitleText": "订单详情",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "appraise/result",
+			"style": {
+				"navigationBarTitleText": "评价结果",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "invite/invite",
+			"style": {
+				"navigationBarTitleText": "我的邀请",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "customer/customer",
+			"style": {
+				"navigationBarTitleText": "我的客户",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "reward/reward",
+			"style": {
+				"navigationBarTitleText": "我的收益",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "profits/profits",
+			"style": {
+				"navigationBarTitleText": "我的收益",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "profits/withdraw",
+			"style": {
+				"navigationBarTitleText": "提现",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "profits/withdraw_record",
+			"style": {
+				"navigationBarTitleText": "提现记录",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "profits/record",
+			"style": {
+				"navigationBarTitleText": "收益记录",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "profits/withdraw_apply",
+			"style": {
+				"navigationBarTitleText": "提现申请",
+				"enablePullDownRefresh": false
+			}
+
+		}]
+	}],
 	// 原生的导航
 	"tabBar": {
 		"custom": true,

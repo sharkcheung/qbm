@@ -1,3 +1,7 @@
-const { http } = uni.$u
-// 获取菜单
-export const fetchMenu = (params, config = {}) => http.post('/ebapi/public_api/index', params, config)
+module.exports = (vm) => {
+	const { http } = uni.$u
+	let rewardPay = (params, config = {}) => http.post('/reward/pay', params, config)
+	uni.$u.api = {
+		rewardPay
+	}
+}

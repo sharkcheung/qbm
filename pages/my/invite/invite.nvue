@@ -1,0 +1,105 @@
+<template>
+	<view class="">
+		
+		<u-sticky bgColor="#fff">
+			<u-tabs
+				:list="tabList"
+				lineWidth="30"
+				lineColor="#f56c6c"
+				:activeStyle="{
+					color: '#303133',
+					fontWeight: 'bold',
+					transform: 'scale(1.05)'
+				}"
+				:inactiveStyle="{
+					color: '#606266',
+					transform: 'scale(1)'
+				}"
+				itemStyle="padding-left: 15px; padding-right: 15px; height: 34px;"
+				@change="tabChange"
+			></u-tabs>
+		</u-sticky>
+		<view class="invite-container"><invite-list :listData="dataList"></invite-list></view>
+	</view>
+</template>
+
+<script>
+import inviteList from '../components/invite-list/invite-list.nvue';
+export default {
+	components: {
+		inviteList
+	},
+	data() {
+		return {
+			dataList:[],
+			tabList: [
+				{
+					id: 1,
+					name: '约聊'
+				},
+				{
+					id: 2,
+					name: '内训'
+				},
+				{
+					id: 3,
+					name: '陪跑'
+				}
+			],
+			indexList: [
+				{
+					id: 1,
+					order_num: '2023020917013685',
+					avatar_url: 'http://qebang.cn/uploads/image/20230210/50a34b448b22972b17d344bd12562225.jpg',
+					nick_name: '马小腾',
+					true_name: '马化腾',
+					order_type_name: '内训',
+					order_type: 2,
+					service_type_name: '全域规划',
+					service_type: 1,
+					create_time: '2023-02-09',
+				},
+				{
+					id: 2,
+					order_num: '2023020917013685',
+					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+					nick_name: '马小云',
+					true_name: '马云',
+					order_type_name: '约聊',
+					order_type: 1,
+					service_type_name: '全域规划',
+					service_type: 1,
+					create_time: '2023-02-09',
+				},
+				{
+					id: 3,
+					order_num: '2023020917013685',
+					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
+					nick_name: '马小云',
+					true_name: '马云',
+					order_type_name: '约聊',
+					order_type: 1,
+					service_type_name: '全域规划',
+					service_type: 1,
+					create_time: '2023-02-09',
+				},
+			]
+		};
+	},
+	created() {
+		this.dataList = this.indexList
+	},
+	methods: {
+		tabChange(e) {
+			this.dataList = this.indexList.filter(item=>item.order_type==e.id)
+			console.log(this.dataList)
+		}
+	}
+};
+</script>
+
+<style lang="scss">
+.invite-container {
+	padding: 24rpx;
+}
+</style>

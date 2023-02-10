@@ -15,28 +15,33 @@
 					transform: 'scale(1)'
 				}"
 				itemStyle="padding-left: 15px; padding-right: 15px; height: 34px;"
+				@change="tabChange"
 			></u-tabs>
 		</u-sticky>
-		<view class="order-container"><order-list :listData="indexList"></order-list></view>
+		<view class="customer-container"><customer-list :listData="dataList"></customer-list></view>
 	</view>
 </template>
 
 <script>
-import orderList from './components/order-list/order-list.nvue';
+import customerList from '../components/customer-list/customer-list.nvue';
 export default {
 	components: {
-		orderList
+		customerList
 	},
 	data() {
 		return {
+			dataList: [],
 			tabList: [
 				{
+					id: 1,
 					name: '约聊'
 				},
 				{
+					id: 2,
 					name: '内训'
 				},
 				{
+					id: 3,
 					name: '陪跑'
 				}
 			],
@@ -44,8 +49,8 @@ export default {
 				{
 					id: 1,
 					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
+					avatar_url: 'http://qebang.cn/uploads/image/20230210/50a34b448b22972b17d344bd12562225.jpg',
+					teacher_name: '马小腾',
 					order_type_name: '内训',
 					order_type: 2,
 					service_type_name: '全域规划',
@@ -59,8 +64,8 @@ export default {
 				{
 					id: 2,
 					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
+					avatar_url: 'http://qebang.cn/uploads/image/20230210/50a34b448b22972b17d344bd12562225.jpg',
+					teacher_name: '马小腾',
 					order_type_name: '约聊',
 					order_type: 1,
 					service_type_name: '全域规划',
@@ -74,8 +79,8 @@ export default {
 				{
 					id: 3,
 					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
+					avatar_url: 'http://qebang.cn/uploads/image/20230210/50a34b448b22972b17d344bd12562225.jpg',
+					teacher_name: '马小腾',
 					order_type_name: '约聊',
 					order_type: 1,
 					service_type_name: '全域规划',
@@ -89,8 +94,8 @@ export default {
 				{
 					id: 4,
 					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
+					avatar_url: 'http://qebang.cn/uploads/image/20230210/50a34b448b22972b17d344bd12562225.jpg',
+					teacher_name: '马小腾',
 					order_type_name: '约聊',
 					order_type: 1,
 					service_type_name: '全域规划',
@@ -104,8 +109,8 @@ export default {
 				{
 					id: 5,
 					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
+					avatar_url: 'http://qebang.cn/uploads/image/20230210/50a34b448b22972b17d344bd12562225.jpg',
+					teacher_name: '马小腾',
 					order_type_name: '约聊',
 					order_type: 1,
 					service_type_name: '全域规划',
@@ -119,8 +124,8 @@ export default {
 				{
 					id: 6,
 					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
+					avatar_url: 'http://qebang.cn/uploads/image/20230210/50a34b448b22972b17d344bd12562225.jpg',
+					teacher_name: '马小腾',
 					order_type_name: '约聊',
 					order_type: 1,
 					service_type_name: '全域规划',
@@ -134,8 +139,8 @@ export default {
 				{
 					id: 7,
 					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
+					avatar_url: 'http://qebang.cn/uploads/image/20230210/50a34b448b22972b17d344bd12562225.jpg',
+					teacher_name: '马小腾',
 					order_type_name: '约聊',
 					order_type: 1,
 					service_type_name: '全域规划',
@@ -146,14 +151,53 @@ export default {
 					create_time: '2023-02-09',
 					start_time: 0
 				},
+				{
+					id: 8,
+					order_num: '2023020917013685',
+					avatar_url: 'http://qebang.cn/uploads/image/20230210/50a34b448b22972b17d344bd12562225.jpg',
+					teacher_name: '马小腾',
+					order_type_name: '陪跑',
+					order_type: 3,
+					service_type_name: '全域规划',
+					service_type: 1,
+					status: 3,
+					status_name: '待开始',
+					is_evaluated: 0,
+					create_time: '2023-02-09',
+					start_time: 0
+				},
+				{
+					id: 9,
+					order_num: '2023020917013685',
+					avatar_url: 'http://qebang.cn/uploads/image/20230210/50a34b448b22972b17d344bd12562225.jpg',
+					teacher_name: '马小腾',
+					order_type_name: '陪跑',
+					order_type: 3,
+					service_type_name: '全域规划',
+					service_type: 1,
+					status: 3,
+					status_name: '待开始',
+					is_evaluated: 0,
+					create_time: '2023-02-09',
+					start_time: 0
+				},
 			]
 		};
+	},
+	created() {
+		this.dataList = this.indexList
+	},
+	methods: {
+		tabChange(e) {
+			this.dataList = this.indexList.filter(item=>item.order_type==e.id)
+			console.log(this.dataList)
+		}
 	}
 };
 </script>
 
 <style lang="scss">
-.order-container {
+.customer-container {
 	padding: 24rpx;
 }
 </style>

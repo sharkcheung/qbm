@@ -1,5 +1,5 @@
 module.exports = {
-    baseUrl: 'https://api.youzixy.com',
+    baseUrl: 'http://demo.dg-cloud-03.qebang.cn/api',
 	tabList: [
 		{
 			name: '首页',

@@ -1,0 +1,92 @@
+<template>
+	<view>
+		<u-sticky bgColor="#fff">
+			<u-tabs
+				:list="tabList"
+				lineWidth="30"
+				lineColor="#f56c6c"
+				:activeStyle="{
+					color: '#303133',
+					fontWeight: 'bold',
+					transform: 'scale(1.05)'
+				}"
+				:inactiveStyle="{
+					color: '#606266',
+					transform: 'scale(1)'
+				}"
+				@change="tabChange"
+				itemStyle="padding-left: 15px; padding-right: 15px; height: 34px;"
+			></u-tabs>
+		</u-sticky>
+		<view class="withdraw-container"><withdraw-list :listData="dataList"></withdraw-list></view>
+	</view>
+</template>
+
+
+<script>
+import withdrawList from '../components/withdraw-list/withdraw-list.nvue';
+export default {
+	components: {
+		withdrawList
+	},
+	data() {
+		return {
+			tabList: [
+				{
+					id: 1,
+					name: '审核中'
+				},
+				{
+					id: 2,
+					name: '成功'
+				},
+				{
+					id: 3,
+					name: '失败'
+				}
+			],
+			dataList: [],
+			indexList: [
+				{
+					id: 1,
+					money: 20,
+					create_time: '2023-02-09 12:12:59',
+					status: 1,
+					status_name: '审核中',
+					desc: '',
+				},
+				{
+					id: 2,
+					money: 2000,
+					create_time: '2023-02-09 12:12:59',
+					status: 2,
+					desc: '',
+					status_name: '成功',
+				},
+				{
+					id: 3,
+					money: 200,
+					create_time: '2023-02-09 12:12:59',
+					status: 3,
+					desc: '暂时不允许提现',
+					status_name: '失败',
+				},
+			]
+		};
+	},
+	created() {
+		this.dataList = this.indexList.filter(item=>item.status==1)
+	},
+	methods: {
+		tabChange(e) {
+			this.dataList = this.indexList.filter(item=>item.status==e.id)
+		}
+	}
+};
+</script>
+
+<style lang="scss">
+.withdraw-container {
+	padding: 24rpx;
+}
+</style>

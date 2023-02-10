@@ -75,7 +75,7 @@
 			return {
 				info: {
 					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					nick_name: '刘老师',
+					nick_name: '马小云',
 					user_type: '注册用户',
 					user_name: '刘强东',
 					mobile: '13888888888',

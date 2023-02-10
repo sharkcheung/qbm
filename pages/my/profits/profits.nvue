@@ -1,0 +1,45 @@
+<template>
+	<view class="profits-box">
+		<u--image :showLoading="true" src="http://qebang.cn/uploads/image/20230210/c0a3cfaf9f5beb215ee2d2d5e03ba94d.png" width="120px" height="120px"></u--image>
+		<view class="account"><u--text size="20" margin="20rpx 0 20rpx 0" :bold="true" align="center" mode="price" :text="info.balance"></u--text>账号余额(元)</view>
+		<u-button text="提现" size="normal" shape="circle" color="linear-gradient(to right, rgb(66, 83, 216), rgb(255, 85, 0))" @click="$u.route('/pages/my/profits/withdraw_apply')"></u-button>
+		<view class="record">
+			<text @click="$u.route('/pages/my/profits/withdraw_record')">提现记录</text>
+			<text @click="$u.route('/pages/my/profits/record')">收益记录</text>
+		</view>
+	</view>
+</template>
+
+<script>
+export default {
+	data() {
+		return {
+			info: {
+				balance: 299
+			}
+		};
+	}
+};
+</script>
+
+<style lang="scss">
+.profits-box {
+	padding: 32rpx;
+	align-items: center;
+	padding-top: 60rpx;
+	.account {
+		align-items: center;
+		margin-bottom: 84rpx;
+		font-size: 24rpx;
+		color: #a7a7a7;
+	}
+	.record {
+		flex-direction: row;
+		font-size: 24rpx;
+		justify-content: center;
+		margin-top: 50rpx;
+		gap: 80rpx;
+		color: #424242;
+	}
+}
+</style>

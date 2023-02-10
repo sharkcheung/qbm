@@ -1,0 +1,130 @@
+<template>
+	<view class="order-result-box">
+		<view class="result-msg">{{ order.result }}</view>
+		<view class="result-tip">打赏金额：￥{{ order.reward }}</view>
+		<view class="result-button"><u-button v-if="order.reward==0" type="info" text="返回" @click="back"></u-button><u-button type="warning" text="去支付" @click="goPay" v-if="order.reward>0"></u-button></view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				order: {
+					result: '评价成功！',
+					reward: 299
+				}
+			}
+		},
+		methods: {
+			back() {
+				uni.navigateBack()
+			},
+			goPay() {
+				
+				if(this.order.reward>0){
+					let that=this;
+					uni.$u.api.rewardPay(this.order).then(res=>{
+						
+						// #ifdef MP-WEIXIN
+						uni.requestPayment({
+							provider: 'wxpay',
+							timeStamp: String(res.data.timeStamp),
+							nonceStr: res.data.nonceStr,
+							package: res.data.package,
+							signType: 'MD5',
+							paySign: res.data.sign,
+							success: function(ret) {
+								uni.showToast({
+									title: '支付成功',
+									icon: 'none'
+								});
+								uni.navigateBack({
+									delta: 1
+								});
+							},
+							fail: function (err) {
+								console.log(err)
+								if(err.errMsg.indexOf('payment微信:-2') > -1) {
+									
+								}
+								else {
+									that.$u.util.showErr('支付失败')
+								}
+							}
+						});
+						// #endif
+					})
+					.catch(err=>{
+						let res = {
+							data: {
+								timeStamp: '12312412313',
+								nonceStr: '12312412313',
+								package: '12312412313',
+								sign: '12312412313',
+							}
+						}
+						// #ifdef MP-WEIXIN
+						uni.requestPayment({
+							provider: 'wxpay',
+							timeStamp: String(res.data.timeStamp),
+							nonceStr: res.data.nonceStr,
+							package: res.data.package,
+							signType: 'MD5',
+							paySign: res.data.sign,
+							success: function(ret) {
+								uni.showToast({
+									title: '支付成功',
+									icon: 'none'
+								});
+								uni.navigateBack({
+									delta: 1
+								});
+							},
+							fail: function (err) {
+								console.log(err)
+								if(err.errMsg.indexOf('payment微信:-2') > -1) {
+									
+								}
+								else {
+									that.$u.util.showErr('支付失败')
+								}
+							}
+						});
+						// #endif
+						console.log(err)
+						that.$u.util.showErr('支付请求失败')
+					})
+				}else{
+					this.$refs.uToast.show({
+						title: '无须打赏',
+						type: 'warning',
+					});
+				}
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+	.order-result-box {
+		padding: 40rpx;
+		text-align: center;
+		.result-msg {
+			font-size: 36rpx;
+			font-weight: bold;
+			margin-bottom: 12rpx;
+		}
+		.result-tip {
+			color: #666;
+			margin-bottom: 20rpx;
+		}
+		.result-button {
+			flex-direction: row;
+			gap: 10rpx;
+			.u-button--square {
+				border-radius: 20rpx;
+			}
+		}
+	}
+</style>

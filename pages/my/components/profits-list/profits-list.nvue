@@ -1,0 +1,97 @@
+<template>
+	<view>
+		<view class="profits-item" v-for="(item, index) in listData" :key="index" @click="openPage('/pages/my/order/info')">
+			<view class="profits-item-top">
+				<view class="profits-item-top-left">
+					<u-avatar shape="circle" size="48" :src="item.avatar_url" customStyle="margin: 0 15px -3px 0"></u-avatar>
+					<view class="profits-item-top-left-title">
+						<text>{{ item.desc }}</text>
+						<text>{{ item.create_time }}</text>
+					</view>
+				</view>
+				<view class="profits-item-top-right">+{{ item.money.toFixed(2) }}</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+export default {
+	name: 'profits-list',
+	props: {
+		listData: Array
+	},
+	data() {
+		return {
+			timeData: []
+		};
+	},
+	mounted() {
+	},
+	methods: {
+		appraise(e) {
+			e.preventDefault();
+			this.openPage('/pages/my/appraise/appraise')
+		},
+		onChange(e, index) {
+			this.timeData[index] = e
+		},
+		openPage(path) {
+			uni.$u.route({
+				url: path
+			});
+		},
+	}
+};
+</script>
+
+<style lang="scss">
+.profits-item {
+	padding: 32rpx;
+	border-radius: 16rpx;
+	background-color: #f9f9f9;
+	margin-bottom: 24rpx;
+	.profits-item-top {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		.profits-item-top-left {
+			flex-direction: row;
+			align-items: center;
+			.profits-item-top-left-title {
+				font-size: 32rpx;
+				text {
+					font-size: 24rpx;
+					margin-top: 8rpx;
+					color: #a6a6a6;
+				}
+			}
+		}
+		.profits-item-top-right {
+			color: #dc9494;
+			
+		}
+	}
+	.profits-item-bottom {
+		flex-direction: row;
+		justify-content: space-between;
+		margin-bottom: 32rpx;
+		color: #a6a6a6;
+		font-size: 24rpx;
+	}
+	.button-group {
+		margin-top: 32rpx;
+		flex-direction: row;
+	}
+	.profits-residue-time {
+		margin-top: 32rpx;
+		flex-direction: row;
+		font-size: 24rpx;
+		color: #878787;
+		view {
+			flex-direction: row;
+		}
+	}
+}
+</style>

@@ -9,5 +9,7 @@ uni.$u.http.setConfig((defaultConfig) => {
 
 module.exports = (vm) => {
     require('./requestInterceptors')(vm)
+	// http接口API抽离，免于写url或者一些固定的参数
+    require('@/common/api')(vm)
     require('./responseInterceptors')(vm)
 }

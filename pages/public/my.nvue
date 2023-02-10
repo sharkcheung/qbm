@@ -11,7 +11,7 @@
 		<view class="cell-box">
 		<u-cell-group :border="false">
 			<template v-for="(item, index) in navList">
-				<u-cell v-if="item.title!==''" :key="index" :icon="item.icon" :title="item.title" :url="item.url" :border="false" :isLink="item.url!==''"></u-cell>
+				<u-cell v-if="item.title!==''" :key="index" :icon="item.icon" :title="item.title" :url="item.url" :border="false" :isLink="item.url!==''" :value="item.value"></u-cell>
 				<u-gap v-else height="10" bgColor="#efefef"></u-gap>
 				
 			</template>
@@ -32,56 +32,65 @@
 					{
 						icon: 'http://qebang.cn/uploads/image/20230208/c732039a121abe41803acf0cdb148a3c.png',
 						title: '我的订单',
-						url: '/pages/my/order',
-						func: ''
+						url: '/pages/my/order/order',
+						func: '',
+						value: ''
 					},
 					{
 						icon: 'http://qebang.cn/uploads/image/20230208/873e1d5eed628d6737ac17de544a6101.png',
 						title: '我的信息',
 						url: '/pages/my/info',
-						func: ''
+						func: '',
+						value: ''
 					},
 					{
 						icon: '',
 						title: '',
 						url: '',
-						func: ''
+						func: '',
+						value: ''
 					},
 					{
 						icon: 'http://qebang.cn/uploads/image/20230208/d668697a29496a304c8b6e4da5b2c292.png',
 						title: '我的客户',
-						url: '/pages/my/customer',
-						func: ''
+						url: '/pages/my/customer/customer',
+						func: '',
+						value: ''
+					},
+					{
+						icon: 'http://qebang.cn/uploads/image/20230208/82821983ccdfc2167f5997a3deacc1e9.png',
+						title: '我的收益',
+						url: '/pages/my/profits/profits',
+						func: '',
+						value: '299元'
 					},
 					{
 						icon: '',
 						title: '',
 						url: '',
-						func: ''
-					},
-					{
-						icon: 'http://qebang.cn/uploads/image/20230208/82821983ccdfc2167f5997a3deacc1e9.png',
-						title: '邀请好友',
-						url: '',
-						func: 'invite'
+						func: '',
+						value: ''
 					},
 					{
 						icon: 'http://qebang.cn/uploads/image/20230208/ae54f017ce24c1fc2472b79d62680c92.png',
 						title: '我的数字顾问',
-						url: '',
-						func: ''
+						url: '/pages/my/adviser/adviser',
+						func: '',
+						value: ''
 					},
 					{
 						icon: 'http://qebang.cn/uploads/image/20230208/82821983ccdfc2167f5997a3deacc1e9.png',
-						title: '邀请好友',
-						url: '',
-						func: 'invite'
+						title: '我的邀请',
+						url: '/pages/my/invite/invite',
+						func: '',
+						value: ''
 					},
 					{
 						icon: 'http://qebang.cn/uploads/image/20230208/02e8d1bb25c4a108667154d98df7c110.png',
 						title: '系统设置',
 						url: '/pages/my/setting',
-						func: ''
+						func: '',
+						value: ''
 					},
 				],
 				tabList: [
@@ -89,7 +98,7 @@
 				currentTab: 3,
 				info: {
 					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					nick_name: '刘老师',
+					nick_name: '马小云',
 					mobile: '13888888888'
 				}
 			};

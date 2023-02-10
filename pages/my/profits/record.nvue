@@ -1,0 +1,83 @@
+<template>
+	<view>
+		<u-sticky bgColor="#fff">
+			<u-tabs
+				:list="tabList"
+				lineWidth="30"
+				lineColor="#f56c6c"
+				:activeStyle="{
+					color: '#303133',
+					fontWeight: 'bold',
+					transform: 'scale(1.05)'
+				}"
+				:inactiveStyle="{
+					color: '#606266',
+					transform: 'scale(1)'
+				}"
+				itemStyle="padding-left: 15px; padding-right: 15px; height: 34px;"
+				@change="tabChange"
+			></u-tabs>
+		</u-sticky>
+		<view class="profits-container"><profits-list :listData="dataList"></profits-list></view>
+	</view>
+</template>
+
+<script>
+import profitsList from '../components/profits-list/profits-list.nvue';
+export default {
+	components: {
+		profitsList
+	},
+	data() {
+		return {
+			dataList: [],
+			tabList: [
+				{
+					id: 1,
+					name: '约聊'
+				},
+				{
+					id: 2,
+					name: '内训'
+				},
+				{
+					id: 3,
+					name: '陪跑'
+				}
+			],
+			indexList: [
+				{
+					id: 1,
+					avatar_url: 'http://qebang.cn/uploads/image/20230210/50a34b448b22972b17d344bd12562225.jpg',
+					money: 20,
+					desc: '马小腾参加约聊打赏返佣',
+					create_time: '2023-02-09',
+					order_type: 1,
+				},
+				{
+					id: 2,
+					avatar_url: 'http://qebang.cn/uploads/image/20230210/50a34b448b22972b17d344bd12562225.jpg',
+					money: 2000,
+					desc: '马小云参加内训服务返佣',
+					create_time: '2023-02-09',
+					order_type: 2,
+				},
+			]
+		};
+	},
+	created() {
+		this.dataList = this.indexList.filter(item=>item.order_type==1)
+	},
+	methods: {
+		tabChange(e) {
+			this.dataList = this.indexList.filter(item=>item.order_type==e.id)
+		}
+	}
+};
+</script>
+
+<style lang="scss">
+.profits-container {
+	padding: 24rpx;
+}
+</style>
