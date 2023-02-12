@@ -8,9 +8,9 @@
 		</view>
 		<u-gap height="10" bgColor="#efefef"></u-gap>
 		<view class="service-container">
-			<u-grid :border="false" @click="click2">
+			<u-grid :border="false">
 				<u-grid-item v-for="(baseListItem, baseListIndex) in baseList" :key="baseListIndex">
-					<u--image shape="circle" :showLoading="true" :src="baseListItem.name" width="60px" height="60px" @click="click"></u--image>
+					<u--image shape="circle" :showLoading="true" :src="baseListItem.name" width="60px" height="60px" @click="click(baseListItem)"></u--image>
 					<text class="grid-text">{{ baseListItem.title }}</text>
 				</u-grid-item>
 			</u-grid>
@@ -158,16 +158,19 @@
 					}
 				],
 				baseList: [{
+						id: 1,
 						name: 'http://qebang.cn/uploads/image/20230209/551548f86244b0595714a9a8bcba6218.png',
 						title: '约聊'
 					},
 					{
+						id: 2,
 						name: 'http://qebang.cn/uploads/image/20230209/805734f9913d2e657bc9d70c190484a0.png',
 						title: '内训'
 					},
 					{
+						id: 3,
 						name: 'http://qebang.cn/uploads/image/20230209/af11c55084d7e061485cfd23aeb88630.png',
-						title: '辅导'
+						title: '陪跑'
 					}
 				],
 				noticeMsg: '热烈庆祝刘老师入驻',
@@ -200,14 +203,13 @@
 			click1(e) {
 				console.log('click1', e);
 			},
-			click(e) {
+			click(item) {
 				uni.$u.route({
-					url: '/pages/teacher/list'
+					url: '/pages/teacher/list',
+					params: {
+						type: item.id
+					}
 				})
-				console.log('click', e);
-			},
-			click2(name) {
-				this.$refs.uToast.success(`点击了第${name}个`);
 			},
 			scrolltolower() {
 				this.loadmore()

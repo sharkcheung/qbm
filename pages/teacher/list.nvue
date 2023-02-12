@@ -99,6 +99,22 @@
 				],
 			};
 		},
+		onLoad(options) {
+			let title = ''
+			if(options.type == 1) {
+				title = '约聊列表'
+			}
+			else if(options.type == 2) {
+				title = '内训列表'
+			}
+			else {
+				title = '陪跑列表'
+			}
+			uni.setNavigationBarTitle({
+				title: title
+			});
+
+		},
 		methods: {
 			change(index) {
 				this.sortIndex = index

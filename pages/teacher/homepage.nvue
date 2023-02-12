@@ -28,8 +28,8 @@
 			</view>
 			<view class="button-group">
 				<u-button type="primary" text="我要约聊" @click="goPage('/pages/teacher/order', { type:1 })"></u-button>
-				<u-button type="warning" text="我要内训" @click="goPage('/pages/teacher/order', { type:1 })"></u-button>
-				<u-button type="error" text="我要辅导" @click="goPage('/pages/teacher/order', { type:1 })"></u-button>
+				<u-button type="warning" text="我要内训" @click="goPage('/pages/teacher/order', { type:2 })"></u-button>
+				<u-button type="error" text="我要陪跑" @click="goPage('/pages/teacher/order', { type:3 })"></u-button>
 			</view>
 			<view class="comment-box">
 				<view class="comment-top">

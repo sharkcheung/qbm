@@ -178,13 +178,31 @@
 			}
 
 		}, {
-			"path": "profits/withdraw_apply",
+			"path": "profits/withdraw_result",
 			"style": {
-				"navigationBarTitleText": "提现申请",
+				"navigationBarTitleText": "提现结果",
 				"enablePullDownRefresh": false
 			}
 
-		}]
+		}    ,{
+                    "path" : "advisor",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "我的数字顾问",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+                ,{
+                    "path" : "setting",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "系统设置",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
 	}],
 	// 原生的导航
 	"tabBar": {

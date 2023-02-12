@@ -62,7 +62,7 @@
 						title: '我的收益',
 						url: '/pages/my/profits/profits',
 						func: '',
-						value: '299元'
+						value: '￥299'
 					},
 					{
 						icon: '',
@@ -74,7 +74,7 @@
 					{
 						icon: 'http://qebang.cn/uploads/image/20230208/ae54f017ce24c1fc2472b79d62680c92.png',
 						title: '我的数字顾问',
-						url: '/pages/my/adviser/adviser',
+						url: '/pages/my/advisor',
 						func: '',
 						value: ''
 					},
