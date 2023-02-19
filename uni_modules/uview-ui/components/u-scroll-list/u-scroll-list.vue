@@ -192,6 +192,7 @@ export default {
 @import "../../libs/css/components.scss";
 
 .u-scroll-list {
+	width: 100%;
 	padding-bottom: 10px;
 
 	&__scroll-view {

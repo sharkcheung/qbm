@@ -46,4 +46,9 @@ const app = new Vue({
 // 引入请求封装
 require('./util/request/index')(app)
 
+// 公共方法
+import util from '@/common/common.js';
+Vue.use(util, app);
+
+
 app.$mount()

@@ -1,9 +1,10 @@
 <template>
 	<view class="my-box">
 		<view class="info-box" @click="goInfo()">
-			<u-avatar shape="circle" size="60" :src="info.avatar_url" customStyle="margin: 0px 10px 0px 0px"></u-avatar>
+			<u-avatar shape="circle" size="60" @click="!vuex_user.token&&goLogin" :src="info.pic" customStyle="margin: 0px 10px 0px 0px"></u-avatar>
 			<view class="info-right">
-				<view class="info-right-title"><text>{{ info.nick_name }}</text>{{ info.mobile }}</view>
+				<view class="info-right-title" v-if="vuex_user.token"><text>{{ info.nickname||'请设置昵称' }}</text>{{ info.mobile||'-' }}</view>
+				<view class="info-right-title" @click="goLogin" v-if="!vuex_user.token">立即登录</view>
 				<view class="info-right-icon"><u-icon name="arrow-right"></u-icon></view>
 			</view>
 		</view>
@@ -97,16 +98,22 @@
 				],
 				currentTab: 3,
 				info: {
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					nick_name: '马小云',
-					mobile: '13888888888'
+					avatar_url: '',
+					nick_name: '',
+					mobile: ''
 				}
 			};
 		},
 		created() {
 			this.tabList = this.$configs.tabList;
+			this.info = this.vuex_user;
 		},
 		methods: {
+			goLogin() {
+				uni.$u.route({
+					url: '/pages/public/login'
+				})
+			},
 			goInfo() {
 				uni.$u.route({
 					url: '/pages/my/info'

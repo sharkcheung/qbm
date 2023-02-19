@@ -1,5 +1,5 @@
 module.exports = {
-    baseUrl: 'http://demo.dg-cloud-03.qebang.cn/api',
+    baseUrl: 'http://www.qbtadmin.com/api',
 	tabList: [
 		{
 			name: '首页',

@@ -12,36 +12,44 @@
 						<text v-for="(item_title, idx) in info.title" :key="idx">{{ item_title }}</text>
 					</view>
 				</view>
-				<view class="item-box">
-					<view class="item-title">简介：</view>
-					<view class="item-value">{{ info.teacher_desc }}</view>
-				</view>
-				<view class="item-box teacher-skill">
-					<view class="item-title">擅长：</view>
-					<view class="item-value"><u-tag v-for="(item_item, index_item) in info.item" :key="index_item" :text="item_item" plain size="mini" type="warning"></u-tag></view>
-				</view>
 				<view class="item-box teacher-mark">
 					<view class="item-title">评分：</view>
 					<view class="item-value"><u-rate :value="info.mark" readonly activeColor="#f9ae3d"></u-rate></view>
 				</view>
+				<view class="item-box">
+					<view class="item-title">履历：</view>
+					<view class="item-value">{{ info.resume }}</view>
+				</view>
+				<view class="item-box">
+					<view class="item-title">荣誉：</view>
+					<view class="item-value">{{ info.honor }}</view>
+				</view>
+				<view class="item-box teacher-skill">
+					<view class="item-title">擅长：</view>
+					<view class="item-value">
+						<u-scroll-list
+						indicatorColor="#fff0f0"
+						indicatorActiveColor="#f56c6c">
+							<view class="scroll-list" style="flex-direction: row;"><u-tag v-for="(item_item, index_item) in info.service" :key="index_item" :text="item_item.name" plain size="mini" type="warning"></u-tag></view>
+						</u-scroll-list>
+					</view>
+				</view>
 				<view class="teacher-bottom">可免费约聊时长：{{ info.duration }} 分钟</view>
 			</view>
 			<view class="button-group">
-				<u-button type="primary" text="我要约聊" @click="goPage('/pages/teacher/order', { type:1 })"></u-button>
-				<u-button type="warning" text="我要内训" @click="goPage('/pages/teacher/order', { type:2 })"></u-button>
-				<u-button type="error" text="我要陪跑" @click="goPage('/pages/teacher/order', { type:3 })"></u-button>
+				<u-button v-for="(item,index) in info.service_type" :key="index" :type="item.id==1?'primary':item.id==2?'warning':'error'" :text="'我要'+item.name" @click="order(item)"></u-button>
 			</view>
-			<view class="comment-box">
+			<view class="comment-box" v-for="(item,index) in info.comment" :key="index">
 				<view class="comment-top">
 					<view class="comment-top-left">
-						<u-avatar shape="circle" size="20" :src="info.comment.avatar_url" customStyle="margin: 0px 5px 0px 0px"></u-avatar>
-						{{ info.comment.nick_name }}
+						<u-avatar shape="circle" size="20" :src="info.avatar_url" customStyle="margin: 0px 5px 0px 0px"></u-avatar>
+						{{ info.nick_name }}
 					</view>
-					<view class="comment-top-right">{{ info.comment.create_time }}</view>
+					<view class="comment-top-right">{{ info.create_time }}</view>
 				</view>
-				<view class="comment-content">{{ info.comment.content }}</view>
+				<view class="comment-content">{{ info.content }}</view>
 			</view>
-			<view class="comment-view-all">查看全部评价</view>
+			<view class="comment-view-all" @click="viewAllComment">{{ info.comment.length >0 ? '查看全部评价' : '暂无评价' }}</view>
 		</template>
 		<template v-if="current==1">
 			
@@ -68,6 +76,15 @@
 			</view>
 			<u-safe-bottom></u-safe-bottom>
 		</view>
+		<u-modal :show="show" :closeOnClickOverlay="true" confirmText="去登录" title="温馨提示" content="您还没有登录,暂时无法进行下单">
+			<u-button
+				slot="confirmButton"
+				text="去登录"
+				type="primary"
+				shape="circle"
+				@click="goLogin"
+			></u-button>
+		</u-modal>
 	</div>
 </template>
 
@@ -75,6 +92,7 @@
 export default {
 	data() {
 		return {
+			show: false,
 			current: 0,
 			commentList: [
 				{
@@ -164,20 +182,16 @@ export default {
 				},
 			],
 			info: {
-				comment: {
-					avatar_url: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-					nick_name: '张**',
-					create_time: '2022-12-12',
-					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
-				},
 				avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
 				teacher_name: '刘老师',
-				title: ['原百度华北战区总经理', '原某上市公司互联网顾问'],
-				teacher_desc: '数十年培训经验，培养出上万于精英，现遍布全国各地',
-				item: ['全域规划', '私域运营', '活动策划', '文案创意'],
-				mark: 4,
-				type: [1, 2, 3, 4],
-				duration: 60
+				title: '',
+				resume: '',
+				honor: '',
+				service: [],
+				service_type: [],
+				mark: 0,
+				duration: 0,
+				comment: [],
 			},
 			listTab: [
 				{
@@ -192,7 +206,54 @@ export default {
 			]
 		};
 	},
+	onLoad(options) {
+		uni.showLoading({
+			title: '数据加载中...'
+		})
+		let that=this;
+		uni.$u.api.teacherHome({ params: {id: options.id} }).then(res=>{
+			console.log(res)
+			that.info = res.data.info;
+			uni.hideLoading()
+		})
+		.catch(err=>{
+			uni.hideLoading()
+			that.$u.util.showErr('头像上传失败');
+		})
+	},
 	methods:{
+		goLogin() {
+			this.show = false;
+			uni.$u.route({
+				url: '/pages/public/login'
+			})
+		},
+		order(item) {
+			if(!this.vuex_user.token) {
+				this.show = true;
+				return false;
+			}
+			uni.showLoading({
+				title: '数据请求中...'
+			})
+			let that=this;
+			uni.$u.api.checkUserOrder({ params: {
+				teacher_id: item.id
+			}}).then(res=>{
+				uni.hideLoading()
+				console.log(item)
+				that.goPage('/pages/teacher/order', { service_type:item.id, service_type_name:item.name, teacher_id: that.info.id, teacher_name: that.info.teacher_name })
+			})
+			.catch(err=>{
+				uni.hideLoading()
+				that.$u.util.showErr(err.msg);
+			})
+		},
+		viewAllComment() {
+			if(this.info.comment.length>0) {
+				this.current = 1
+			}
+		},
 		clickTab(item) {
 			this.current = item.index
 			console.log(item)
@@ -241,7 +302,9 @@ export default {
 		flex-direction: row;
 		.item-value {
 			flex-direction: row;
-			gap: 10rpx;
+			.scroll-list {
+				gap: 20rpx;
+			}
 		}
 	}
 

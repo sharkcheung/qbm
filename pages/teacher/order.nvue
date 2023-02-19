@@ -85,9 +85,10 @@ export default {
 			],
 			showCalendar: false,
 			modelOrder: {
-				teacher_name: '刘老师',
-				service_type: 1,
-				service_name: '数字系统',
+				teacher_id: '',
+				teacher_name: '',
+				service_type: '',
+				service_name: '',
 				company_name: '',
 				industry: '',
 				teamInfo: '',
@@ -129,6 +130,27 @@ export default {
 				}
 			}
 		};
+	},
+	onLoad(options) {
+		console.log(options);
+		let title = ''
+		if(options.service_type == 1) {
+			title = '约聊下单'
+		}
+		else if(options.service_type == 2) {
+			title = '内训下单'
+		}
+		else {
+			title = '陪跑下单'
+		}
+		uni.setNavigationBarTitle({
+			title: title
+		});
+		this.modelOrder.service_type = options.service_type;
+		this.modelOrder.service_type_name = options.service_type_name;
+		this.modelOrder.teacher_name = options.teacher_name;
+		this.modelOrder.teacher_id = options.teacher_id;
+		
 	},
 	methods: {
 		hideKeyboard() {

@@ -9,18 +9,18 @@
 		<u-gap height="10" bgColor="#efefef"></u-gap>
 		<view class="service-container">
 			<u-grid :border="false">
-				<u-grid-item v-for="(baseListItem, baseListIndex) in baseList" :key="baseListIndex">
-					<u--image shape="circle" :showLoading="true" :src="baseListItem.name" width="60px" height="60px" @click="click(baseListItem)"></u--image>
-					<text class="grid-text">{{ baseListItem.title }}</text>
+				<u-grid-item v-for="(baseListItem, baseListIndex) in serviceTypeList" :key="baseListIndex">
+					<u--image shape="circle" :showLoading="true" :src="baseListItem.picture" width="60px" height="60px" @click="click(baseListItem)"></u--image>
+					<text class="grid-text">{{ baseListItem.name }}</text>
 				</u-grid-item>
 			</u-grid>
 		</view>
 		<u-gap height="10" bgColor="#efefef"></u-gap>
 		<u-sticky bgColor="#fff">
-			<u-tabs :list="list1"></u-tabs>
+			<u-tabs :list="serviceList" @click="changeService"></u-tabs>
 		</u-sticky>
 		<view class="teacher-container">
-			<teacher-list :listData="indexList"></teacher-list>
+			<teacher-list :listData="teacherList"></teacher-list>
 		</view>
 		<u-tabbar :value="vuex_currentTab" :placeholder="false">
 			<u-tabbar-item v-for="(item,index) in tabList" @click="changeTab(item)" :text="item.name" :icon="item.icon" :key="index"></u-tabbar-item>
@@ -30,92 +30,14 @@
 
 <script>
 	export default {
+		options: { styleIsolation: 'shared' },
 		data() {
 			return {
 				tabList: [
 				],
 				current: 0,
 				currentNum: 0,
-				indexList: [{
-						id: 1,
-						avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-						teacher_name: '刘老师',
-						title: [
-							'原百度华北战区总经理',
-							'原某上市公司互联网顾问'
-						],
-						item: [
-							'全域规划',
-							'私域运营',
-							'活动策划',
-							'文案创意'
-						],
-						mark: 4,
-						type: [
-							1, 2, 3, 4
-						],
-						duration: 60
-					},
-					{
-						id: 2,
-						avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-						teacher_name: '刘老师',
-						title: [
-							'原百度华北战区总经理',
-							'原某上市公司互联网顾问'
-						],
-						item: [
-							'全域规划',
-							'私域运营',
-							'活动策划',
-							'文案创意'
-						],
-						mark: 4,
-						type: [
-							1, 2, 3, 4
-						],
-						duration: 60
-					},
-					{
-						id: 3,
-						avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-						teacher_name: '刘老师',
-						title: [
-							'原百度华北战区总经理',
-							'原某上市公司互联网顾问'
-						],
-						item: [
-							'全域规划',
-							'私域运营',
-							'活动策划',
-							'文案创意'
-						],
-						mark: 4,
-						type: [
-							1, 2, 3, 4
-						],
-						duration: 60
-					},
-					{
-						id: 4,
-						avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-						teacher_name: '刘老师',
-						title: [
-							'原百度华北战区总经理',
-							'原某上市公司互联网顾问'
-						],
-						item: [
-							'全域规划',
-							'私域运营',
-							'活动策划',
-							'文案创意'
-						],
-						mark: 4,
-						type: [
-							1, 2, 3, 4
-						],
-						duration: 60
-					},
+				teacherList: [
 				],
 				urls: [
 					'https://cdn.uviewui.com/uview/album/1.jpg',
@@ -129,49 +51,9 @@
 					'https://cdn.uviewui.com/uview/album/9.jpg',
 					'https://cdn.uviewui.com/uview/album/10.jpg',
 				],
-				list1: [{
-						name: '推荐'
-					},
-					{
-						name: '数字系统'
-					},
-					{
-						name: '全域规划'
-					},
-					{
-						name: '私域运营'
-					},
-					{
-						name: '活动策划'
-					},
-					{
-						name: '文案创意'
-					},
-					{
-						name: '服务规范'
-					},
-					{
-						name: '组织结构'
-					},
-					{
-						name: '团队绩效'
-					}
+				serviceList: [
 				],
-				baseList: [{
-						id: 1,
-						name: 'http://qebang.cn/uploads/image/20230209/551548f86244b0595714a9a8bcba6218.png',
-						title: '约聊'
-					},
-					{
-						id: 2,
-						name: 'http://qebang.cn/uploads/image/20230209/805734f9913d2e657bc9d70c190484a0.png',
-						title: '内训'
-					},
-					{
-						id: 3,
-						name: 'http://qebang.cn/uploads/image/20230209/af11c55084d7e061485cfd23aeb88630.png',
-						title: '陪跑'
-					}
+				serviceTypeList: [
 				],
 				noticeMsg: '热烈庆祝刘老师入驻',
 				list4: [{
@@ -187,13 +69,69 @@
 						url: 'https://cdn.uviewui.com/uview/swiper/swiper3.png',
 						title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
 					}
-				]
+				],
+				params: {
+					page: 1,
+					order: '',
+					sort: '',
+					type: '',
+				}
 			};
 		},
 		created() {
 			this.tabList = this.$configs.tabList;
+			this.getServiceType();
+			this.getServiceList();
+			this.params.order = 'desc';
+			this.params.sort = 'mark';
+			this.getTeacherList();
 		},
 		methods: {
+			changeService(e) {
+				console.log(e);
+				this.params.type = e.id;
+				this.params.page = 1;
+				if(e.id == 0) {
+					this.params.sort = 'mark';
+					this.params.order = 'desc';
+				}
+				else{
+					this.params.sort = '';
+					this.params.order = '';
+				}
+				this.getTeacherList()
+			},
+			getServiceList() {
+				let that=this;
+				uni.$u.api.serviceAll().then(res=>{
+					console.log(res)
+					let arr = [ { id: 0, name: '推荐' } ];
+					that.serviceList = arr.concat(res.data)
+				})
+				.catch(err=>{
+					uni.hideLoading()
+				})
+			},
+			getServiceType() {
+				let that=this;
+				uni.$u.api.serviceTypeAll().then(res=>{
+					console.log(res)
+					that.serviceTypeList = res.data
+				})
+				.catch(err=>{
+					uni.hideLoading()
+				})
+			},
+			getTeacherList() {
+				let that=this;
+				uni.$u.api.teacherList({ params: that.params}).then(res=>{
+					console.log(res)
+					that.teacherList = res.data.data
+				})
+				.catch(err=>{
+					uni.hideLoading()
+				})
+			},
 			changeTab(item) {
 				uni.$u.route({
 					type: 'switchTab',

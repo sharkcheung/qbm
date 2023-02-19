@@ -7,7 +7,7 @@ module.exports = (vm) => {
         const data = response.data
         // 自定义参数
         const custom = response.config?.custom
-        if (data.code !== 200) { // 服务端返回的状态码不等于200，则reject()
+        if (data.status !== 200) { // 服务端返回的状态码不等于200，则reject()
             // 如果没有显式定义custom的toast参数为false的话，默认对报错进行toast弹出提示
             if (custom.toast !== false) {
                 uni.$u.toast(data.message)
@@ -20,7 +20,7 @@ module.exports = (vm) => {
                 return new Promise(() => { })
             }
         }
-        return data.data || {}
+        return data || {}
     }, (response) => { /*  对响应错误做点什么 （statusCode !== 200）*/
         return Promise.reject(response)
     })

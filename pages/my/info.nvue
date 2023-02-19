@@ -7,27 +7,28 @@
 					:border="false"
 				    title="头像"
 				>
-					<u-avatar slot="value" shape="circle" size="40" :src="info.avatar_url"></u-avatar>
+					<u-avatar slot="value" shape="circle" size="40" :src="info.pic"></u-avatar>
 				</u-cell>
 				<u-cell
 					:border="false"
 				    title="昵称"
-				    :value="info.nick_name"
+				    :value="info.nickname||'-'"
 				></u-cell>
 				<u-cell
 					:border="false"
 				    title="用户类型"
-				    :value="info.user_type"
+				    :value="getType(info.type)"
 				></u-cell>
 				<u-cell
 					:border="false"
 				    title="用户姓名"
-				    :value="info.user_name"
+				    :value="info.username||'-'"
 				></u-cell>
 				<u-cell
 				    title="企微二维码"
+					v-if="info.membeinfo.we_com_qrcode"
 				>
-					<u--image slot="value" :showLoading="true" :src="info.bqrcode" width="80px" height="80px"></u--image>
+					<u--image slot="value" :showLoading="true" :src="info.membeinfo.we_com_qrcode" width="80px" height="80px"></u--image>
 				</u-cell>
 			</u-cell-group>
 		</view>
@@ -37,32 +38,32 @@
 				<u-cell
 					:border="false"
 				    title="公司名称"
-				    :value="info.company_name"
+				    :value="info.membeinfo.company_name||'-'"
 				></u-cell>
 				<u-cell
 					:border="false"
 				    title="所在地区"
-				    :value="info.area"
+				    :value="info.membeinfo.area||'-'"
 				></u-cell>
 				<u-cell
 					:border="false"
 				    title="公司地址"
-				    :value="info.address"
+				    :value="info.membeinfo.address||'-'"
 				></u-cell>
 				<u-cell
 					:border="false"
 				    title="官网"
-				    :value="info.website"
+				    :value="info.membeinfo.website||'-'"
 				></u-cell>
 				<u-cell
 					:border="false"
 				    title="公众号"
-				    :value="info.official_account"
+				    :value="info.membeinfo.official_account||'-'"
 				></u-cell>
 				<u-cell
 					:border="false"
 				    title="视频号"
-				    :value="info.video_account"
+				    :value="info.membeinfo.video_account||'-'"
 				></u-cell>
 			</u-cell-group>
 		</view>
@@ -74,22 +75,42 @@
 		data() {
 			return {
 				info: {
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					nick_name: '马小云',
-					user_type: '注册用户',
-					user_name: '刘强东',
-					mobile: '13888888888',
-					bqrcode: 'http://qebang.cn/uploads/image/20230211/c34ce3c85bb841fb3a9c416ea2077951.jpg',
-					company_name: '京东集团',
-					area: '北京',
-					address: '朝阳区一号',
-					website: 'https://jd.com',
-					official_account: '京东',
-					video_account: '京东',
+					pic: '',
+					nickname: '',
+					type: '',
+					username: '',
+					mobile: '',
+					membeinfo: {
+						we_com_qrcode: '',
+						company_name: '',
+						area: '北京',
+						address: '朝阳区一号',
+						website: 'https://jd.com',
+						official_account: '京东',
+						video_account: '京东',
+					}
 				},
 			}
 		},
+		created() {
+			let that=this;
+			uni.$u.api.userDetail({ params : {membe_id: that.vuex_user.membe_id }}).then(res=>{
+				console.log(res)
+				that.info = res.data
+			})
+			.catch(err=>{
+				uni.hideLoading()
+			})
+		},
 		methods: {
+			getType(type) {
+				if(type == 1) {
+					return '注册用户'
+				}
+				else {
+					return '企业用户'
+				}
+			},
 			click() {
 				console.log('Cell is clicked.');
 			}
