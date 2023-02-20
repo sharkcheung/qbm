@@ -15,7 +15,7 @@ module.exports = (vm) => {
 					uni.$u.route({
 						url: '/pages/public/login'
 					})
-				}, 3000)
+				}, 1000)
 				return new Promise(() => { })
 				
 			}
