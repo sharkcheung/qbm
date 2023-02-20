@@ -107,6 +107,7 @@ export default {
 				},
 				fail: err => {
 					console.log(err);
+					uni.hideLoading()
 					uni.$u.util.showErr('头像上传失败');
 				}
 			});

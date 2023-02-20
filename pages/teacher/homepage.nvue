@@ -76,13 +76,13 @@
 			</view>
 			<u-safe-bottom></u-safe-bottom>
 		</view>
-		<u-modal :show="show" :closeOnClickOverlay="true" confirmText="去登录" title="温馨提示" content="您还没有登录,暂时无法进行下单">
+		<u-modal :show="show" :closeOnClickOverlay="true" title="温馨提示" :content="content">
 			<u-button
 				slot="confirmButton"
-				text="去登录"
+				:text="confirmText"
 				type="primary"
 				shape="circle"
-				@click="goLogin"
+				@click="confirmClick"
 			></u-button>
 		</u-modal>
 	</div>
@@ -92,8 +92,11 @@
 export default {
 	data() {
 		return {
+			modalType: 0,
 			show: false,
 			current: 0,
+			confirmText: '去登录',
+			content: '您还没有登录,暂时无法进行下单',
 			commentList: [
 				{
 					avatar_url: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
@@ -222,17 +225,41 @@ export default {
 		})
 	},
 	methods:{
-		goLogin() {
+		confirmClick() {
 			this.show = false;
-			uni.$u.route({
-				url: '/pages/public/login'
-			})
+			if(this.modalType == 0) {
+				uni.$u.route({
+					url: '/pages/public/login'
+				})
+			}
+			else if(this.modalType == 1) {
+				uni.$u.route({
+					url: '/pages/my/verify',
+					params: { type: 2 }
+				})
+			}
+			else if(this.modalType == 2) {
+				uni.$u.route({
+					url: '/pages/my/perfection'
+				})
+			}
 		},
 		order(item) {
 			if(!this.vuex_user.token) {
+				this.modalType = 0;
 				this.show = true;
+				this.content = '您还没有登录,暂时无法进行下单';
+				this.confirmText = '去登录';
 				return false;
 			}
+			if(!this.vuex_user.mobile) {
+				this.modalType = 2;
+				this.show = true;
+				this.content = '请先完善信息再下单';
+				this.confirmText = '去完善';
+				return false;
+			}
+			
 			uni.showLoading({
 				title: '数据请求中...'
 			})
@@ -241,8 +268,14 @@ export default {
 				teacher_id: item.id
 			}}).then(res=>{
 				uni.hideLoading()
-				console.log(item)
-				that.goPage('/pages/teacher/order', { service_type:item.id, service_type_name:item.name, teacher_id: that.info.id, teacher_name: that.info.teacher_name })
+				if(res.msg !== '') {
+					that.modalType = 1;
+					that.show = true;
+					that.confirmText = '去认证';
+					that.content = res.msg;
+					return false;
+				}
+				that.goPage('/pages/teacher/order', { company_name: res.data.company_name, service_type_id:item.id, service_type_name:item.name, teacher_id: that.info.id, teacher_name: that.info.teacher_name })
 			})
 			.catch(err=>{
 				uni.hideLoading()

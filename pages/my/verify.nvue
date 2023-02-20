@@ -1,0 +1,358 @@
+<template>
+	<view>
+		<template v-if="type==0">
+			<view class="pic-info">
+				<view class="reason" v-if="modelPerson.person_verify_status===3">
+					认证未通过：{{modelPerson.person_refuse_reason}}
+				</view>
+				<view class="submit-time">
+					提交时间：{{modelPerson.person_apply_time}}
+				</view>
+			</view>
+			<u-gap height="10" bgColor="#efefef"></u-gap>
+		</template>
+		<template v-else>
+			<view class="pic-info">
+				<view class="reason" v-if="modelCompany.company_verify_status===3">认证未通过：{{modelCompany.company_refuse_reason}}</view>
+				<view class="submit-time">
+					提交时间：{{modelCompany.company_apply_time}}
+				</view>
+			</view>
+			<u-gap height="10" bgColor="#efefef"></u-gap>
+		</template>
+		<view class="verify-box">
+			<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
+			<u--form labelPosition="left" :model="modelPerson" ref="form" labelWidth="80" v-if="type==0">
+				<u-form-item label="企微二维码" prop="we_com_qrcode">
+					<u-upload :fileList="fileList" @afterRead="afterRead" @delete="deletePic" name="we_com_qrcode" multiple
+						:maxCount="1"></u-upload>
+				</u-form-item>
+				<u-form-item label="名片" prop="card">
+					<u-upload :fileList="fileList" @afterRead="afterRead" @delete="deletePic" name="card" multiple
+						:maxCount="1"></u-upload>
+				</u-form-item>
+				<u-form-item label="工作证明" prop="work_certificate">
+					<u-upload :fileList="fileList" @afterRead="afterRead" @delete="deletePic" name="work_certificate" multiple
+						:maxCount="1"></u-upload>
+				</u-form-item>
+				<u-form-item label="工牌" prop="work_card">
+					<u-upload :fileList="fileList" @afterRead="afterRead" @delete="deletePic" name="work_card" multiple
+						:maxCount="1"></u-upload>
+				</u-form-item>
+			</u--form>
+			<u--form labelPosition="left" :model="modelCompany" ref="formCompany" labelWidth="80" v-else>
+				<u-form-item label="公司名" prop="company_name" required>
+					<u--input placeholder="请输入公司名" v-model="modelCompany.company_name" verify-border="none">
+					</u--input>
+				</u-form-item>
+				<u-form-item label="所在地区" prop="area" required>
+					<u--input placeholder="请输入所在地区" v-model="modelCompany.area" verify-border="none">
+					</u--input>
+				</u-form-item>
+				<u-form-item label="公司地址" prop="address" required>
+					<u--input placeholder="请输入公司地址" v-model="modelCompany.address" verify-border="none">
+					</u--input>
+				</u-form-item>
+				<u-form-item label="官网" prop="website">
+					<u--input placeholder="请输入官网" v-model="modelCompany.website" verify-border="none">
+					</u--input>
+				</u-form-item>
+				<u-form-item label="公众号" prop="official_account">
+					<u--input placeholder="请输入公众号" v-model="modelCompany.official_account" verify-border="none">
+					</u--input>
+				</u-form-item>
+				<u-form-item label="视频号" prop="video_account">
+					<u--input placeholder="请输入视频号" v-model="modelCompany.video_account" verify-border="none">
+					</u--input>
+				</u-form-item>
+				<u-form-item label="营业执照" prop="business_license" required>
+					<u-upload :deletable="modelCompany.company_verify_status!==1" :fileList="fileListbusiness_license" @afterRead="afterRead" @delete="deletePic" name="business_license" :maxCount="1"></u-upload>
+				</u-form-item>
+			</u--form>
+		</view>
+		<view class="bottom-button-box">
+			<view class="bottom-button-group"><u-button type="primary" :disabled="modelCompany.company_verify_status==1" :text="buttonText" @click="submit"></u-button></view>
+			<u-safe-bottom></u-safe-bottom>
+		</view>
+	</view>
+</template>
+
+<script>
+export default {
+	data() {
+		return {
+			buttonText: '提交认证',
+			type: 0,
+			fileListbusiness_license:[],
+			isEdit: false,
+			hasPhone: false,
+			modelCompany: {
+				company_name: '',
+				area: '',
+				address: '',
+				website: '',
+				official_account: '',
+				video_account: '',
+				business_license: '',
+				company_verify_status: 0,
+				company_refuse_reason: '',
+				company_apply_time: '',
+			},
+			modelPerson: {
+				person_verify_status: 0,
+				person_refuse_reason: '',
+				person_apply_time: '',
+				we_com_qrcode: '',
+				card: '',
+				work_certificate: '',
+				work_card: '',
+			},
+			rulesCompany: {
+				company_name: {
+					type: 'string',
+					required: true,
+					message: '请填写公司名称',
+					trigger: ['blur']
+				},
+				area: {
+					type: 'string',
+					required: true,
+					message: '请填写所在地区',
+					trigger: ['blur']
+				},
+				address: {
+					type: 'string',
+					required: true,
+					message: '请填写公司地址',
+					trigger: ['blur']
+				},
+				business_license: {
+					type: 'string',
+					required: true,
+					message: '请上传营业执照',
+					trigger: ['change']
+				},
+			}
+		};
+	},
+	onLoad(options) {
+		let title = ''
+		this.type = options.type
+		if(this.type == 0) {
+			title = '个人认证'
+		}
+		else {
+			title = '企业认证'
+		}
+		uni.setNavigationBarTitle({
+			title: title
+		});
+		uni.showLoading({
+			title: '数据加载中...'
+		})
+		let that=this;
+		uni.$u.api.userInfo().then(res=>{
+			console.log(res)
+			that.modelCompany = res.data.membeinfo;
+			if(that.modelCompany.business_license) {
+				that.fileListbusiness_license.push({ url: that.modelCompany.business_license })
+				console.log(that.fileListbusiness_license)
+			}
+			if(that.modelCompany.company_verify_status==1) {
+				that.buttonText = '认证审核中'
+			}
+			else if(that.modelCompany.company_verify_status==3) {
+				that.buttonText = '重新提交'
+			}
+			uni.hideLoading()
+		})
+		.catch(err=>{
+			uni.hideLoading()
+			that.$u.util.showErr('获取用户信息失败');
+		})
+	},
+	methods: {
+		decryptPhoneNumber(e) {
+			console.log(e)
+			if(e.detail.code) {
+				uni.showLoading({
+					title: '正在获取手机号'
+				})
+				uni.$u.api.getPhone({ code: e.detail.code }).then(res=>{
+					console.log(res)
+					this.model.mobile = res.data.mobile;
+					this.hasPhone = true;
+					uni.hideLoading()
+				})
+				.catch(err=>{
+					uni.$u.util.showErr('手机号获取失败');
+					uni.hideLoading()
+				})
+			}
+		},
+		onChooseAvatar(e) {
+			console.log(this.vuex_user);
+			let __this = this;
+			const tempFilePaths = e.detail.avatarUrl;
+			uni.uploadFile({
+				url: __this.$configs.baseUrl + '/Upload/upload', //仅为示例，非真实的接口地址
+				filePath: tempFilePaths,
+				header: {
+					token: __this.vuex_user.token,
+					contentType: 'application/json'
+				},
+				name: 'file',
+				formData: {
+					modelFile: 'headimg'
+				},
+				success: uploadFileRes => {
+					let data = uploadFileRes.data;
+					data = JSON.parse(data);
+					if(data.status == 200) {
+						console.log(data)
+						__this.model.pic = data.data;
+					}
+					else {
+						uni.$u.util.showErr('头像上传失败');
+					}
+					// let userinfo = __this.vuex_user_info;
+					// userinfo.imageUrl = data.data.httpUrl;
+					// __this.$u.vuex('vuex_user_info', userinfo);
+					// __this.$u.api.editUserInfo({ editType: 1, imageUrl: data.data.url }).then(val => {});
+				},
+				fail: err => {
+					console.log(err);
+					uni.$u.util.showErr('头像上传失败');
+				}
+			});
+		},
+		// 删除图片
+		deletePic(event) {
+			this[`fileList${event.name}`].splice(event.index, 1)
+			if(this.fileListbusiness_license.length==0) {
+				this.modelCompany.business_license = '';
+			}
+		},
+		// 新增图片
+		async afterRead(event) {
+			console.log(event)
+			// 当设置 mutiple 为 true 时, file 为数组格式，否则为对象格式
+			let lists = [].concat(event.file)
+			let fileListLen = this[`fileList${event.name}`].length
+			lists.map((item) => {
+				this[`fileList${event.name}`].push({
+					...item,
+					status: 'uploading',
+					message: '上传中'
+				})
+			})
+			for (let i = 0; i < lists.length; i++) {
+				const result = await this.uploadFilePromise(lists[i].url)
+				let item = this[`fileList${event.name}`][fileListLen]
+				this[`fileList${event.name}`].splice(fileListLen, 1, Object.assign(item, {
+					status: 'success',
+					message: '',
+					url: result
+				}))
+				fileListLen++
+			}
+			if(this.fileListbusiness_license.length>0) {
+				this.modelCompany.business_license = this.fileListbusiness_license[0].url;
+			}
+		},
+		uploadFilePromise(url) {
+			let __this = this
+			return new Promise((resolve, reject) => {
+				let a = uni.uploadFile({
+					url: __this.$configs.baseUrl + '/Upload/upload', // 仅为示例，非真实的接口地址
+					filePath: url,
+					header: {
+						token: __this.vuex_user.token,
+						contentType: 'application/json'
+					},
+					name: 'file',
+					success: (res) => {
+						let data = JSON.parse(res.data)
+						console.log(data)
+						setTimeout(() => {
+							resolve(data.data)
+						}, 1000)
+					}
+				});
+			})
+		},
+		hideKeyboard() {
+			uni.hideKeyboard();
+		},
+		submit() {
+			let that=this;
+			// 如果有错误，会在catch中返回报错信息数组，校验通过则在then中返回true
+			this.$refs.formCompany
+				.validate()
+				.then(res => {
+					uni.showLoading({
+						title: '正在提交数据'
+					})
+					uni.$u.api.applyVerify(that.modelCompany).then(result=>{
+						console.log(result)
+						uni.hideLoading()
+						uni.$u.util.showErr(result.msg);
+						setTimeout(()=>{
+							uni.navigateBack()
+						}, 2000)
+					})
+					.catch(err=>{
+						uni.hideLoading()
+						uni.$u.util.showErr('申请认证失败');
+					})
+				})
+				.catch(errors => {
+					uni.hideLoading()
+					console.log(errors)
+				});
+		},
+	},
+	onReady() {
+		console.log(this.type)
+		if(this.type == 2) {
+			//如果需要兼容微信小程序，并且校验规则中含有方法等，只能通过setRules方法设置规则。
+			this.$refs.formCompany.setRules(this.rulesCompany);
+		}
+	}
+};
+</script>
+
+<style lang="scss">
+.verify-box {
+	padding: 32rpx;
+}
+.pic-info {
+	align-items: center;
+	margin-top: 32rpx;
+	margin-bottom: 48rpx;
+	.reason {
+		color:#c00;
+		margin-bottom: 16rpx;
+		font-weight: bold;
+	}
+	.submit-time {
+		color: #bbb;
+		font-size: 24rpx;
+	}
+}
+.bottom-button-box {
+	position: fixed;
+	width: 100%;
+	bottom: 0;
+	left: 0;
+	z-index: 999;
+	background-color: #ffffff;
+	.bottom-button-group {
+		margin: 0 32rpx;
+		flex-direction: row;
+		.u-button--square {
+			border-radius: 20rpx;
+		}
+	}
+}
+</style>

@@ -211,6 +211,15 @@
                 }
                 
                 }
+                ,{
+                    "path" : "verify",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
             ]
 	}],
 	// 原生的导航

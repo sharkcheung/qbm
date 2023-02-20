@@ -33,7 +33,7 @@
 							duration: 2000
 						});
 						uni.$u.vuex('vuex_user', res.data)
-						if(!res.data.phone) {
+						if(!res.data.mobile) {
 							uni.$u.route({
 								type: 'reLaunch',
 								url: '/pages/my/perfection'

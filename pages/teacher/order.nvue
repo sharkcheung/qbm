@@ -20,7 +20,7 @@
 				</u-form-item>
 				<u-form-item label="公司名称" prop="company_name" ref="itemCompanyName"><u--input v-model="modelOrder.company_name"></u--input></u-form-item>
 				<u-form-item label="行业" prop="industry" ref="itemIndustry"><u--input v-model="modelOrder.industry"></u--input></u-form-item>
-				<u-form-item label="团队情况" prop="teamInfo" ref="item3"><u--textarea placeholder="不低于3个字" v-model="modelOrder.teamInfo" count></u--textarea></u-form-item>
+				<u-form-item label="团队情况" prop="team_info" ref="item3"><u--textarea placeholder="不低于3个字" v-model="modelOrder.team_info" count></u--textarea></u-form-item>
 				<u-form-item
 					label="项目启动时间"
 					prop="hotel"
@@ -87,17 +87,18 @@ export default {
 			modelOrder: {
 				teacher_id: '',
 				teacher_name: '',
-				service_type: '',
+				service_type_id: '',
+				service_id: '',
 				service_name: '',
 				company_name: '',
 				industry: '',
-				teamInfo: '',
+				team_info: '',
 				start_time: '',
 				intro: ''
 			},
 			showService: false,
 			rules: {
-				service_type: {
+				service_type_id: {
 					type: 'string',
 					required: true,
 					message: '请选择预约服务',
@@ -115,7 +116,7 @@ export default {
 					message: '请填写行业',
 					trigger: ['blur', 'change']
 				},
-				teamInfo: {
+				team_info: {
 					type: 'string',
 					required: true,
 					message: '请填写团队情况',
@@ -134,10 +135,10 @@ export default {
 	onLoad(options) {
 		console.log(options);
 		let title = ''
-		if(options.service_type == 1) {
+		if(options.service_type_id == 1) {
 			title = '约聊下单'
 		}
-		else if(options.service_type == 2) {
+		else if(options.service_type_id == 2) {
 			title = '内训下单'
 		}
 		else {
@@ -146,7 +147,8 @@ export default {
 		uni.setNavigationBarTitle({
 			title: title
 		});
-		this.modelOrder.service_type = options.service_type;
+		this.modelOrder.company_name = options.company_name;
+		this.modelOrder.service_type_id = options.service_type_id;
 		this.modelOrder.service_type_name = options.service_type_name;
 		this.modelOrder.teacher_name = options.teacher_name;
 		this.modelOrder.teacher_id = options.teacher_id;
@@ -157,12 +159,28 @@ export default {
 			uni.hideKeyboard();
 		},
 		submit() {
+			let that = this;
 			// 如果有错误，会在catch中返回报错信息数组，校验通过则在then中返回true
 			this.$refs.formOrder
 				.validate()
 				.then(res => {
-					uni.$u.route({
-						url: '/pages/teacher/order_result'
+					
+					uni.showLoading({
+						title: '正在提交数据'
+					})
+					uni.$u.api.order(that.modelOrder).then(result=>{
+						console.log(result)
+						uni.hideLoading()
+						uni.$u.route({
+							url: '/pages/teacher/order_result',
+							params: {
+								order_num: result.order_num
+							}
+						})
+					})
+					.catch(err=>{
+						uni.hideLoading()
+						uni.$u.util.showErr('下单失败');
 					})
 				})
 				.catch(errors => {
@@ -171,8 +189,8 @@ export default {
 		},
 		serviceSelect(e) {
 			this.modelOrder.service_name = e.name;
-			this.modelOrder.service_type = e.id;
-			this.$refs.formOrder.validateField('service_type');
+			this.modelOrder.service_id = e.id;
+			this.$refs.formOrder.validateField('service_id');
 		},
 		calendarConfirm(e) {
 			this.showCalendar = false;
@@ -180,7 +198,7 @@ export default {
 		},
 		calendarClose() {
 			this.showCalendar = false;
-			this.$refs.formOrder.validateField('service_type');
+			this.$refs.formOrder.validateField('service_id');
 		}
 	},
 	onReady() {
