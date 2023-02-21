@@ -1,22 +1,22 @@
 <template>
 	<view>
-		<view class="customer-item" v-for="(item, index) in listData" :key="index" @click="openPage('/pages/my/order/info')">
+		<view class="customer-item" v-for="(item, index) in listData" :key="index" @click="openPage('/pages/my/customer/info', item)">
 			<view class="customer-item-bottom">
 				<text class="customer-num">订单号：{{ item.order_num }}</text>
-				<text>{{ item.create_time }}</text>
+				<text>{{ item.create_time | date('yyyy-mm-dd hh:MM:ss') }}</text>
 			</view>
 			<view class="customer-item-top">
 				<view class="customer-item-top-left">
-					<u-avatar shape="circle" size="48" :src="item.avatar_url" customStyle="margin: 0 15px -3px 0"></u-avatar>
+					<u-avatar shape="circle" size="48" :src="item.membe_pic" customStyle="margin: 0 15px -3px 0"></u-avatar>
 					<view class="customer-item-top-left-title">
-						{{ item.service_type_name }}
-						<text>{{ item.teacher_name }}</text>
+						{{ item.service_type_name }}-{{ item.teacher_name }}
+						<text>{{ item.membe_name }}</text>
 					</view>
 				</view>
-				<view class="customer-item-top-right"><u--text :text="item.status_name" :color="getColor(item.status)"></u--text></view>
+				<view class="customer-item-top-right"><u--text :text="$u.util.getStatus(item.status,1)" :color="$u.util.getStatus(item.status,2)"></u--text></view>
 			</view>
-			<view class="customer-residue-time" v-if="item.order_type==1&&item.status == 3">
-				距离{{ item.order_type_name }}还有：<text>{{ item.start_time }}天</text>
+			<view class="customer-residue-time" v-if="item.service_type_id==1&&item.status == 3">
+				距离{{ item.service_type_name }}还有：<text>{{ $u.util.formatRemainTime(item.begin_time) }}</text>
 			</view>
 		</view>
 	</view>
@@ -44,10 +44,33 @@ export default {
 		onChange(e, index) {
 			this.timeData[index] = e
 		},
-		openPage(path) {
+		openPage(path, params) {
 			uni.$u.route({
-				url: path
+				url: path,
+				params: {
+					order_num: params.order_num
+				}
 			});
+		},
+		getStatus(status) {
+			let title = '';
+			switch (status) {
+				case 1:
+					title = '待支付';
+					break;
+				case 2:
+					title = '待确认';
+					break;
+				case 3:
+					title = '待开始';
+					break;
+				case 4:
+					title = '已结束';
+					break;
+				default:
+					break;
+			}
+			return title;
 		},
 		getColor(status) {
 			let color = '#303133';

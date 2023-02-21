@@ -1,0 +1,363 @@
+<template>
+	<view class="">
+		<view class="order-result-box">
+			<view class="result-msg">订单{{ $u.util.getStatus(info.status, 1) }}</view>
+			<view class="result-tip">{{ getTips(info.status) }}</view>
+			<view class="result-button">
+				<u-button type="info" text="返回" @click="back"></u-button>
+				<u-button v-if="info.status == 2" type="warning" text="确认订单" @click="confirmOrder"></u-button>
+				
+				<u-button type="warning" v-if="info.status == 4 && !info.is_evaluated" text="我要评价" @click="appraise()"></u-button>
+				<u-button type="warning" v-if="info.status == 4 && info.start_time==0" text="结束订单"></u-button>
+			</view>
+		</view>
+
+		<view class="u-page__item">
+			<u-cell-group>
+				<u-cell :border="false" title="支付金额" :value="info.pay_fee?'￥' + info.pay_fee:'免费'"></u-cell>
+				<u-cell :border="false" title="下单时间" :value="$u.timeFormat(info.create_time, 'yyyy-mm-dd hh:MM:ss')"></u-cell>
+				<u-cell :border="false" title="订单号" :value="info.order_num"></u-cell>
+				<u-cell :border="false" title="服务类型" :value="info.service_type_name"></u-cell>
+				<u-cell :border="false" title="服务内容" :value="info.service_name"></u-cell>
+				<u-cell :border="false" title="服务老师" :value="info.teacher_name"></u-cell>
+				
+				<u-cell :border="false" title="公司名称" :value="info.company_name"></u-cell>
+				<u-cell :border="false" title="行业" :value="info.industry"></u-cell>
+				<u-cell :border="false" title="项目启动时间" :value="info.start_time"></u-cell>
+				<u-cell :border="false" title="团队情况" :value="info.team_info"></u-cell>
+				<u-cell :border="false" title="咨询简述" :value="info.intro"></u-cell>
+			</u-cell-group>
+		</view>
+		<u-popup :show="show" :mode="mode" :round="16" :customStyle="{width: '80%'}" :safeAreaInsetBottom="false">
+			<view class="cancelShow">
+				<view class="tishi">
+					
+					<u--form labelPosition="left" :model="model" ref="form" labelWidth="90">
+						<u-form-item :label="info.service_type_name+'时间'" prop="begin_time" @click="showPicker = true; hideKeyboard()">
+							<u--input
+								v-model="begin_time"
+								disabled
+								disabledColor="#ffffff"
+								:placeholder="'请选择'+info.service_type_name+'时间'"
+								border="none"
+							></u--input>
+							<u-icon
+								slot="right"
+								name="arrow-right"
+							></u-icon>
+						</u-form-item>
+						<u-form-item label="会议二维码" prop="meeting_qrcode">
+							<u-upload :fileList="fileListmeeting_qrcode" @afterRead="afterRead" @delete="deletePic" name="meeting_qrcode" multiple
+								:maxCount="1"></u-upload>
+						</u-form-item>
+					</u--form>
+				
+				</view>
+				<view class="makes">
+					<text class="quxiao" @click="show=false">取消</text>
+					<text class="queren" @click="confirm">确认</text>
+				</view>
+			</view>
+		</u-popup>
+		<u-datetime-picker
+			:show="showPicker"
+			@confirm="confirmTime"
+			mode="datetime"
+		></u-datetime-picker>
+		<!-- <u-modal :show="show" :title="title" @cancel="show=false" @confirm="confirm" :showCancelButton="true" :content='content'></u-modal> -->
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				model: {
+					meeting_qrcode: '',
+					begin_time: '',
+					order_num: '',
+				},
+				fileListmeeting_qrcode: [],
+				mode:'center',
+				show: false,
+				showPicker: false,
+				title: '温馨提示',
+				content: '是否确认订单？',
+				info: {
+					status: 1,
+					result: '待支付',
+					tip: '请尽快支付！',
+					order_type_name: '内训',
+					service_type_name: '全域规划',
+					pay_money: 299,
+					create_time: '2023-02-09',
+					order_num: '2023020917013685',
+					start_time: 3,
+					is_evaluated: 0,
+					teacher_name: '刘老师',
+				},
+				orderList: [{
+						status: 1,
+						result: '待支付',
+						tip: '请尽快支付！',
+						order_type_name: '内训',
+						service_type_name: '全域规划',
+						pay_money: 299,
+						create_time: '2023-02-09',
+						order_num: '2023020917013685',
+						start_time: 3,
+						is_evaluated: 0,
+						teacher_name: '刘老师',
+					},
+					{
+						status: 2,
+						result: '待确认',
+						tip: '请联系数字顾问与您确认！',
+						order_type_name: '内训',
+						service_type_name: '全域规划',
+						pay_money: 299,
+						create_time: '2023-02-09',
+						order_num: '2023020917013685',
+						start_time: 3,
+						is_evaluated: 0,
+						teacher_name: '刘老师',
+					},
+					{
+						status: 3,
+						result: '待开始',
+						tip: '距离约聊还有1天！',
+						order_type_name: '内训',
+						service_type_name: '全域规划',
+						pay_money: 299,
+						create_time: '2023-02-09',
+						order_num: '2023020917013685',
+						start_time: 3,
+						is_evaluated: 0,
+						teacher_name: '刘老师',
+					},
+					{
+						status: 4,
+						result: '已结束',
+						tip: '服务已结束',
+						order_type_name: '内训',
+						service_type_name: '全域规划',
+						pay_money: 299,
+						create_time: '2023-02-09',
+						order_num: '2023020917013685',
+						start_time: 3,
+						is_evaluated: 0,
+						teacher_name: '刘老师',
+					},
+				]
+			}
+		},
+		onLoad(options) {
+			let that=this;
+			that.model.order_num = options.order_num;
+			uni.$u.api.orderInfo({ params: { order_num: that.model.order_num }}).then(res=>{
+				that.info = res.data;
+			})
+			.catch(err=>{
+			})
+		},
+		methods: {
+			// 删除图片
+			deletePic(event) {
+				this[`fileList${event.name}`].splice(event.index, 1)
+				if(this.fileListmeeting_qrcode.length==0) {
+					this.model.meeting_qrcode = '';
+				}
+			},
+			// 新增图片
+			async afterRead(event) {
+				console.log(event)
+				// 当设置 mutiple 为 true 时, file 为数组格式，否则为对象格式
+				let lists = [].concat(event.file)
+				let fileListLen = this[`fileList${event.name}`].length
+				lists.map((item) => {
+					this[`fileList${event.name}`].push({
+						...item,
+						status: 'uploading',
+						message: '上传中'
+					})
+				})
+				for (let i = 0; i < lists.length; i++) {
+					const result = await this.uploadFilePromise(lists[i].url)
+					let item = this[`fileList${event.name}`][fileListLen]
+					this[`fileList${event.name}`].splice(fileListLen, 1, Object.assign(item, {
+						status: 'success',
+						message: '',
+						url: result
+					}))
+					fileListLen++
+				}
+				if(this.fileListmeeting_qrcode.length>0) {
+					this.model.meeting_qrcode = this.fileListmeeting_qrcode[0].url;
+				}
+			},
+			uploadFilePromise(url) {
+				let __this = this
+				return new Promise((resolve, reject) => {
+					let a = uni.uploadFile({
+						url: __this.$configs.baseUrl + '/Upload/upload', // 仅为示例，非真实的接口地址
+						filePath: url,
+						header: {
+							token: __this.vuex_token,
+							contentType: 'application/json'
+						},
+						name: 'file',
+						success: (res) => {
+							let data = JSON.parse(res.data)
+							setTimeout(() => {
+								resolve(data.data)
+							}, 1000)
+						}
+					});
+				})
+			},
+			confirmTime(e) {
+				this.showPicker = false;
+				console.log(e);
+				this.$set(this.model, 'begin_time', uni.$u.timeFormat(e.value, 'yyyy-mm-dd hh:MM'));
+				// this.model.begin_time = uni.$u.timeFormat(e.value, 'yyyy-mm-dd hh:MM');
+				console.log(this.model)
+			},
+			hideKeyboard() {
+				uni.hideKeyboard()
+			},
+			getTips(status) {
+				let result = '';
+				switch (status) {
+					case 1:
+						// 待支付
+						result = '请尽快支付！';
+						break;
+					case 2:
+						// 待确认
+						result = '请联系客户后再点击确认订单！';
+						break;
+					case 3:
+						// 待开始
+						result = '距离约聊还有'+ uni.$u.util.formatRemainTime(this.info.begin_time) +'！';
+						break;
+					case 4:
+						// 已结束
+						result = '服务已结束';
+						break;
+					default:
+						break;
+				}
+				return result;
+			},
+			close() {
+			  this.show = false
+			  // console.log('close');
+			},
+			appraise() {
+				uni.$u.route({
+					url: '/pages/my/appraise/appraise'
+				})
+			},
+			back() {
+				uni.navigateBack()
+			},
+			confirmOrder() {
+				this.show = true;
+			},
+			confirm() {
+				if(!this.model.begin_time) {
+					uni.$u.util.showErr('请选择'+this.info.service_type_name+'时间');
+					return false;
+				}
+				if(!this.model.meeting_qrcode) {
+					uni.$u.util.showErr('请选择'+this.info.service_type_name+'时间');
+					return false;
+				}
+				let that=this;
+				uni.$u.api.confirmOrder(this.model).then(res=>{
+					this.show = false;
+					uni.showToast({
+						title: res.msg,
+						duration: 2000
+					});
+					
+					that.info.status = 3;
+				})
+				.catch(err=>{
+					this.show = false;
+					uni.$u.util.showErr('下单确认失败');
+				})
+			},
+			goPay() {
+				uni.$u.route({
+					url: '/pages/teacher/order_pay'
+				})
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+	.order-result-box {
+		padding: 40rpx;
+		text-align: center;
+
+		.result-msg {
+			font-size: 36rpx;
+			font-weight: bold;
+			margin-bottom: 12rpx;
+		}
+
+		.result-tip {
+			color: #666;
+			margin-bottom: 20rpx;
+		}
+
+		.result-button {
+			margin-top: 40rpx;
+			flex-direction: row;
+			gap: 10rpx;
+
+			.u-button--square {
+				border-radius: 20rpx;
+			}
+		}
+	}
+	
+.cancelShow{
+	border-radius: 16rpx;
+	padding: 10rpx 24rpx;
+	background: #FFFFFF;
+	.tishi{
+		flex-direction: row;
+		text-align: center;
+		align-items: center;
+		padding: 40rpx 0rpx;
+		color:#191C27;
+		font-size: 28rpx;
+	}
+	.makes{
+		padding: 24rpx 24rpx;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		text{
+			padding: 12rpx 0rpx;
+			width: 47%;
+			text-align: center;
+			font-size: 32rpx;
+		}
+		.quxiao{
+			background: #F0F0F0;
+			border-radius: 40px;
+			color: #666666;
+		}
+		.queren{
+			background: linear-gradient(135deg, #FF6D65 0%, #FE3B30 100%);
+			border-radius: 40px;
+			color: #FFFFFF;
+		}
+	}
+}
+</style>

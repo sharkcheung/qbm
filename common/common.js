@@ -756,6 +756,59 @@ module.exports = (vm) => {
 		 return false;
 		}
 	}
+	/**
+	 * JS格式化现在距${endTime}的剩余时间
+	 * @param  {Date} endTime
+	 * @return {String}
+	 */
+	const formatRemainTime =(endTime) => {
+	    var startDate = new Date(); //开始时间
+	    var endDate = new Date(endTime); //结束时间
+	    var t = endDate.getTime() - startDate.getTime(); //时间差
+	    var d = 0,
+	        h = 0,
+	        m = 0,
+	        s = 0;
+	    if (t >= 0) {
+	        d = Math.floor(t / 1000 / 3600 / 24);
+	        h = Math.floor(t / 1000 / 60 / 60 % 24);
+	        m = Math.floor(t / 1000 / 60 % 60);
+	        s = Math.floor(t / 1000 % 60);
+	    }
+		var time = '';
+		if(d>0) time += d + '天 ';
+		if(h>0) time += h + '小时 ';
+		if(m) time += m + '分钟 ';
+		if(s) time += s + '秒 ';
+	    return time;
+	}
+	
+	const getStatus = (status, type) => {
+		let title = '';
+		let color = '';
+		switch (status) {
+			case 1:
+				title = '待支付';
+				color = '#ffaa00';
+				break;
+			case 2:
+				title = '待确认';
+				color = '#55aa7f';
+				break;
+			case 3:
+				title = '待开始';
+				color = '#aa5500';
+				break;
+			case 4:
+				title = '已结束';
+				color = '#ccd0d8';
+				break;
+			default:
+				break;
+		}
+		return type==1?title:color;
+	}
+
 
 	uni.$u.util = {
 		writeLog,
@@ -774,6 +827,8 @@ module.exports = (vm) => {
 		connectMqtt,
 		onMessage,
 		getReportTypeInfo,
+		formatRemainTime,
+		getStatus,
 		goBackHome
 	};
 

@@ -13,6 +13,9 @@ module.exports = (vm) => {
 	let checkUserOrder = (params, config = {}) => http.get('/Order/checkUserOrder', params, config)
 	let applyVerify = (params, config = {}) => http.post('/Membe/applyVerify', params, config)
 	let order = (params, config = {}) => http.post('/Order/order', params, config)
+	let orderList = (params, config = {}) => http.get('/Order/index', params, config)
+	let orderInfo = (params, config = {}) => http.get('/Order/detail', params, config)
+	let confirmOrder = (params, config = {}) => http.post('/Order/confirm', params, config)
 	let rewardPay = (params, config = {}) => http.post('/reward/pay', params, config)
 	uni.$u.api = {
 		login,
@@ -28,6 +31,9 @@ module.exports = (vm) => {
 		checkUserOrder,
 		applyVerify,
 		order,
+		orderList,
+		orderInfo,
+		confirmOrder,
 		rewardPay,
 	}
 }

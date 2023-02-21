@@ -181,16 +181,46 @@ export default {
 					create_time: '2023-02-09',
 					start_time: 0
 				},
-			]
+			],
+			params: {
+				page: 1,
+				order: '',
+				sort: '',
+				type: 0,
+				service_id: '',
+				service_type_id: '',
+			}
 		};
 	},
 	created() {
+		if(this.vuex_token) {
+			if(this.vuex_user.advisor) {
+				this.params.type = 1;
+			}
+			else if(this.vuex_user.teacher) {
+				this.params.type = 2;
+			}
+			else {
+				this.params.type = 0;
+			}
+		}
+		this.getCustomerList()
 		this.dataList = this.indexList
 	},
 	methods: {
+		getCustomerList() {
+			let that=this;
+			uni.$u.api.orderList({ params: that.params}).then(res=>{
+				console.log(res)
+				that.dataList = res.data.data
+			})
+			.catch(err=>{
+			})
+		},
 		tabChange(e) {
-			this.dataList = this.indexList.filter(item=>item.order_type==e.id)
-			console.log(this.dataList)
+			this.params.service_type_id = e.id;
+			this.params.page = 1;
+			this.getCustomerList();
 		}
 	}
 };

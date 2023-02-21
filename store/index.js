@@ -36,6 +36,8 @@ const store = new Vuex.Store({
     state: {
         // 用户信息
         vuex_user: lifeData.vuex_user ? lifeData.vuex_user : {},
+        // 用户token
+        vuex_token: lifeData.vuex_token ? lifeData.vuex_token : '',
 		// 当前导航
 		vuex_currentTab: lifeData.vuex_currentTab ? lifeData.vuex_currentTab : 0
     },

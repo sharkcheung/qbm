@@ -267,7 +267,7 @@ export default {
 					url: __this.$configs.baseUrl + '/Upload/upload', // 仅为示例，非真实的接口地址
 					filePath: url,
 					header: {
-						token: __this.vuex_user.token,
+						token: __this.vuex_token,
 						contentType: 'application/json'
 					},
 					name: 'file',
