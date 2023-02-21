@@ -1,10 +1,10 @@
 <template>
 	<view class="my-box">
 		<view class="info-box" @click="goInfo()">
-			<u-avatar shape="circle" size="60" @click="!vuex_token&&goLogin" :src="info.pic" customStyle="margin: 0px 10px 0px 0px"></u-avatar>
+			<u-avatar shape="circle" size="60" :src="info.pic" customStyle="margin: 0px 10px 0px 0px"></u-avatar>
 			<view class="info-right">
 				<view class="info-right-title" v-if="vuex_token"><text>{{ info.nickname||'请设置昵称' }}</text>{{ info.mobile||'-' }}</view>
-				<view class="info-right-title" @click="goLogin" v-if="!vuex_token">立即登录</view>
+				<view class="info-right-title" v-if="!vuex_token">立即登录</view>
 				<view class="info-right-icon"><u-icon name="arrow-right"></u-icon></view>
 			</view>
 		</view>
@@ -77,9 +77,14 @@
 				})
 			},
 			goInfo() {
-				uni.$u.route({
-					url: '/pages/my/info'
-				})
+				if(!this.vuex_token) {
+					this.goLogin()
+				}
+				else {
+					uni.$u.route({
+						url: '/pages/my/info'
+					})
+				}
 			},
 			changeTab(item) {
 				uni.$u.route({

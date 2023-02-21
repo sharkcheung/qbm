@@ -10,7 +10,9 @@ module.exports = (vm) => {
         if (data.status !== 200) { // 服务端返回的状态码不等于200，则reject()
 			if(data.status == 401) {
 				
-				uni.$u.toast(data.msg)
+				uni.$u.toast(data.msg);
+				uni.$u.vuex('vuex_user', {});
+				uni.$u.vuex('vuex_token', '');
 				setTimeout(()=>{
 					uni.$u.route({
 						url: '/pages/public/login'

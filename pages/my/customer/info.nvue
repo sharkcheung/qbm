@@ -2,12 +2,27 @@
 	<view class="">
 		<view class="order-result-box">
 			<view class="result-msg">订单{{ $u.util.getStatus(info.status, 1) }}</view>
-			<view class="result-tip">{{ getTips(info.status) }}</view>
+			<view class="result-tip">
+				
+				<u-count-down v-if="info.status==3&&$u.util.formatRemainTime(info.begin_time)!==''" :time="$u.util.formatRemainTime(info.begin_time)" format="DD:HH:mm:ss" autoStart millisecond @change="onChange">
+					<view class="time">
+						<text class="time__item">{{ timeData.days }}&nbsp;天</text>
+						<text class="time__item">{{ timeData.hours}}&nbsp;时</text>
+						<text class="time__item">{{ timeData.minutes }}&nbsp;分</text>
+						<text class="time__item">{{ timeData.seconds }}&nbsp;秒</text>
+					</view>
+				</u-count-down>
+				<template v-if="info.status!==3">
+					{{ getTips(info.status) }}
+				</template>
+			</view>
 			<view class="result-button">
 				<u-button type="info" text="返回" @click="back"></u-button>
 				<u-button v-if="info.status == 2" type="warning" text="确认订单" @click="confirmOrder"></u-button>
-				
-				<u-button type="warning" v-if="info.status == 4 && !info.is_evaluated" text="我要评价" @click="appraise()"></u-button>
+				<u-button v-if="info.status==3&&$u.util.formatRemainTime(info.begin_time)===''" type="primary" text="进入会议" @click="showMeeting=true"></u-button>
+
+				<u-button type="warning" v-if="info.status == 4 && !info.is_evaluated" text="我要评价" @click="appraise()">
+				</u-button>
 				<u-button type="warning" v-if="info.status == 4 && info.start_time==0" text="结束订单"></u-button>
 			</view>
 		</view>
@@ -15,12 +30,13 @@
 		<view class="u-page__item">
 			<u-cell-group>
 				<u-cell :border="false" title="支付金额" :value="info.pay_fee?'￥' + info.pay_fee:'免费'"></u-cell>
-				<u-cell :border="false" title="下单时间" :value="$u.timeFormat(info.create_time, 'yyyy-mm-dd hh:MM:ss')"></u-cell>
+				<u-cell :border="false" title="下单时间" :value="$u.timeFormat(info.create_time, 'yyyy-mm-dd hh:MM:ss')">
+				</u-cell>
 				<u-cell :border="false" title="订单号" :value="info.order_num"></u-cell>
 				<u-cell :border="false" title="服务类型" :value="info.service_type_name"></u-cell>
 				<u-cell :border="false" title="服务内容" :value="info.service_name"></u-cell>
 				<u-cell :border="false" title="服务老师" :value="info.teacher_name"></u-cell>
-				
+
 				<u-cell :border="false" title="公司名称" :value="info.company_name"></u-cell>
 				<u-cell :border="false" title="行业" :value="info.industry"></u-cell>
 				<u-cell :border="false" title="项目启动时间" :value="info.start_time"></u-cell>
@@ -31,27 +47,20 @@
 		<u-popup :show="show" :mode="mode" :round="16" :customStyle="{width: '80%'}" :safeAreaInsetBottom="false">
 			<view class="cancelShow">
 				<view class="tishi">
-					
+
 					<u--form labelPosition="left" :model="model" ref="form" labelWidth="90">
-						<u-form-item :label="info.service_type_name+'时间'" prop="begin_time" @click="showPicker = true; hideKeyboard()">
-							<u--input
-								v-model="begin_time"
-								disabled
-								disabledColor="#ffffff"
-								:placeholder="'请选择'+info.service_type_name+'时间'"
-								border="none"
-							></u--input>
-							<u-icon
-								slot="right"
-								name="arrow-right"
-							></u-icon>
+						<u-form-item :label="info.service_type_name+'时间'" prop="begin_time"
+							@click="showPicker = true; hideKeyboard()">
+							<u--input v-model="model.begin_time" disabled disabledColor="#ffffff"
+								:placeholder="'请选择'+info.service_type_name+'时间'" border="none"></u--input>
+							<u-icon slot="right" name="arrow-right"></u-icon>
 						</u-form-item>
 						<u-form-item label="会议二维码" prop="meeting_qrcode">
-							<u-upload :fileList="fileListmeeting_qrcode" @afterRead="afterRead" @delete="deletePic" name="meeting_qrcode" multiple
-								:maxCount="1"></u-upload>
+							<u-upload :fileList="fileListmeeting_qrcode" @afterRead="afterRead" @delete="deletePic"
+								name="meeting_qrcode" multiple :maxCount="1"></u-upload>
 						</u-form-item>
 					</u--form>
-				
+
 				</view>
 				<view class="makes">
 					<text class="quxiao" @click="show=false">取消</text>
@@ -59,11 +68,14 @@
 				</view>
 			</view>
 		</u-popup>
-		<u-datetime-picker
-			:show="showPicker"
-			@confirm="confirmTime"
-			mode="datetime"
-		></u-datetime-picker>
+		<u-datetime-picker :show="showPicker" :minDate="minDate" @confirm="confirmTime" mode="datetime">
+		</u-datetime-picker>
+		<u-popup :show="showMeeting" :closeable="true" @close="closeMeeting">
+			<view class="show-box">
+				<u--image slot="value" :showLoading="true" :src="info.meeting_qrcode" width="160px" height="160px"></u--image>
+				<text>长按图片识别即可进入会议</text>
+			</view>
+		</u-popup>
 		<!-- <u-modal :show="show" :title="title" @cancel="show=false" @confirm="confirm" :showCancelButton="true" :content='content'></u-modal> -->
 	</view>
 </template>
@@ -72,13 +84,16 @@
 	export default {
 		data() {
 			return {
+				showMeeting: false,
+				timeData: {},
 				model: {
 					meeting_qrcode: '',
 					begin_time: '',
 					order_num: '',
 				},
+				minDate: '',
 				fileListmeeting_qrcode: [],
-				mode:'center',
+				mode: 'center',
 				show: false,
 				showPicker: false,
 				title: '温馨提示',
@@ -152,19 +167,30 @@
 			}
 		},
 		onLoad(options) {
-			let that=this;
+			let that = this;
+			that.minDate = Number(new Date());
 			that.model.order_num = options.order_num;
-			uni.$u.api.orderInfo({ params: { order_num: that.model.order_num }}).then(res=>{
-				that.info = res.data;
-			})
-			.catch(err=>{
-			})
+			uni.$u.api.orderInfo({
+					params: {
+						order_num: that.model.order_num
+					}
+				}).then(res => {
+					that.info = res.data;
+					console.log(uni.$u.util.formatRemainTime(that.info.begin_time));
+				})
+				.catch(err => {})
 		},
 		methods: {
+			closeMeeting() {
+				this.showMeeting = false
+			},
+			onChange(e) {
+				this.timeData = e
+			},
 			// 删除图片
 			deletePic(event) {
 				this[`fileList${event.name}`].splice(event.index, 1)
-				if(this.fileListmeeting_qrcode.length==0) {
+				if (this.fileListmeeting_qrcode.length == 0) {
 					this.model.meeting_qrcode = '';
 				}
 			},
@@ -191,7 +217,7 @@
 					}))
 					fileListLen++
 				}
-				if(this.fileListmeeting_qrcode.length>0) {
+				if (this.fileListmeeting_qrcode.length > 0) {
 					this.model.meeting_qrcode = this.fileListmeeting_qrcode[0].url;
 				}
 			},
@@ -218,8 +244,7 @@
 			confirmTime(e) {
 				this.showPicker = false;
 				console.log(e);
-				this.$set(this.model, 'begin_time', uni.$u.timeFormat(e.value, 'yyyy-mm-dd hh:MM'));
-				// this.model.begin_time = uni.$u.timeFormat(e.value, 'yyyy-mm-dd hh:MM');
+				this.model.begin_time = uni.$u.timeFormat(e.value, 'yyyy-mm-dd hh:MM');
 				console.log(this.model)
 			},
 			hideKeyboard() {
@@ -238,7 +263,7 @@
 						break;
 					case 3:
 						// 待开始
-						result = '距离约聊还有'+ uni.$u.util.formatRemainTime(this.info.begin_time) +'！';
+						result = '距离约聊还有' + uni.$u.util.formatRemainTime(this.info.begin_time) + '！';
 						break;
 					case 4:
 						// 已结束
@@ -250,8 +275,8 @@
 				return result;
 			},
 			close() {
-			  this.show = false
-			  // console.log('close');
+				this.show = false
+				// console.log('close');
 			},
 			appraise() {
 				uni.$u.route({
@@ -265,28 +290,28 @@
 				this.show = true;
 			},
 			confirm() {
-				if(!this.model.begin_time) {
-					uni.$u.util.showErr('请选择'+this.info.service_type_name+'时间');
+				if (!this.model.begin_time) {
+					uni.$u.util.showErr('请选择' + this.info.service_type_name + '时间');
 					return false;
 				}
-				if(!this.model.meeting_qrcode) {
-					uni.$u.util.showErr('请选择'+this.info.service_type_name+'时间');
+				if (!this.model.meeting_qrcode) {
+					uni.$u.util.showErr('请选择' + this.info.service_type_name + '时间');
 					return false;
 				}
-				let that=this;
-				uni.$u.api.confirmOrder(this.model).then(res=>{
-					this.show = false;
-					uni.showToast({
-						title: res.msg,
-						duration: 2000
-					});
-					
-					that.info.status = 3;
-				})
-				.catch(err=>{
-					this.show = false;
-					uni.$u.util.showErr('下单确认失败');
-				})
+				let that = this;
+				uni.$u.api.confirmOrder(that.model).then(res => {
+						that.show = false;
+						uni.showToast({
+							title: res.msg,
+							duration: 2000
+						});
+						that.info.begin_time = that.model.begin_time
+						that.info.status = 3;
+					})
+					.catch(err => {
+						that.show = false;
+						uni.$u.util.showErr('下单确认失败');
+					})
 			},
 			goPay() {
 				uni.$u.route({
@@ -298,6 +323,13 @@
 </script>
 
 <style lang="scss">
+	.show-box {
+		padding: 48rpx 32rpx;
+		align-items: center;
+		text {
+			margin-top: 20rpx;
+		}
+	}
 	.order-result-box {
 		padding: 40rpx;
 		text-align: center;
@@ -323,41 +355,48 @@
 			}
 		}
 	}
-	
-.cancelShow{
-	border-radius: 16rpx;
-	padding: 10rpx 24rpx;
-	background: #FFFFFF;
-	.tishi{
+	.time {
 		flex-direction: row;
-		text-align: center;
-		align-items: center;
-		padding: 40rpx 0rpx;
-		color:#191C27;
-		font-size: 28rpx;
 	}
-	.makes{
-		padding: 24rpx 24rpx;
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		align-items: center;
-		text{
-			padding: 12rpx 0rpx;
-			width: 47%;
+	.cancelShow {
+		border-radius: 16rpx;
+		padding: 10rpx 24rpx;
+		background: #FFFFFF;
+
+		.tishi {
+			flex-direction: row;
 			text-align: center;
-			font-size: 32rpx;
+			align-items: center;
+			padding: 40rpx 0rpx;
+			color: #191C27;
+			font-size: 28rpx;
 		}
-		.quxiao{
-			background: #F0F0F0;
-			border-radius: 40px;
-			color: #666666;
-		}
-		.queren{
-			background: linear-gradient(135deg, #FF6D65 0%, #FE3B30 100%);
-			border-radius: 40px;
-			color: #FFFFFF;
+
+		.makes {
+			padding: 24rpx 24rpx;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+
+			text {
+				padding: 12rpx 0rpx;
+				width: 47%;
+				text-align: center;
+				font-size: 32rpx;
+			}
+
+			.quxiao {
+				background: #F0F0F0;
+				border-radius: 40px;
+				color: #666666;
+			}
+
+			.queren {
+				background: linear-gradient(135deg, #FF6D65 0%, #FE3B30 100%);
+				border-radius: 40px;
+				color: #FFFFFF;
+			}
 		}
 	}
-}
 </style>
