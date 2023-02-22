@@ -16,6 +16,7 @@ module.exports = (vm) => {
 	let orderList = (params, config = {}) => http.get('/Order/index', params, config)
 	let orderInfo = (params, config = {}) => http.get('/Order/detail', params, config)
 	let confirmOrder = (params, config = {}) => http.post('/Order/confirm', params, config)
+	let finishOrder = (params, config = {}) => http.get('/Order/finish', params, config)
 	let rewardPay = (params, config = {}) => http.post('/reward/pay', params, config)
 	uni.$u.api = {
 		login,
@@ -34,6 +35,7 @@ module.exports = (vm) => {
 		orderList,
 		orderInfo,
 		confirmOrder,
+		finishOrder,
 		rewardPay,
 	}
 }

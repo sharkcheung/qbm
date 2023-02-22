@@ -15,7 +15,7 @@
 				</view>
 				<view class="customer-item-top-right"><u--text :text="$u.util.getStatus(item.status,1)" :color="$u.util.getStatus(item.status,2)"></u--text></view>
 			</view>
-			<view class="customer-residue-time" v-if="item.service_type_id==1&&item.status == 3">
+			<view class="customer-residue-time" v-if="$u.util.formatRemainTime(item.begin_time)!==''&&item.status == 3">
 				距离{{ item.service_type_name }}还有：<text>{{ $u.util.formatRemainTime(item.begin_time) }}</text>
 			</view>
 		</view>

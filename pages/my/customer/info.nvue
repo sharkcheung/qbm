@@ -23,7 +23,7 @@
 
 				<u-button type="warning" v-if="info.status == 4 && !info.is_evaluated" text="我要评价" @click="appraise()">
 				</u-button>
-				<u-button type="warning" v-if="info.status == 4 && info.start_time==0" text="结束订单"></u-button>
+				<u-button type="warning" v-if="info.status == 3 &&$u.util.formatRemainTime(info.begin_time)===''" text="结束订单" @click="finishOrder"></u-button>
 			</view>
 		</view>
 
@@ -68,6 +68,15 @@
 				</view>
 			</view>
 		</u-popup>
+		<u-popup :show="showFinish" :mode="mode" :round="16" :customStyle="{width: '60%'}" :safeAreaInsetBottom="false">
+			<view class="cancelShow">
+				<view class="tishi" style="font-size: 36rpx;">确认结束该订单吗？</view>
+				<view class="makes">
+					<text class="quxiao" @click="showFinish=false">取消</text>
+					<text class="queren" @click="confirmFinish">确认</text>
+				</view>
+			</view>
+		</u-popup>
 		<u-datetime-picker :show="showPicker" :minDate="minDate" @confirm="confirmTime" mode="datetime">
 		</u-datetime-picker>
 		<u-popup :show="showMeeting" :closeable="true" @close="closeMeeting">
@@ -85,6 +94,7 @@
 		data() {
 			return {
 				showMeeting: false,
+				showFinish: false,
 				timeData: {},
 				model: {
 					meeting_qrcode: '',
@@ -289,6 +299,9 @@
 			confirmOrder() {
 				this.show = true;
 			},
+			finishOrder() {
+				this.showFinish = true;
+			},
 			confirm() {
 				if (!this.model.begin_time) {
 					uni.$u.util.showErr('请选择' + this.info.service_type_name + '时间');
@@ -311,6 +324,21 @@
 					.catch(err => {
 						that.show = false;
 						uni.$u.util.showErr('下单确认失败');
+					})
+			},
+			confirmFinish() {
+				let that = this;
+				uni.$u.api.finishOrder({ params: { order_num: that.info.order_num }}).then(res => {
+						that.showFinish = false;
+						uni.showToast({
+							title: res.msg,
+							duration: 2000
+						});
+						that.info.status = 4;
+					})
+					.catch(err => {
+						that.showFinish = false;
+						uni.$u.util.showErr('结束下单失败');
 					})
 			},
 			goPay() {
