@@ -12,9 +12,15 @@
 			return {
 				order: {
 					result: '评价成功！',
-					reward: 299
+					reward: 0,
+					id: '',
 				}
 			}
+		},
+		onLoad(options) {
+			let that = this;
+			that.order.id = options.id;
+			that.order.reward = options.reward;
 		},
 		methods: {
 			back() {

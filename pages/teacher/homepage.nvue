@@ -245,7 +245,7 @@ export default {
 			}
 		},
 		order(item) {
-			if(!this.vuex_user.token) {
+			if(!this.vuex_token) {
 				this.modalType = 0;
 				this.show = true;
 				this.content = '您还没有登录,暂时无法进行下单';

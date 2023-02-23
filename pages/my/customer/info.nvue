@@ -290,7 +290,10 @@
 			},
 			appraise() {
 				uni.$u.route({
-					url: '/pages/my/appraise/appraise'
+					url: '/pages/my/appraise/appraise',
+					params: {
+						order_num: this.info.order_num
+					}
 				})
 			},
 			back() {

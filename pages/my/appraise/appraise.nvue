@@ -3,11 +3,19 @@
 	<view class="appraise-box">
 		<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
 		<u--form labelPosition="left" :model="modelAppraise" ref="formAppraise" labelWidth="100">
+			<u-form-item label="订单号" prop="order_num" ref="itemOrder_num">
+				<u--input placeholder="" v-model="modelAppraise.order_num" border="none" disabled disabledColor="#ffffff">
+				</u--input>
+			</u-form-item>
 			<u-form-item label="老师" prop="teacher_name" ref="itemTeacher_name">
 				<u--input placeholder="" v-model="modelAppraise.teacher_name" border="none" disabled disabledColor="#ffffff">
 				</u--input>
 			</u-form-item>
-			<u-form-item label="预约服务" prop="service_name">
+			<u-form-item label="服务类型" prop="service_name">
+				<u--input placeholder="" v-model="modelAppraise.service_type_name" disabled disabledColor="#ffffff" border="none">
+				</u--input>
+			</u-form-item>
+			<u-form-item label="服务内容" prop="service_name">
 				<u--input placeholder="" v-model="modelAppraise.service_name" disabled disabledColor="#ffffff" border="none">
 				</u--input>
 			</u-form-item>
@@ -32,8 +40,12 @@
 				</u--input>
 				<!-- #endif -->
 			</u-form-item>
+			<u-form-item label="评价图片" prop="pic" ref="itemPic">
+				<u-upload :fileList="fileListpic" @afterRead="afterRead" @delete="deletePic" name="pic"
+					:maxCount="1"></u-upload>
+			</u-form-item>
 			<u-form-item label="评价视频" prop="video" ref="itemVideo">
-				<u-upload :fileList="fileList2" @afterRead="afterRead" @delete="deletePic" name="2" multiple
+				<u-upload :fileList="fileListvideo" @afterRead="afterRead" @delete="deletePic" name="video"
 					:maxCount="1" accept="video"></u-upload>
 			</u-form-item>
 			<u-form-item label="评价内容" prop="content" ref="itemContent">
@@ -50,11 +62,14 @@
 	export default {
 		data() {
 			return {
-				fileList2: [],
+				fileListpic: [],
+				fileListvideo: [],
 				modelAppraise: {
-					teacher_name: '刘老师',
-					service_type: 1,
-					service_name: '数字系统',
+					order_num: '',
+					pic: '',
+					teacher_name: '',
+					service_name: '',
+					service_type_name: '',
 					rate: 0,
 					reward: 0,
 					video: '',
@@ -91,6 +106,12 @@
 			// 删除图片
 			deletePic(event) {
 				this[`fileList${event.name}`].splice(event.index, 1)
+				if(this.fileListpic.length==0) {
+					this.modelAppraise.pic = '';
+				}
+				if(this.fileListvideo.length==0) {
+					this.modelAppraise.video = '';
+				}
 			},
 			// 新增图片
 			async afterRead(event) {
@@ -114,38 +135,88 @@
 					}))
 					fileListLen++
 				}
+				if(this.fileListpic.length>0) {
+					this.modelAppraise.pic = this.fileListpic[0].url;
+				}
+				if(this.fileListvideo.length>0) {
+					this.modelAppraise.video = this.fileListvideo[0].url;
+				}
 			},
 			uploadFilePromise(url) {
+				let __this = this
 				return new Promise((resolve, reject) => {
 					let a = uni.uploadFile({
-						url: 'http://www.example.com/upload', // 仅为示例，非真实的接口地址
+						url: __this.$configs.baseUrl + '/Upload/upload', // 仅为示例，非真实的接口地址
 						filePath: url,
-						name: 'file',
-						formData: {
-							user: 'test'
+						header: {
+							token: __this.vuex_token,
+							contentType: 'application/json'
 						},
+						name: 'file',
 						success: (res) => {
+							let data = JSON.parse(res.data)
 							setTimeout(() => {
-								resolve(res.data.data)
+								resolve(data.data)
 							}, 1000)
 						}
 					});
 				})
 			},
 			submit() {
+				let that = this;
 				// 如果有错误，会在catch中返回报错信息数组，校验通过则在then中返回true
 				this.$refs.formAppraise
 					.validate()
 					.then(res => {
-						uni.$u.route({
-							type: 'reLaunch',
-							url: '/pages/my/appraise/result'
+						
+						uni.$u.api.appraise(that.modelAppraise).then(result => {
+							console.log(result);
+							// if(res.data) {
+							// 	uni.requestPayment({
+							// 	    "provider": "wxpay", 
+							// 	    "orderInfo": {
+							// 	        "nonceStr": res.data.nonceStr, // 随机字符串
+							// 	        "package": "Sign=WXPay",        // 固定值
+							// 	        "signType": "MD5",      // 微信支付商户号
+							// 	        "prepayid": "wx202254********************fbe90000", // 统一下单订单号 
+							// 	        "timeStamp": 1597935292,        // 时间戳（单位：秒）
+							// 	        "sign": "A842B45937F6EFF60DEC7A2EAA52D5A0" // 签名，这里用的 MD5/RSA 签名
+							// 	    },
+							// 	    success(res) {},
+							// 	    fail(e) {}
+							// 	})
+							// }
+							uni.$u.route({
+								type: 'reLaunch',
+								url: '/pages/my/appraise/result',
+								params: {
+									id: result.data,
+									reward: that.modelAppraise.reward
+								}
+							})
+						})
+						.catch(err => {
+							uni.$u.util.showErr('评价失败');
 						})
 					})
 					.catch(errors => {
 						console.log(errors)
 					});
 			},
+		},
+		onLoad(options) {
+			let that = this;
+			that.modelAppraise.order_num = options.order_num;
+			uni.$u.api.orderInfo({
+					params: {
+						order_num: that.modelAppraise.order_num
+					}
+				}).then(res => {
+					that.modelAppraise.teacher_name = res.data.teacher_name;
+					that.modelAppraise.service_type_name = res.data.service_type_name;
+					that.modelAppraise.service_name = res.data.service_name;
+				})
+				.catch(err => {})
 		},
 		onReady() {
 			//如果需要兼容微信小程序，并且校验规则中含有方法等，只能通过setRules方法设置规则。
