@@ -25,7 +25,7 @@
 		</view>
 		<u-popup :show="show" :closeable="true" @close="close">
 			<view class="show-box">
-				<u--image slot="value" :showLoading="true" :src="info.weCom" width="160px" height="160px"></u--image>
+				<u--image :showLoading="true" :src="info.weCom" width="160px" height="160px"></u--image>
 				<text>长按图片识别即可与顾问联系</text>
 			</view>
 		</u-popup>

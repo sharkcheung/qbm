@@ -45,152 +45,33 @@ export default {
 				}
 			],
 			dataList: [],
-			indexList: [
-				{
-					id: 1,
-					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
-					order_type_name: '内训',
-					order_type: 2,
-					service_type_name: '全域规划',
-					service_type: 1,
-					status: 1,
-					status_name: '待支付',
-					is_evaluated: 0,
-					create_time: '2023-02-09',
-					start_time: 3
-				},
-				{
-					id: 2,
-					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
-					order_type_name: '约聊',
-					order_type: 1,
-					service_type_name: '全域规划',
-					service_type: 1,
-					status: 2,
-					status_name: '待确认',
-					is_evaluated: 0,
-					create_time: '2023-02-09',
-					start_time: 30 * 60 * 60 * 100
-				},
-				{
-					id: 3,
-					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
-					order_type_name: '约聊',
-					order_type: 1,
-					service_type_name: '全域规划',
-					service_type: 1,
-					status: 3,
-					status_name: '待开始',
-					is_evaluated: 0,
-					create_time: '2023-02-09',
-					start_time: 3
-				},
-				{
-					id: 4,
-					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
-					order_type_name: '约聊',
-					order_type: 1,
-					service_type_name: '全域规划',
-					service_type: 1,
-					status: 4,
-					status_name: '已结束',
-					is_evaluated: 0,
-					create_time: '2023-02-09',
-					start_time: 30 * 60 * 60 * 100
-				},
-				{
-					id: 5,
-					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
-					order_type_name: '约聊',
-					order_type: 1,
-					service_type_name: '全域规划',
-					service_type: 1,
-					status: 4,
-					status_name: '已结束',
-					is_evaluated: 0,
-					create_time: '2023-02-09',
-					start_time: 30 * 60 * 60 * 100
-				},
-				{
-					id: 6,
-					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
-					order_type_name: '约聊',
-					order_type: 1,
-					service_type_name: '全域规划',
-					service_type: 1,
-					status: 3,
-					status_name: '待开始',
-					is_evaluated: 0,
-					create_time: '2023-02-09',
-					start_time: 6
-				},
-				{
-					id: 7,
-					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
-					order_type_name: '约聊',
-					order_type: 1,
-					service_type_name: '全域规划',
-					service_type: 1,
-					status: 3,
-					status_name: '待开始',
-					is_evaluated: 0,
-					create_time: '2023-02-09',
-					start_time: 0
-				},
-				{
-					id: 8,
-					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
-					order_type_name: '陪跑',
-					order_type: 3,
-					service_type_name: '全域规划',
-					service_type: 1,
-					status: 3,
-					status_name: '待开始',
-					is_evaluated: 0,
-					create_time: '2023-02-09',
-					start_time: 0
-				},
-				{
-					id: 9,
-					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
-					order_type_name: '陪跑',
-					order_type: 3,
-					service_type_name: '全域规划',
-					service_type: 1,
-					status: 3,
-					status_name: '待开始',
-					is_evaluated: 0,
-					create_time: '2023-02-09',
-					start_time: 0
-				},
-			]
+			params: {
+				page: 1,
+				order: '',
+				sort: '',
+				type: 0,
+				service_id: '',
+				service_type_id: '',
+			}
 		};
 	},
 	created() {
-		this.dataList = this.indexList
+		this.getOrderList()
 	},
 	methods: {
+		getOrderList() {
+			let that=this;
+			uni.$u.api.orderList({ params: that.params}).then(res=>{
+				console.log(res)
+				that.dataList = res.data.data
+			})
+			.catch(err=>{
+			})
+		},
 		tabChange(e) {
-			this.dataList = this.indexList.filter(item=>item.order_type==e.id)
-			console.log(this.dataList)
+			this.params.service_type_id = e.id;
+			this.params.page = 1;
+			this.getOrderList();
 		}
 	}
 };

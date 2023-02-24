@@ -1,8 +1,17 @@
 <template>
 	<view class="order-result-box">
-		<view class="result-msg">{{ order.result }}</view>
+		<view class="result-msg">预约成功！</view>
 		<view class="result-tip">请等待数字顾问与您联系！</view>
-		<view class="result-button"><u-button type="info" text="返回" @click="back"></u-button><u-button type="warning" text="去支付" @click="goPay"></u-button></view>
+		<view class="result-button"><u-button type="info" text="返回" @click="back"></u-button><u-button v-if="order.service_type_id==2" type="warning" text="去支付" @click="goPay"></u-button></view>
+		<view class="u-page__item">
+			<u-cell-group>
+				<u-cell :border="false" title="下单时间" :value="order.create_time"></u-cell>
+				<u-cell :border="false" title="订单号" :value="order.order_num"></u-cell>
+				<u-cell :border="false" title="服务类型" :value="order.service_type_name"></u-cell>
+				<u-cell :border="false" title="服务内容" :value="order.service_name"></u-cell>
+				<u-cell :border="false" title="服务老师" :value="order.teacher_name"></u-cell>
+			</u-cell-group>
+		</view>
 	</view>
 </template>
 
@@ -11,9 +20,25 @@
 		data() {
 			return {
 				order: {
-					result: '预约成功！'
+					create_time: '',
+					order_num: '',
+					service_type_name: '',
+					service_name: '',
+					teacher_name: '',
 				}
 			}
+		},
+		onLoad() {
+			let that = this;
+			that.order.order_num = options.order_num;
+			uni.$u.api.orderInfo({
+					params: {
+						order_num: that.order.order_num
+					}
+				}).then(res => {
+					that.order = res.data;
+				})
+				.catch(err => {})
 		},
 		methods: {
 			back() {

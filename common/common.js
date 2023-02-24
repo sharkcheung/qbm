@@ -761,10 +761,13 @@ module.exports = (vm) => {
 	 * @param  {Date} endTime
 	 * @return {String}
 	 */
-	const formatRemainTime =(endTime) => {
+	const formatRemainTime =(endTime, type) => {
 	    var startDate = new Date(); //开始时间
 	    var endDate = new Date(endTime); //结束时间
 	    var t = endDate.getTime() - startDate.getTime(); //时间差
+		if(type==0) {
+			return t;
+		}
 	    var d = 0,
 	        h = 0,
 	        m = 0,

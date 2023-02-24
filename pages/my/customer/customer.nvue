@@ -205,7 +205,7 @@ export default {
 			}
 		}
 		this.getCustomerList()
-		this.dataList = this.indexList
+		// this.dataList = this.indexList
 	},
 	methods: {
 		getCustomerList() {

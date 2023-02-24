@@ -1,11 +1,13 @@
 module.exports = (vm) => {
 	const { http } = uni.$u
+	let homeData = (params, config = {}) => http.get('/Home/index', params, config)
 	let login = (params, config = {}) => http.post('/Login/index', params, config)
 	let getPhone = (params, config = {}) => http.post('/Membe/getPhone', params, config)
 	let perfection = (params, config = {}) => http.post('/Membe/perfection', params, config)
 	let userDetail = (params, config = {}) => http.get('/Membe/detail', params, config)
 	let userInfo = (params, config = {}) => http.get('/Membe/info', params, config)
 	let updateUserInfo = (params, config = {}) => http.post('/Membe/update', params, config)
+	let bannerList = (params, config = {}) => http.get('/Link/bannerList', params, config)
 	let teacherList = (params, config = {}) => http.get('/Teacher/index', params, config)
 	let serviceTypeAll = (params, config = {}) => http.get('/Servicetype/all', params, config)
 	let serviceAll = (params, config = {}) => http.get('/Service/all', params, config)
@@ -20,12 +22,14 @@ module.exports = (vm) => {
 	let appraise = (params, config = {}) => http.post('/Appraise/appraise', params, config)
 	let rewardPay = (params, config = {}) => http.post('/reward/pay', params, config)
 	uni.$u.api = {
+		homeData,
 		login,
 		getPhone,
 		perfection,
 		userDetail,
 		userInfo,
 		updateUserInfo,
+		bannerList,
 		teacherList,
 		serviceTypeAll,
 		serviceAll,

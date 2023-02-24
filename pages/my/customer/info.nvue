@@ -3,15 +3,18 @@
 		<view class="order-result-box">
 			<view class="result-msg">订单{{ $u.util.getStatus(info.status, 1) }}</view>
 			<view class="result-tip">
+				<template v-if="info.status==3&&$u.util.formatRemainTime(info.begin_time, 0)>0">
+					距离{{ info.service_type_name }}还有：
+					<u-count-down :time="$u.util.formatRemainTime(info.begin_time, 0)" format="DD:HH:mm:ss" autoStart millisecond @change="onChange">
+						<view class="time">
+							<text class="time__item">{{ timeData.days }}&nbsp;天</text>
+							<text class="time__item">{{ timeData.hours}}&nbsp;时</text>
+							<text class="time__item">{{ timeData.minutes }}&nbsp;分</text>
+							<text class="time__item">{{ timeData.seconds }}&nbsp;秒</text>
+						</view>
+					</u-count-down>
+				</template>
 				
-				<u-count-down v-if="info.status==3&&$u.util.formatRemainTime(info.begin_time)!==''" :time="$u.util.formatRemainTime(info.begin_time)" format="DD:HH:mm:ss" autoStart millisecond @change="onChange">
-					<view class="time">
-						<text class="time__item">{{ timeData.days }}&nbsp;天</text>
-						<text class="time__item">{{ timeData.hours}}&nbsp;时</text>
-						<text class="time__item">{{ timeData.minutes }}&nbsp;分</text>
-						<text class="time__item">{{ timeData.seconds }}&nbsp;秒</text>
-					</view>
-				</u-count-down>
 				<template v-if="info.status!==3">
 					{{ getTips(info.status) }}
 				</template>
@@ -19,11 +22,7 @@
 			<view class="result-button">
 				<u-button type="info" text="返回" @click="back"></u-button>
 				<u-button v-if="info.status == 2" type="warning" text="确认订单" @click="confirmOrder"></u-button>
-				<u-button v-if="info.status==3&&$u.util.formatRemainTime(info.begin_time)===''" type="primary" text="进入会议" @click="showMeeting=true"></u-button>
-
-				<u-button type="warning" v-if="info.status == 4 && !info.is_evaluated" text="我要评价" @click="appraise()">
-				</u-button>
-				<u-button type="warning" v-if="info.status == 3 &&$u.util.formatRemainTime(info.begin_time)===''" text="结束订单" @click="finishOrder"></u-button>
+				<u-button v-if="info.status==3&&$u.util.formatRemainTime(info.begin_time, 0)<=0" type="primary" text="进入会议" @click="showMeeting=true"></u-button>
 			</view>
 		</view>
 
@@ -35,7 +34,8 @@
 				<u-cell :border="false" title="订单号" :value="info.order_num"></u-cell>
 				<u-cell :border="false" title="服务类型" :value="info.service_type_name"></u-cell>
 				<u-cell :border="false" title="服务内容" :value="info.service_name"></u-cell>
-				<u-cell :border="false" title="服务老师" :value="info.teacher_name"></u-cell>
+				<u-cell :border="false" title="服务老师" :value="info.teacher_name" v-if="Object.keys(vuex_user.advisor).length>0"></u-cell>
+				<u-cell :border="false" title="服务顾问" :value="info.advisor_name" v-if="Object.keys(vuex_user.teacher).length>0"></u-cell>
 
 				<u-cell :border="false" title="公司名称" :value="info.company_name"></u-cell>
 				<u-cell :border="false" title="行业" :value="info.industry"></u-cell>
@@ -65,15 +65,6 @@
 				<view class="makes">
 					<text class="quxiao" @click="show=false">取消</text>
 					<text class="queren" @click="confirm">确认</text>
-				</view>
-			</view>
-		</u-popup>
-		<u-popup :show="showFinish" :mode="mode" :round="16" :customStyle="{width: '60%'}" :safeAreaInsetBottom="false">
-			<view class="cancelShow">
-				<view class="tishi" style="font-size: 36rpx;">确认结束该订单吗？</view>
-				<view class="makes">
-					<text class="quxiao" @click="showFinish=false">取消</text>
-					<text class="queren" @click="confirmFinish">确认</text>
 				</view>
 			</view>
 		</u-popup>
@@ -110,70 +101,15 @@
 				content: '是否确认订单？',
 				info: {
 					status: 1,
-					result: '待支付',
-					tip: '请尽快支付！',
-					order_type_name: '内训',
-					service_type_name: '全域规划',
-					pay_money: 299,
-					create_time: '2023-02-09',
-					order_num: '2023020917013685',
-					start_time: 3,
+					order_type_name: '',
+					service_type_name: '',
+					pay_money: 0,
+					create_time: '',
+					order_num: '',
+					start_time: 0,
 					is_evaluated: 0,
-					teacher_name: '刘老师',
+					teacher_name: '',
 				},
-				orderList: [{
-						status: 1,
-						result: '待支付',
-						tip: '请尽快支付！',
-						order_type_name: '内训',
-						service_type_name: '全域规划',
-						pay_money: 299,
-						create_time: '2023-02-09',
-						order_num: '2023020917013685',
-						start_time: 3,
-						is_evaluated: 0,
-						teacher_name: '刘老师',
-					},
-					{
-						status: 2,
-						result: '待确认',
-						tip: '请联系数字顾问与您确认！',
-						order_type_name: '内训',
-						service_type_name: '全域规划',
-						pay_money: 299,
-						create_time: '2023-02-09',
-						order_num: '2023020917013685',
-						start_time: 3,
-						is_evaluated: 0,
-						teacher_name: '刘老师',
-					},
-					{
-						status: 3,
-						result: '待开始',
-						tip: '距离约聊还有1天！',
-						order_type_name: '内训',
-						service_type_name: '全域规划',
-						pay_money: 299,
-						create_time: '2023-02-09',
-						order_num: '2023020917013685',
-						start_time: 3,
-						is_evaluated: 0,
-						teacher_name: '刘老师',
-					},
-					{
-						status: 4,
-						result: '已结束',
-						tip: '服务已结束',
-						order_type_name: '内训',
-						service_type_name: '全域规划',
-						pay_money: 299,
-						create_time: '2023-02-09',
-						order_num: '2023020917013685',
-						start_time: 3,
-						is_evaluated: 0,
-						teacher_name: '刘老师',
-					},
-				]
 			}
 		},
 		onLoad(options) {
@@ -186,7 +122,6 @@
 					}
 				}).then(res => {
 					that.info = res.data;
-					console.log(uni.$u.util.formatRemainTime(that.info.begin_time));
 				})
 				.catch(err => {})
 		},
@@ -273,7 +208,7 @@
 						break;
 					case 3:
 						// 待开始
-						result = '距离约聊还有' + uni.$u.util.formatRemainTime(this.info.begin_time) + '！';
+						result = '距离约聊还有' + uni.$u.util.formatRemainTime(this.info.begin_time, 1) + '！';
 						break;
 					case 4:
 						// 已结束
@@ -302,9 +237,6 @@
 			confirmOrder() {
 				this.show = true;
 			},
-			finishOrder() {
-				this.showFinish = true;
-			},
 			confirm() {
 				if (!this.model.begin_time) {
 					uni.$u.util.showErr('请选择' + this.info.service_type_name + '时间');
@@ -323,25 +255,11 @@
 						});
 						that.info.begin_time = that.model.begin_time
 						that.info.status = 3;
+						console.log(that.info);
 					})
 					.catch(err => {
 						that.show = false;
 						uni.$u.util.showErr('下单确认失败');
-					})
-			},
-			confirmFinish() {
-				let that = this;
-				uni.$u.api.finishOrder({ params: { order_num: that.info.order_num }}).then(res => {
-						that.showFinish = false;
-						uni.showToast({
-							title: res.msg,
-							duration: 2000
-						});
-						that.info.status = 4;
-					})
-					.catch(err => {
-						that.showFinish = false;
-						uni.$u.util.showErr('结束下单失败');
 					})
 			},
 			goPay() {
@@ -374,6 +292,8 @@
 		.result-tip {
 			color: #666;
 			margin-bottom: 20rpx;
+			flex-direction: row;
+			justify-content: center;
 		}
 
 		.result-button {

@@ -1,27 +1,66 @@
 <template>
 	<view class="">
 		<view class="order-result-box">
-			<view class="result-msg">订单{{ info.result }}</view>
-			<view class="result-tip">{{ info.tip }}</view>
+			<view class="result-msg">订单{{ $u.util.getStatus(info.status, 1) }}</view>
+			<view class="result-tip">
+				<template v-if="info.status==3&&remainTime>0">
+					距离{{ info.service_type_name }}还有：
+					<u-count-down :time="remainTime" format="DD:HH:mm:ss" autoStart millisecond @change="onChange">
+						<view class="time">
+							<text class="time__item">{{ timeData.days }}&nbsp;天</text>
+							<text class="time__item">{{ timeData.hours}}&nbsp;时</text>
+							<text class="time__item">{{ timeData.minutes }}&nbsp;分</text>
+							<text class="time__item">{{ timeData.seconds }}&nbsp;秒</text>
+						</view>
+					</u-count-down>
+				</template>
+				<template>
+					{{ getTips(info.status) }}
+				</template>
+			</view>
 			<view class="result-button">
 				<u-button type="info" text="返回" @click="back"></u-button>
-				<u-button v-if="info.status == 1" type="warning" text="去支付" @click="goPay"></u-button>
-				
-				<u-button type="warning" v-if="info.status == 4 && !info.is_evaluated" text="我要评价" @click="appraise()"></u-button>
-				<u-button type="warning" v-if="info.status == 4 && info.start_time==0" text="结束订单"></u-button>
+				<u-button v-if="info.status==3&&info.begin_time&&remainTime<=0" type="primary" text="进入会议" @click="showMeeting=true"></u-button>
+
+				<u-button type="warning" v-if="info.status == 4 && !info.is_evaluated" text="我要评价" @click="appraise()">
+				</u-button>
+				<u-button type="warning" v-if="info.status == 3 &&info.begin_time&&remainTime<=0" text="结束订单" @click="finishOrder"></u-button>
+				<u-button v-if="info.status==4&&info.pay_fee>0&&!info.pay_time" type="primary" text="去打赏"></u-button>
 			</view>
 		</view>
 
 		<view class="u-page__item">
 			<u-cell-group>
-				<u-cell :border="false" title="支付金额" :value="info.pay_money"></u-cell>
-				<u-cell :border="false" title="下单时间" :value="info.create_time"></u-cell>
+				<u-cell :border="false" title="支付金额" :value="info.pay_fee?'￥' + info.pay_fee:'免费'"></u-cell>
+				<u-cell :border="false" title="下单时间" :value="$u.timeFormat(info.create_time, 'yyyy-mm-dd hh:MM:ss')">
+				</u-cell>
 				<u-cell :border="false" title="订单号" :value="info.order_num"></u-cell>
-				<u-cell :border="false" title="订单类型" :value="info.order_type_name"></u-cell>
 				<u-cell :border="false" title="服务类型" :value="info.service_type_name"></u-cell>
+				<u-cell :border="false" title="服务内容" :value="info.service_name"></u-cell>
 				<u-cell :border="false" title="服务老师" :value="info.teacher_name"></u-cell>
+
+				<u-cell :border="false" title="公司名称" :value="info.company_name"></u-cell>
+				<u-cell :border="false" title="行业" :value="info.industry"></u-cell>
+				<u-cell :border="false" title="项目启动时间" :value="info.start_time"></u-cell>
+				<u-cell :border="false" title="团队情况" :value="info.team_info"></u-cell>
+				<u-cell :border="false" title="咨询简述" :value="info.intro"></u-cell>
 			</u-cell-group>
 		</view>
+		<u-popup :show="showFinish" :mode="mode" :round="16" :customStyle="{width: '60%'}" :safeAreaInsetBottom="false">
+			<view class="cancelShow">
+				<view class="tishi" style="font-size: 36rpx;">确认结束该订单吗？</view>
+				<view class="makes">
+					<text class="quxiao" @click="showFinish=false">取消</text>
+					<text class="queren" @click="confirmFinish">确认</text>
+				</view>
+			</view>
+		</u-popup>
+		<u-popup :show="showMeeting" :closeable="true" @close="closeMeeting">
+			<view class="show-box">
+				<u--image :showLoading="true" :src="info.meeting_qrcode" width="160px" height="160px"></u--image>
+				<text>长按图片识别即可进入会议</text>
+			</view>
+		</u-popup>
 	</view>
 </template>
 
@@ -29,87 +68,111 @@
 	export default {
 		data() {
 			return {
+				remainTime: 0,
+				showMeeting: false,
+				showFinish: false,
+				timeData: {},
+				mode: 'center',
 				info: {
 					status: 1,
-					result: '待支付',
-					tip: '请尽快支付！',
-					order_type_name: '内训',
-					service_type_name: '全域规划',
-					pay_money: 299,
-					create_time: '2023-02-09',
-					order_num: '2023020917013685',
-					start_time: 3,
+					service_type_name: '',
+					service_name: '',
+					pay_money: 0,
+					create_time: '',
+					order_num: '',
 					is_evaluated: 0,
-					teacher_name: '刘老师',
+					teacher_name: '',
 				},
-				orderList: [{
-						status: 1,
-						result: '待支付',
-						tip: '请尽快支付！',
-						order_type_name: '内训',
-						service_type_name: '全域规划',
-						pay_money: 299,
-						create_time: '2023-02-09',
-						order_num: '2023020917013685',
-						start_time: 3,
-						is_evaluated: 0,
-						teacher_name: '刘老师',
-					},
-					{
-						status: 2,
-						result: '待确认',
-						tip: '请联系数字顾问与您确认！',
-						order_type_name: '内训',
-						service_type_name: '全域规划',
-						pay_money: 299,
-						create_time: '2023-02-09',
-						order_num: '2023020917013685',
-						start_time: 3,
-						is_evaluated: 0,
-						teacher_name: '刘老师',
-					},
-					{
-						status: 3,
-						result: '待开始',
-						tip: '距离约聊还有1天！',
-						order_type_name: '内训',
-						service_type_name: '全域规划',
-						pay_money: 299,
-						create_time: '2023-02-09',
-						order_num: '2023020917013685',
-						start_time: 3,
-						is_evaluated: 0,
-						teacher_name: '刘老师',
-					},
-					{
-						status: 4,
-						result: '已结束',
-						tip: '服务已结束',
-						order_type_name: '内训',
-						service_type_name: '全域规划',
-						pay_money: 299,
-						create_time: '2023-02-09',
-						order_num: '2023020917013685',
-						start_time: 3,
-						is_evaluated: 0,
-						teacher_name: '刘老师',
-					},
+				orderList: [
 				]
 			}
 		},
 		onLoad(options) {
-			let arr = this.orderList.filter(item => item.status == Number(options.status))
-			this.info = arr[0]
-			console.log(this.info)
+			let that = this;
+			that.info.order_num = options.order_num;
+			uni.$u.api.orderInfo({
+					params: {
+						order_num: that.info.order_num
+					}
+				}).then(res => {
+					that.info = res.data;
+					that.remainTime = uni.$u.util.formatRemainTime(that.info.begin_time, 0);
+					console.log(that.remainTime);
+				})
+				.catch(err => {})
 		},
 		methods: {
+			closeMeeting() {
+				this.showMeeting = false
+			},
+			onChange(e) {
+				this.timeData = e
+			},
+			hideKeyboard() {
+				uni.hideKeyboard()
+			},
+			getTips(status) {
+				let result = '';
+				switch (status) {
+					case 1:
+						// 待支付
+						result = '请尽快支付！';
+						break;
+					case 2:
+						// 待确认
+						result = '请等待数字顾问与您联系！';
+						break;
+					case 3:
+						// 待开始
+						console.log(this.remainTime);
+						if(this.remainTime<=0) {
+							result = '会议已开始';
+						}
+						else {
+							result = '';
+						}
+						break;
+					case 4:
+						// 已结束
+						result = '服务已结束';
+						break;
+					default:
+						break;
+				}
+				return result;
+			},
+			close() {
+				this.show = false
+				// console.log('close');
+			},
 			appraise() {
 				uni.$u.route({
-					url: '/pages/my/appraise/appraise'
+					url: '/pages/my/appraise/appraise',
+					params: {
+						order_num: this.info.order_num
+					}
 				})
 			},
 			back() {
 				uni.navigateBack()
+			},
+			finishOrder() {
+				this.showFinish = true;
+			},
+			confirmFinish() {
+				let that = this;
+				uni.$u.api.finishOrder({ params: { order_num: that.info.order_num }}).then(res => {
+						that.showFinish = false;
+						uni.showToast({
+							title: res.msg,
+							duration: 2000
+						});
+						that.info.status = 4;
+					})
+					.catch(err => {
+						that.showFinish = false;
+						uni.$u.util.showErr('结束下单失败');
+					})
 			},
 			goPay() {
 				uni.$u.route({
@@ -121,6 +184,13 @@
 </script>
 
 <style lang="scss">
+	.show-box {
+		padding: 48rpx 32rpx;
+		align-items: center;
+		text {
+			margin-top: 20rpx;
+		}
+	}
 	.order-result-box {
 		padding: 40rpx;
 		text-align: center;
@@ -134,6 +204,8 @@
 		.result-tip {
 			color: #666;
 			margin-bottom: 20rpx;
+			flex-direction: row;
+			justify-content: center;
 		}
 
 		.result-button {
@@ -143,6 +215,50 @@
 
 			.u-button--square {
 				border-radius: 20rpx;
+			}
+		}
+	}
+	.time {
+		flex-direction: row;
+	}
+	.cancelShow {
+		border-radius: 16rpx;
+		padding: 10rpx 24rpx;
+		background: #FFFFFF;
+
+		.tishi {
+			flex-direction: row;
+			text-align: center;
+			align-items: center;
+			padding: 40rpx 0rpx;
+			color: #191C27;
+			font-size: 28rpx;
+		}
+
+		.makes {
+			padding: 24rpx 24rpx;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+
+			text {
+				padding: 12rpx 0rpx;
+				width: 47%;
+				text-align: center;
+				font-size: 32rpx;
+			}
+
+			.quxiao {
+				background: #F0F0F0;
+				border-radius: 40px;
+				color: #666666;
+			}
+
+			.queren {
+				background: linear-gradient(135deg, #FF6D65 0%, #FE3B30 100%);
+				border-radius: 40px;
+				color: #FFFFFF;
 			}
 		}
 	}
