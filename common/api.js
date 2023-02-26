@@ -20,6 +20,11 @@ module.exports = (vm) => {
 	let confirmOrder = (params, config = {}) => http.post('/Order/confirm', params, config)
 	let finishOrder = (params, config = {}) => http.get('/Order/finish', params, config)
 	let appraise = (params, config = {}) => http.post('/Appraise/appraise', params, config)
+	let generatePoster = (params, config = {}) => http.get('/Teacher/generatePoster', params, config)
+	let appraiseList = (params, config = {}) => http.get('/Appraise/index', params, config)
+	let courseList = (params, config = {}) => http.get('/Course/index', params, config)
+	let courseDetail = (params, config = {}) => http.get('/Course/detail', params, config)
+	let updateStudyNums = (params, config = {}) => http.get('/Course/updateStudyNums', params, config)
 	let rewardPay = (params, config = {}) => http.post('/reward/pay', params, config)
 	uni.$u.api = {
 		homeData,
@@ -42,6 +47,11 @@ module.exports = (vm) => {
 		confirmOrder,
 		finishOrder,
 		appraise,
+		generatePoster,
+		appraiseList,
+		courseList,
+		courseDetail,
+		updateStudyNums,
 		rewardPay,
 	}
 }

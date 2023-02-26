@@ -1,6 +1,7 @@
 module.exports = {
     baseUrl: 'http://192.168.3.179/api',
     baseUrl: 'http://www.qbtadmin.com/api',
+    staticUrl: 'http://www.qbtadmin.com',
 	tabList: [
 		{
 			name: '首页',

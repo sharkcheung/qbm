@@ -1,14 +1,28 @@
 <template>
 	<view>
-		<video :src="info.video_url"></video>
+		<view v-if="play" class="video-box">
+			<video style="width: 100%;" :src="info.video" :autoplay="true"></video>
+		</view>
+		<view v-if="!play" class="image-box" @click="playVideo">
+			<view class="mask"></view>
+			<u--image width="100%" :src="info.pic"></u--image>
+			<view class="play-btn"><u-icon name="play-circle" color="#fff" size="60"></u-icon></view>
+		</view>
 		<view class="video-intro">
-			<view class="video-title">{{ info.title }}</view>
-			<view class="video-tip">{{ info.num }}人已学</view>
+			<view class="video-title">{{ info.course_name }}</view>
+			<view class="video-tip"><text>{{ info.views||0 }}人已学</text><text>{{ info.sale_price ? info.sale_price : '免费' }}</text></view>
 		</view>
 		<u-gap height="10" bgColor="#efefef"></u-gap>
-		<view class="video-box">
+		<view class="video-list-box">
 			<view class="videl-else">其他课程</view>
 			<video-list :listData="videoList"></video-list>
+		</view>
+		<view class="bottom-button-box">
+			<view class="bottom-button-group">
+				<u-button icon="share" type="primary" openType="share" text="推荐好友"></u-button>
+				<u-button icon="coupon" type="warning" text="立即购买" @click="buy" v-if="info.sale_price>0&&!info.isBuy"></u-button>
+			</view>
+			<u-safe-bottom></u-safe-bottom>
 		</view>
 	</view>
 </template>
@@ -17,50 +31,67 @@
 	export default {
 		data() {
 			return {
+				play: false,
 				info: {
-					title: '企业怎么做数字化转型？',
-					num: 322,
-					video_url: 'https://vd4.bdstatic.com/mda-pb32i8gyccwp5vjc/720p_frame30/h264_cae/1675475266766838206/mda-pb32i8gyccwp5vjc.mp4?v_from_s=hkapp-haokan-hnb&auth_key=1675915698-0-0-d2e0aa7684ba63f1d1daf11ac004315c&bcevod_channel=searchbox_feed&cd=0&pd=1&pt=3&logid=2298851445&vid=5045328126985943265&abtest=&klogid=2298851445'
+					title: '',
+					views: 0,
+					video: '',
+					pic: '',
+					sale_price: 0,
+					isBuy: true,
 				},
 				
 				videoList: [
-					{
-						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-						title: '数字化转型之亢龙有悔',
-						num: '322',
-					},
-					{
-						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-						title: '数字化转型之亢龙有悔',
-						num: '322',
-					},
-					{
-						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-						title: '数字化转型之亢龙有悔',
-						num: '322',
-					},
-					{
-						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-						title: '数字化转型之亢龙有悔',
-						num: '322',
-					},
-					{
-						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-						title: '数字化转型之亢龙有悔',
-						num: '322',
-					},
-					{
-						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-						title: '数字化转型之亢龙有悔',
-						num: '322',
-					},
-					{
-						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-						title: '数字化转型之亢龙有悔',
-						num: '322',
-					},
 				],
+				id: '',
+				paramsCourse: {
+					page: 1,
+					id: '',
+					teacher_id: '',
+				},
 			};
+		},
+		onLoad(options) {
+			let that = this;
+			that.id = options.id;
+			uni.$u.api.courseDetail({
+					params: {
+						id: that.id
+					}
+				}).then(res => {
+					that.info = res.data;
+					that.getVideoList();
+					uni.$u.mpShare.title = that.info.course_name;
+					uni.$u.mpShare.path = 'pages/course/info?id='+that.info.id+'&invite_id='+that.vuex_user.membe_id;
+				})
+				.catch(err => {})
+		},
+		methods:{
+			buy() {
+				
+			},
+			getVideoList() {
+				
+				let that = this;
+				uni.$u.api.courseList({
+						params: that.paramsCourse
+					}).then(res => {
+						console.log(res)
+						that.videoList = res.data.data;
+					})
+					.catch(err => {
+					})
+			},
+			playVideo(){
+				if(this.info.sale_price>0&&!this.info.isBuy){
+					this.$u.util.showErr('请先购买再观看')
+					return false;
+				}
+				this.play = true;
+				uni.$u.api.updateStudyNums({params: {id:this.id}}).then(res=>{
+					console.log(res);
+				})
+			}
 		}
 	}
 </script>
@@ -75,13 +106,58 @@
 			color: #a6a6a6;
 			font-size: 24rpx;
 			margin-top: 12rpx;
+			flex-direction: row;
+			justify-content: space-between;
+			text:last-child {
+				color:#c00;
+			}
 		}
 	}
 	
-	.video-box {
+	.video-list-box {
 		padding: 24rpx;
 		.videl-else {
 			margin-bottom: 16rpx;
+		}
+	}
+	
+	.image-box {
+		position: relative;
+		.mask {
+			left: 0;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			position: absolute;
+			background-color: #000000;
+			opacity: 0.5;
+			z-index: 9;
+			pointer-events: none;
+		}
+		.play-btn {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 999;
+			
+		}
+	}
+	
+	.bottom-button-box {
+		position: fixed;
+		width: 100%;
+		bottom: 0;
+		left: 0;
+		z-index: 999;
+		background-color: #ffffff;
+	
+		.bottom-button-group {
+			flex-direction: row;
+	
+			.u-button--square {
+				border-radius: 0;
+			}
 		}
 	}
 </style>

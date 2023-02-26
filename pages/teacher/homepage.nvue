@@ -1,12 +1,13 @@
 <template>
 	<div>
 		<u-sticky bgColor="#fff">
-		<u-tabs :list="listTab" @click="clickTab"></u-tabs>
+			<u-tabs :list="listTab" @click="clickTab"></u-tabs>
 		</u-sticky>
 		<template v-if="current==0">
 			<view class="teacher-container">
 				<view class="teacher-top">
-					<u-avatar shape="circle" size="100" :src="info.avatar_url" customStyle="margin: 0px 25px 5px 10px"></u-avatar>
+					<u-avatar shape="circle" size="100" :src="info.avatar_url" customStyle="margin: 0px 25px 5px 10px">
+					</u-avatar>
 					<view class="teacher-top-title">
 						<view class="teacher-name">{{ info.teacher_name }}</view>
 						<text v-for="(item_title, idx) in info.title" :key="idx">{{ item_title }}</text>
@@ -14,7 +15,9 @@
 				</view>
 				<view class="item-box teacher-mark">
 					<view class="item-title">评分：</view>
-					<view class="item-value"><u-rate :value="info.mark" readonly activeColor="#f9ae3d"></u-rate></view>
+					<view class="item-value">
+						<u-rate :value="info.mark" readonly activeColor="#f9ae3d"></u-rate>
+					</view>
 				</view>
 				<view class="item-box">
 					<view class="item-title">履历：</view>
@@ -27,370 +30,451 @@
 				<view class="item-box teacher-skill">
 					<view class="item-title">擅长：</view>
 					<view class="item-value">
-						<u-scroll-list
-						indicatorColor="#fff0f0"
-						indicatorActiveColor="#f56c6c">
-							<view class="scroll-list" style="flex-direction: row;"><u-tag v-for="(item_item, index_item) in info.service" :key="index_item" :text="item_item.name" plain size="mini" type="warning"></u-tag></view>
+						<u-scroll-list indicatorColor="#fff0f0" indicatorActiveColor="#f56c6c">
+							<view class="scroll-list" style="flex-direction: row;">
+								<u-tag v-for="(item_item, index_item) in info.service" :key="index_item"
+									:text="item_item.name" plain size="mini" type="warning"></u-tag>
+							</view>
 						</u-scroll-list>
 					</view>
 				</view>
 				<view class="teacher-bottom">可免费约聊时长：{{ info.duration }} 分钟</view>
 			</view>
 			<view class="button-group">
-				<u-button v-for="(item,index) in info.service_type" :key="index" :type="item.id==1?'primary':item.id==2?'warning':'error'" :text="'我要'+item.name" @click="order(item)"></u-button>
+				<u-button v-for="(item,index) in info.service_type" :key="index"
+					:type="item.id==1?'primary':item.id==2?'warning':'error'" :text="'我要'+item.name"
+					@click="order(item)"></u-button>
 			</view>
 			<view class="comment-box" v-for="(item,index) in info.comment" :key="index">
 				<view class="comment-top">
 					<view class="comment-top-left">
-						<u-avatar shape="circle" size="20" :src="info.avatar_url" customStyle="margin: 0px 5px 0px 0px"></u-avatar>
+						<u-avatar shape="circle" size="20" :src="info.avatar_url" customStyle="margin: 0px 5px 0px 0px">
+						</u-avatar>
 						{{ info.nick_name }}
 					</view>
 					<view class="comment-top-right">{{ info.create_time }}</view>
 				</view>
 				<view class="comment-content">{{ info.content }}</view>
 			</view>
-			<view class="comment-view-all" @click="viewAllComment">{{ info.comment.length >0 ? '查看全部评价' : '暂无评价' }}</view>
+			<view class="comment-view-all" @click="viewAllComment">{{ info.comment.length >0 ? '查看全部评价' : '暂无评价' }}
+			</view>
 		</template>
 		<template v-if="current==1">
-			
+
 			<view class="comment-box comment-item" v-for="(item, index) in commentList" :key="index">
 				<view class="comment-top">
 					<view class="comment-top-left">
-						<u-avatar shape="circle" size="20" :src="item.avatar_url" customStyle="margin: 0px 5px 0px 0px"></u-avatar>
-						{{ item.nick_name }}
+						<u-avatar shape="circle" size="20" :src="item.pic" customStyle="margin: 0px 5px 0px 0px">
+						</u-avatar>
+						{{ item.nickname }}
 					</view>
 					<view class="comment-top-right">{{ item.create_time }}</view>
 				</view>
 				<view class="comment-content">{{ item.content }}</view>
 			</view>
+			<u-empty
+				text='暂无评价'
+				:show="commentList.length==0"
+				mode="comment"
+				:icon="commentPng"
+			>
+			</u-empty>
 		</template>
 		<template v-if="current==2">
 			<view class="video-box">
 				<video-list :listData="videoList"></video-list>
+				<u-empty
+					text='暂无课程'
+					:show="videoList.length==0"
+					mode="list"
+					:icon="listPng"
+				>
+				</u-empty>
 			</view>
 		</template>
 		<view class="bottom-button-box">
 			<view class="bottom-button-group">
-				<u-button icon="share" type="primary" text="推荐好友"></u-button>
-				<u-button icon="coupon" type="warning" text="生成海报"></u-button>
+				<u-button icon="share" type="primary" openType="share" text="推荐好友"></u-button>
+				<u-button icon="coupon" type="warning" text="生成海报" @click="generatePoster"></u-button>
 			</view>
 			<u-safe-bottom></u-safe-bottom>
 		</view>
 		<u-modal :show="show" :closeOnClickOverlay="true" title="温馨提示" :content="content">
-			<u-button
-				slot="confirmButton"
-				:text="confirmText"
-				type="primary"
-				shape="circle"
-				@click="confirmClick"
-			></u-button>
+			<u-button slot="confirmButton" :text="confirmText" type="primary" shape="circle" @click="confirmClick">
+			</u-button>
 		</u-modal>
+		<u-popup :show="showPoster" :closeable="true" @close="closeshowPoster">
+			<view class="show-box">
+				<u--image :showLoading="true" mode="aspectFit" :src="poster" height="360px"></u--image>
+				<text>保存图片到相册 分享到朋友圈吧</text>
+				<u-button type="warning" text="保存到相册" @click="savePhoto"></u-button>
+			</view>
+		</u-popup>
 	</div>
 </template>
 
 <script>
-export default {
-	data() {
-		return {
-			modalType: 0,
-			show: false,
-			current: 0,
-			confirmText: '去登录',
-			content: '您还没有登录,暂时无法进行下单',
-			commentList: [
-				{
-					avatar_url: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-					nick_name: '张**',
-					create_time: '2022-12-12',
-					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
-				},
-				{
+	export default {
+		data() {
+			return {
+				poster: '',
+				commentPng: '',
+				listPng: '',
+				modalType: 0,
+				showPoster: false,
+				show: false,
+				current: 0,
+				confirmText: '去登录',
+				content: '您还没有登录,暂时无法进行下单',
+				commentList: [
+				],
+				videoList: [
+				],
+				info: {
 					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					nick_name: '张**',
-					create_time: '2022-12-12',
-					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
+					teacher_name: '刘老师',
+					title: '',
+					resume: '',
+					honor: '',
+					service: [],
+					service_type: [],
+					mark: 0,
+					duration: 0,
+					comment: [],
 				},
-				{
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					nick_name: '张**',
-					create_time: '2022-12-12',
-					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
+				listTab: [{
+						name: '老师简介'
+					},
+					{
+						name: '用户口碑'
+					},
+					{
+						name: '视频课程'
+					}
+				],
+				params: {
+					page: 1,
+					teacher_id: '',
 				},
-				{
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					nick_name: '张**',
-					create_time: '2022-12-12',
-					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
-				},
-				{
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					nick_name: '张**',
-					create_time: '2022-12-12',
-					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
-				},
-				{
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					nick_name: '张**',
-					create_time: '2022-12-12',
-					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
-				},
-				{
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					nick_name: '张**',
-					create_time: '2022-12-12',
-					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
-				},
-				{
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					nick_name: '张**',
-					create_time: '2022-12-12',
-					content: '刘老师非常敬业，也非常专业，在他的帮助下，我收获良多，感觉思想一下子通畅'
-				},
-			],
-			videoList: [
-				{
-					pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-					title: '数字化转型之亢龙有悔',
-					num: '322',
-				},
-				{
-					pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-					title: '数字化转型之亢龙有悔',
-					num: '322',
-				},
-				{
-					pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-					title: '数字化转型之亢龙有悔',
-					num: '322',
-				},
-				{
-					pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-					title: '数字化转型之亢龙有悔',
-					num: '322',
-				},
-				{
-					pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-					title: '数字化转型之亢龙有悔',
-					num: '322',
-				},
-				{
-					pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-					title: '数字化转型之亢龙有悔',
-					num: '322',
-				},
-				{
-					pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-					title: '数字化转型之亢龙有悔',
-					num: '322',
-				},
-			],
-			info: {
-				avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-				teacher_name: '刘老师',
-				title: '',
-				resume: '',
-				honor: '',
-				service: [],
-				service_type: [],
-				mark: 0,
-				duration: 0,
-				comment: [],
-			},
-			listTab: [
-				{
-					name: '老师简介'
-				},
-				{
-					name: '用户口碑'
-				},
-				{
-					name: '视频课程'
+				paramsCourse: {
+					page: 1,
+					teacher_id: '',
 				}
-			]
-		};
-	},
-	onLoad(options) {
-		uni.showLoading({
-			title: '数据加载中...'
-		})
-		let that=this;
-		uni.$u.api.teacherHome({ params: {id: options.id} }).then(res=>{
-			console.log(res)
-			that.info = res.data.info;
-			uni.hideLoading()
-		})
-		.catch(err=>{
-			uni.hideLoading()
-			that.$u.util.showErr('头像上传失败');
-		})
-	},
-	methods:{
-		confirmClick() {
-			this.show = false;
-			if(this.modalType == 0) {
-				uni.$u.route({
-					url: '/pages/public/login'
-				})
-			}
-			else if(this.modalType == 1) {
-				uni.$u.route({
-					url: '/pages/my/verify',
-					params: { type: 2 }
-				})
-			}
-			else if(this.modalType == 2) {
-				uni.$u.route({
-					url: '/pages/my/perfection'
-				})
-			}
+			};
 		},
-		order(item) {
-			if(!this.vuex_token) {
-				this.modalType = 0;
-				this.show = true;
-				this.content = '您还没有登录,暂时无法进行下单';
-				this.confirmText = '去登录';
-				return false;
-			}
-			if(!this.vuex_user.mobile) {
-				this.modalType = 2;
-				this.show = true;
-				this.content = '请先完善信息再下单';
-				this.confirmText = '去完善';
-				return false;
-			}
-			
+		onLoad(options) {
+			this.commentPng = this.$configs.staticUrl + '/uploads/api/icon/comment.png';
+			this.listPng = this.$configs.staticUrl + '/uploads/api/icon/list.png';
 			uni.showLoading({
-				title: '数据请求中...'
+				title: '数据加载中...'
 			})
-			let that=this;
-			uni.$u.api.checkUserOrder({ params: {
-				teacher_id: item.id
-			}}).then(res=>{
-				uni.hideLoading()
-				if(res.msg !== '') {
-					that.modalType = 1;
-					that.show = true;
-					that.confirmText = '去认证';
-					that.content = res.msg;
+			let that = this;
+			uni.$u.api.teacherHome({
+					params: {
+						id: options.id,
+						invite_id: options.invite_id?options.invite_id:0,
+					}
+				}).then(res => {
+					console.log(res)
+					that.info = res.data.info;
+					that.params.teacher_id = that.info.id;
+					that.paramsCourse.teacher_id = that.info.id;
+					uni.$u.mpShare.title = '企帮通名师推荐';
+					uni.$u.mpShare.path = 'pages/teacher/homepage?id='+that.info.id+'&invite_id='+that.vuex_user.membe_id;
+					uni.hideLoading()
+				})
+				.catch(err => {
+					uni.hideLoading()
+					that.$u.util.showErr('头像上传失败');
+				})
+		},
+		methods: {
+			closeshowPoster() {
+				this.showPoster = false;
+			},
+			savePhoto() {
+				let that = this
+				uni.downloadFile({
+					url: that.poster,
+					success: function(res) {
+						uni.saveImageToPhotosAlbum({
+						 filePath: res.tempFilePath,
+							success(res) {
+								uni.showToast({
+									title: '保存成功',
+									icon: "success",
+									duration: 1000
+								})
+							},
+							fail(err) {
+								console.log(err);
+							}
+						})
+					}
+				})
+			},
+			generatePoster() {
+				this.showPoster = true;
+				uni.showLoading({
+					title: '生成中...'
+				})
+				let that = this;
+				uni.$u.api.generatePoster({
+						params: {
+							id: that.info.id
+						}
+					}).then(res => {
+						console.log(res)
+						that.poster = res.data;
+						uni.hideLoading()
+					})
+					.catch(err => {
+						uni.hideLoading()
+						that.$u.util.showErr('生成失败');
+					})
+
+			},
+			confirmClick() {
+				this.show = false;
+				if (this.modalType == 0) {
+					uni.$u.route({
+						url: '/pages/public/login'
+					})
+				} else if (this.modalType == 1) {
+					uni.$u.route({
+						url: '/pages/my/verify',
+						params: {
+							type: 2
+						}
+					})
+				} else if (this.modalType == 2) {
+					uni.$u.route({
+						url: '/pages/my/perfection'
+					})
+				}
+			},
+			order(item) {
+				if (!this.vuex_token) {
+					this.modalType = 0;
+					this.show = true;
+					this.content = '您还没有登录,暂时无法进行下单';
+					this.confirmText = '去登录';
 					return false;
 				}
-				that.goPage('/pages/teacher/order', { company_name: res.data.company_name, service_type_id:item.id, service_type_name:item.name, teacher_id: that.info.id, teacher_name: that.info.teacher_name })
-			})
-			.catch(err=>{
-				uni.hideLoading()
-				that.$u.util.showErr(err.msg);
-			})
-		},
-		viewAllComment() {
-			if(this.info.comment.length>0) {
-				this.current = 1
+				if (!this.vuex_user.mobile) {
+					this.modalType = 2;
+					this.show = true;
+					this.content = '请先完善信息再下单';
+					this.confirmText = '去完善';
+					return false;
+				}
+
+				uni.showLoading({
+					title: '数据请求中...'
+				})
+				let that = this;
+				uni.$u.api.checkUserOrder({
+						params: {
+							teacher_id: item.id
+						}
+					}).then(res => {
+						uni.hideLoading()
+						if (res.msg !== '') {
+							that.modalType = 1;
+							that.show = true;
+							that.confirmText = '去认证';
+							that.content = res.msg;
+							return false;
+						}
+						that.goPage('/pages/teacher/order', {
+							company_name: res.data.company_name,
+							service_type_id: item.id,
+							service_type_name: item.name,
+							teacher_id: that.info.id,
+							teacher_name: that.info.teacher_name
+						})
+					})
+					.catch(err => {
+						uni.hideLoading()
+						that.$u.util.showErr(err.msg);
+					})
+			},
+			viewAllComment() {
+				if (this.info.comment.length > 0) {
+					this.current = 1
+				}
+			},
+			clickTab(item) {
+				this.current = item.index
+				if(this.current==1) {
+					if(this.commentList.length==0) {
+						this.params.page = 1;
+						this.getCommentList()
+					}
+				}
+				if(this.current==2) {
+					if(this.videoList.length==0) {
+						this.paramsCourse.page = 1;
+						this.getVideoList()
+					}
+				}
+				console.log(item)
+			},
+			getCommentList() {
+				
+				let that = this;
+				uni.$u.api.appraiseList({
+						params: that.params
+					}).then(res => {
+						console.log(res)
+						that.commentList = res.data.data;
+					})
+					.catch(err => {
+						that.$u.util.showErr('头像上传失败');
+					})
+			},
+			getVideoList() {
+				
+				let that = this;
+				uni.$u.api.courseList({
+						params: that.paramsCourse
+					}).then(res => {
+						console.log(res)
+						that.videoList = res.data.data;
+					})
+					.catch(err => {
+						that.$u.util.showErr('头像上传失败');
+					})
+			},
+			goPage(path, params) {
+				uni.$u.route({
+					url: path,
+					params: params
+				})
 			}
-		},
-		clickTab(item) {
-			this.current = item.index
-			console.log(item)
-		},
-		goPage(path, params) {
-			uni.$u.route({
-				url: path,
-				params: params
-			})
 		}
-	}
-};
+	};
 </script>
 
 <style lang="scss">
-.teacher-container {
-	padding: 24rpx;
-	background-color: #f5f5f5;
-	.item-box {
-		flex-direction: row;
-		margin-top: 20rpx;
-		.item-value {
-			flex: 1;
-		}
-	}
-	.teacher-top {
-		margin-top: 20rpx;
-		flex-direction: row;
-		.teacher-top-title {
-			.teacher-name {
-				margin-bottom: 20rpx;
-				font-weight: bold;
-				font-size: 36rpx;
-			}
-			font-size: 32rpx;
-			text {
-				font-size: 24rpx;
-				margin-top: 8rpx;
-			}
-		}
-	}
+	.teacher-container {
+		padding: 24rpx;
+		background-color: #f5f5f5;
 
-	.teacher-skill {
-		margin-top: 20rpx;
-		padding-bottom: 20rpx;
-		flex-direction: row;
-		.item-value {
+		.item-box {
 			flex-direction: row;
-			.scroll-list {
-				gap: 20rpx;
+			margin-top: 20rpx;
+
+			.item-value {
+				flex: 1;
 			}
+		}
+
+		.teacher-top {
+			margin-top: 20rpx;
+			flex-direction: row;
+
+			.teacher-top-title {
+				.teacher-name {
+					margin-bottom: 20rpx;
+					font-weight: bold;
+					font-size: 36rpx;
+				}
+
+				font-size: 32rpx;
+
+				text {
+					font-size: 24rpx;
+					margin-top: 8rpx;
+				}
+			}
+		}
+
+		.teacher-skill {
+			margin-top: 20rpx;
+			padding-bottom: 20rpx;
+			flex-direction: row;
+
+			.item-value {
+				flex-direction: row;
+
+				.scroll-list {
+					gap: 20rpx;
+				}
+			}
+		}
+
+		.teacher-bottom {
+			text-align: center;
+			margin-top: 20rpx;
 		}
 	}
 
-	.teacher-bottom {
+	.button-group {
+		flex-direction: row;
+		gap: 20rpx;
+		padding: 32rpx;
+	}
+
+	.comment-box {
+		padding: 24rpx;
+		background-color: #f5f5f5;
+		margin: 24rpx;
+		border-radius: 20rpx;
+
+		.comment-top {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+			font-size: 24rpx;
+
+			.comment-top-left {
+				flex-direction: row;
+			}
+		}
+
+		.comment-content {
+			margin-top: 20rpx;
+			font-size: 28rpx;
+		}
+	}
+
+	.comment-item {
+		margin-bottom: 0;
+	}
+
+	.comment-view-all {
 		text-align: center;
-		margin-top: 20rpx;
 	}
-}
-.button-group {
-	flex-direction: row;
-	gap: 20rpx;
-	padding: 32rpx;
-}
-.comment-box {
-	padding: 24rpx;
-	background-color: #f5f5f5;
-	margin: 24rpx;
-	border-radius: 20rpx;
-	.comment-top {
-		flex-direction: row;
-		justify-content: space-between;
-		align-items: center;
-		font-size: 24rpx;
-		.comment-top-left {
+
+	.bottom-button-box {
+		position: fixed;
+		width: 100%;
+		bottom: 0;
+		left: 0;
+		z-index: 999;
+		background-color: #ffffff;
+
+		.bottom-button-group {
 			flex-direction: row;
+
+			.u-button--square {
+				border-radius: 0;
+			}
 		}
 	}
-	.comment-content {
-		margin-top: 20rpx;
-		font-size: 28rpx;
+
+	.video-box {
+		padding: 24rpx;
 	}
-}
-.comment-item {
-	margin-bottom: 0;
-}
-.comment-view-all {
-	text-align: center;
-}
-.bottom-button-box {
-	position: fixed;
-	width: 100%;
-	bottom: 0;
-	left: 0;
-	z-index: 999;
-	background-color: #ffffff;
-	.bottom-button-group {
-		flex-direction: row;
-		.u-button--square {
-			border-radius: 0;
+
+	.show-box {
+		padding: 68rpx 32rpx 0 32rpx;
+		align-items: center;
+
+		text {
+			margin-top: 32rpx;
+			margin-bottom: 32rpx;
 		}
 	}
-}
-.video-box {
-	padding: 24rpx;
-}
 </style>

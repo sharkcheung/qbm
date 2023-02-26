@@ -1,13 +1,12 @@
 <template>
-	<view>
+	<view style="height: 100%;display: flex;flex-direction: column;justify-content: space-between;">
 		<u-sticky bgColor="#fff">
-			<view class="sort-box">
-				<u-tag text="默认排序" size="mini" :plain="sortIndex==0 ? false : true" type="warning" @click="change(0)"></u-tag> <u-tag text="按评分" :plain="sortIndex==1 ? false : true" size="mini" type="warning" @click="change(1)"></u-tag> <u-tag text="按约聊次数" :plain="sortIndex==2 ? false : true" @click="change(2)" size="mini" type="warning"></u-tag>
-			</view>
+			<u-tabs :list="serviceList" @click="changeService"></u-tabs>
 		</u-sticky>
 		<view class="teacher-container">
 			<teacher-list :listData="indexList"></teacher-list>
 		</view>
+		
 		<u-tabbar :value="currentTab" :placeholder="false">
 			<u-tabbar-item v-for="(item,index) in tabList" @click="changeTab(item)" :text="item.name" :icon="item.icon" :key="index"></u-tabbar-item>
 		</u-tabbar>
@@ -18,101 +17,70 @@
 	export default {
 		data() {
 			return {
-				sortIndex: 0,
-				indexList: [{
-						id: 1,
-						avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-						teacher_name: '刘老师',
-						title: [
-							'原百度华北战区总经理',
-							'原某上市公司互联网顾问'
-						],
-						item: [
-							'全域规划',
-							'私域运营',
-							'活动策划',
-							'文案创意'
-						],
-						mark: 4,
-						type: [
-							1, 2, 3, 4
-						],
-						duration: 60
-					},
-					{
-						id: 2,
-						avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-						teacher_name: '刘老师',
-						title: [
-							'原百度华北战区总经理',
-							'原某上市公司互联网顾问'
-						],
-						item: [
-							'全域规划',
-							'私域运营',
-							'活动策划',
-							'文案创意'
-						],
-						mark: 4,
-						type: [
-							1, 2, 3, 4
-						],
-						duration: 60
-					},
-					{
-						id: 3,
-						avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-						teacher_name: '刘老师',
-						title: [
-							'原百度华北战区总经理',
-							'原某上市公司互联网顾问'
-						],
-						item: [
-							'全域规划',
-							'私域运营',
-							'活动策划',
-							'文案创意'
-						],
-						mark: 4,
-						type: [
-							1, 2, 3, 4
-						],
-						duration: 60
-					},
-					{
-						id: 4,
-						avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-						teacher_name: '刘老师',
-						title: [
-							'原百度华北战区总经理',
-							'原某上市公司互联网顾问'
-						],
-						item: [
-							'全域规划',
-							'私域运营',
-							'活动策划',
-							'文案创意'
-						],
-						mark: 4,
-						type: [
-							1, 2, 3, 4
-						],
-						duration: 60
-					},
+				serviceList: [
 				],
-				tabList: [
-				],
+				tabList: [],
+				sortField: '',
 				currentTab: 1,
+				sortIndex: 0,
+				indexList: [
+				],
+				params: {
+					page: 1,
+					order: '',
+					sort: '',
+					type: '',
+				},
 			};
 		},
 		created() {
-			this.tabList = this.$configs.tabList;
+			this.tabList = this.$configs.tabList;	
+			this.getServiceList();
 		},
-		methods:{
+		onLoad(options) {
+			this.params.type = options.type;
+			this.getTeacherList();
+		},
+		methods: {
+			changeService(e) {
+				console.log(e);
+				this.params.type = e.id;
+				this.params.page = 1;
+				if(e.id == 0) {
+					this.params.sort = 'mark';
+					this.params.order = 'desc';
+				}
+				else{
+					this.params.sort = '';
+					this.params.order = '';
+				}
+				this.getTeacherList()
+			},
+			getServiceList() {
+				let that=this;
+				uni.$u.api.serviceAll().then(res=>{
+					console.log(res)
+					let arr = [ { id: 0, name: '推荐' } ];
+					that.serviceList = arr.concat(res.data)
+				})
+				.catch(err=>{
+					uni.hideLoading()
+				})
+			},
 			changeTab(item) {
 				uni.$u.route({
 					type: 'switchTab',
 					url: item.path
+				})
+			},
+			getTeacherList() {
+				let that=this;
+				uni.$u.api.teacherList({ params: that.params}).then(res=>{
+					console.log(res)
+					that.indexList = res.data.data
+				})
+				.catch(err=>{
+					uni.hideLoading()
 				})
 			},
 		}
@@ -121,7 +89,9 @@
 
 <style lang="scss">
 	.teacher-container {
-		padding: 24rpx;
+		padding: 0 24rpx;
+		overflow: scroll;
+		flex: 1;
 	}
 	.sort-box {
 		padding: 24rpx;
