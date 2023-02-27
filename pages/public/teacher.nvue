@@ -1,10 +1,11 @@
 <template>
-	<view style="height: 100%;display: flex;flex-direction: column;justify-content: space-between;">
+	<view>
 		<u-sticky bgColor="#fff">
 			<u-tabs :list="serviceList" @click="changeService"></u-tabs>
 		</u-sticky>
-		<view class="teacher-container">
-			<teacher-list :listData="indexList"></teacher-list>
+		<view class="teacher-container" :style="{marginBottom: $u.util.isIphoneX() ? '168rpx' : '120rpx' }">
+			<teacher-list :listData="teacherList"></teacher-list>
+			<u-loadmore :status="status" marginBottom="18" @loadmore="loadmore"/>
 		</view>
 		
 		<u-tabbar :value="currentTab" :placeholder="false">
@@ -17,13 +18,14 @@
 	export default {
 		data() {
 			return {
+				status: 'loadmore',
 				serviceList: [
 				],
 				tabList: [],
 				sortField: '',
 				currentTab: 1,
 				sortIndex: 0,
-				indexList: [
+				teacherList: [
 				],
 				params: {
 					page: 1,
@@ -41,9 +43,33 @@
 			this.params.type = options.type;
 			this.getTeacherList();
 		},
+		onPullDownRefresh() {
+			console.log('refresh');
+			this.params.page = 1;
+			this.status = 'loadmore';
+			this.getTeacherList();
+			setTimeout(function () {
+				uni.stopPullDownRefresh();
+			}, 1000);
+		},
+		onReachBottom() {
+			if(this.status !== 'noMore') {
+				this.status = 'loading';
+				this.params.page++;
+				this.getTeacherList()
+			}
+		},
 		methods: {
+			loadmore() {
+				if(this.status !== 'noMore') {
+					this.status = 'loading';
+					this.params.page++;
+					this.getTeacherList()
+				}
+			},
 			changeService(e) {
 				console.log(e);
+				this.status = 'loadmore';
 				this.params.type = e.id;
 				this.params.page = 1;
 				if(e.id == 0) {
@@ -77,7 +103,19 @@
 				let that=this;
 				uni.$u.api.teacherList({ params: that.params}).then(res=>{
 					console.log(res)
-					that.indexList = res.data.data
+					if(that.teacherList.length>0) {
+						that.teacherList = that.teacherList.concat(res.data.data);
+					}
+					else {
+						that.teacherList = res.data.data;
+					}
+					if(res.data.current_page == res.data.last_page) {
+						that.status = 'noMore';
+					}
+					else {
+						that.status = 'loadmore';
+					}
+					console.log(that.status)
 				})
 				.catch(err=>{
 					uni.hideLoading()

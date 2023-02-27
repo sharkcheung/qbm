@@ -11,19 +11,22 @@
 		{
 			"path": "pages/public/home",
 			"style": {
-				"navigationBarTitleText": "首页"
+				"navigationBarTitleText": "首页",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
 			"path": "pages/public/teacher",
 			"style": {
-				"navigationBarTitleText": "明星老师"
+				"navigationBarTitleText": "明星老师",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
 			"path": "pages/public/course",
 			"style": {
-				"navigationBarTitleText": "精选课程"
+				"navigationBarTitleText": "精选课程",
+				"enablePullDownRefresh": true
 			}
 		}, {
 			"path": "pages/public/my",

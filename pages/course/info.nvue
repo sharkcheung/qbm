@@ -10,12 +10,14 @@
 		</view>
 		<view class="video-intro">
 			<view class="video-title">{{ info.course_name }}</view>
+			<view class="video-teacher" @click="goPage('/pages/teacher/homepage')">主讲老师：{{ info.teacher.teacher_name }}</view>
 			<view class="video-tip"><text>{{ info.views||0 }}人已学</text><text>{{ info.sale_price ? info.sale_price : '免费' }}</text></view>
 		</view>
 		<u-gap height="10" bgColor="#efefef"></u-gap>
-		<view class="video-list-box">
+		<view class="video-list-box" :style="{marginBottom: $u.util.isIphoneX() ? '168rpx' : '120rpx' }">
 			<view class="videl-else">其他课程</view>
-			<video-list :listData="videoList"></video-list>
+			<video-list :listData="courseList"></video-list>
+			<u-loadmore :status="status" marginBottom="18" @loadmore="loadmore"/>
 		</view>
 		<view class="bottom-button-box">
 			<view class="bottom-button-group">
@@ -31,6 +33,7 @@
 	export default {
 		data() {
 			return {
+				status: 'loadmore',
 				play: false,
 				info: {
 					title: '',
@@ -41,7 +44,7 @@
 					isBuy: true,
 				},
 				
-				videoList: [
+				courseList: [
 				],
 				id: '',
 				paramsCourse: {
@@ -60,27 +63,67 @@
 					}
 				}).then(res => {
 					that.info = res.data;
-					that.getVideoList();
+					that.paramsCourse.teacher_id = that.info.teacher_id
+					that.getCourseList();
 					uni.$u.mpShare.title = that.info.course_name;
 					uni.$u.mpShare.path = 'pages/course/info?id='+that.info.id+'&invite_id='+that.vuex_user.membe_id;
 				})
 				.catch(err => {})
 		},
+		onPullDownRefresh() {
+			console.log('refresh');
+			this.paramsCourse.page = 1;
+			this.status = 'loadmore';
+			this.getCourseList();
+			setTimeout(function () {
+				uni.stopPullDownRefresh();
+			}, 1000);
+		},
+		onReachBottom() {
+			if(this.status !== 'noMore') {
+				this.status = 'loading';
+				this.paramsCourse.page++;
+				this.getCourseList()
+			}
+		},
 		methods:{
+			loadmore() {
+				if(this.status !== 'noMore') {
+					this.status = 'loading';
+					this.params.page++;
+					this.getCourseList()
+				}
+			},
+			goPage(url) {
+				uni.$u.route({
+					url: url,
+					params: { id: this.info.teacher_id }
+				})
+			},
 			buy() {
 				
 			},
-			getVideoList() {
-				
-				let that = this;
-				uni.$u.api.courseList({
-						params: that.paramsCourse
-					}).then(res => {
-						console.log(res)
-						that.videoList = res.data.data;
-					})
-					.catch(err => {
-					})
+			getCourseList() {
+				let that=this;
+				uni.$u.api.courseList({ params: that.paramsCourse}).then(res=>{
+					console.log(res)
+					if(that.courseList.length>0) {
+						that.courseList = that.courseList.concat(res.data.data);
+					}
+					else {
+						that.courseList = res.data.data;
+					}
+					if(res.data.current_page == res.data.last_page) {
+						that.status = 'noMore';
+					}
+					else {
+						that.status = 'loadmore';
+					}
+					console.log(that.status)
+				})
+				.catch(err=>{
+					uni.hideLoading()
+				})
 			},
 			playVideo(){
 				if(this.info.sale_price>0&&!this.info.isBuy){
@@ -111,6 +154,11 @@
 			text:last-child {
 				color:#c00;
 			}
+		}
+		.video-teacher {
+			color: #565656;
+			font-size: 28rpx;
+			margin-top: 12rpx;
 		}
 	}
 	

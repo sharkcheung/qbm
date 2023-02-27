@@ -4,6 +4,7 @@
 			<u--image :showLoading="true" radius="4" :src="item.pic" width="100%" height="180rpx"></u--image>
 			<view class="video-title">{{ item.course_name }}</view>
 			<view class="video-study-num"><text>{{ item.views||0 }}人已学</text><text>{{ item.sale_price ? item.sale_price : '免费' }}</text></view>
+			<text v-if="showTeacher" class="teacher-name">{{ item.teacher.teacher_name}}</text>
 		</view>
 	</view>
 </template>
@@ -12,7 +13,11 @@
 	export default {
 		name:"video-list",
 		props: {
-			listData: Array
+			listData: Array,
+			showTeacher: {
+				type: Boolean,
+				default: false
+			},
 		},
 		data() {
 			return {
@@ -39,6 +44,7 @@
 		justify-content: space-between;
 		.video-item {
 			width: calc(50% - 10rpx);
+			position: relative;
 			.video-title {
 				margin-top: 12rpx;
 				font-size: 28rpx;
@@ -59,6 +65,16 @@
 				}
 			}
 			margin-bottom: 24rpx;
+			.teacher-name {
+				position: absolute;
+				left: 16rpx;
+				background: rgba(0,0,0,0.4);
+				top: 16rpx;
+				color: #efecec;
+				font-size: 24rpx;
+				padding: 8rpx 16rpx;
+				border-radius: 10rpx;
+			}
 		}
 	}
 </style>

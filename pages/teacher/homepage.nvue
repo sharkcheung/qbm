@@ -82,14 +82,15 @@
 		</template>
 		<template v-if="current==2">
 			<view class="video-box">
-				<video-list :listData="videoList"></video-list>
+				<video-list :listData="courseList"></video-list>
 				<u-empty
 					text='暂无课程'
-					:show="videoList.length==0"
+					:show="courseList.length==0"
 					mode="list"
 					:icon="listPng"
 				>
 				</u-empty>
+				<u-loadmore v-if="courseList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
 			</view>
 		</template>
 		<view class="bottom-button-box">
@@ -117,6 +118,8 @@
 	export default {
 		data() {
 			return {
+				status: 'loadmore',
+				statusComment: 'loadmore',
 				poster: '',
 				commentPng: '',
 				listPng: '',
@@ -128,11 +131,11 @@
 				content: '您还没有登录,暂时无法进行下单',
 				commentList: [
 				],
-				videoList: [
+				courseList: [
 				],
 				info: {
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					teacher_name: '刘老师',
+					avatar_url: '',
+					teacher_name: '',
 					title: '',
 					resume: '',
 					honor: '',
@@ -156,11 +159,43 @@
 					page: 1,
 					teacher_id: '',
 				},
-				paramsCourse: {
+				paramsComment: {
 					page: 1,
 					teacher_id: '',
 				}
 			};
+		},
+		onPullDownRefresh() {
+			console.log('refresh');
+			if(this.current == 2) {
+				this.params.page = 1;
+				this.status = 'loadmore';
+				this.getCourseList();
+			}
+			if(this.current == 1) {
+				this.paramsComment.page = 1;
+				this.statusComment = 'loadmore';
+				this.getCommentList();
+			}
+			setTimeout(function () {
+				uni.stopPullDownRefresh();
+			}, 1000);
+		},
+		onReachBottom() {
+			if(this.current == 2) {
+				if(this.status !== 'noMore') {
+					this.status = 'loading';
+					this.params.page++;
+					this.getCourseList()
+				}
+			}
+			if(this.current == 1) {
+				if(this.statusComment !== 'noMore') {
+					this.statusComment = 'loading';
+					this.paramsComment.page++;
+					this.getCommentList()
+				}
+			}
 		},
 		onLoad(options) {
 			this.commentPng = this.$configs.staticUrl + '/uploads/api/icon/comment.png';
@@ -178,7 +213,7 @@
 					console.log(res)
 					that.info = res.data.info;
 					that.params.teacher_id = that.info.id;
-					that.paramsCourse.teacher_id = that.info.id;
+					that.paramsComment.teacher_id = that.info.id;
 					uni.$u.mpShare.title = '企帮通名师推荐';
 					uni.$u.mpShare.path = 'pages/teacher/homepage?id='+that.info.id+'&invite_id='+that.vuex_user.membe_id;
 					uni.hideLoading()
@@ -189,6 +224,43 @@
 				})
 		},
 		methods: {
+			loadmore() {
+				if(this.status !== 'noMore') {
+					this.status = 'loading';
+					this.params.page++;
+					this.getCourseList()
+				}
+			},
+			loadmoreComment() {
+				if(this.statusComment !== 'noMore') {
+					this.statusComment = 'loading';
+					this.paramsComment.page++;
+					this.getCommentList()
+				}
+			},
+			getCourseList() {
+				let that=this;
+				uni.$u.api.courseList({ params: that.params}).then(res=>{
+					console.log(res)
+					if(that.courseList.length>0) {
+						that.courseList = that.courseList.concat(res.data.data);
+					}
+					else {
+						that.courseList = res.data.data;
+					}
+					if(res.data.current_page == res.data.last_page) {
+						that.status = 'noMore';
+					}
+					else {
+						that.status = 'loadmore';
+					}
+					console.log(that.status)
+				})
+				.catch(err=>{
+					that.status = 'loadmore';
+					that.$u.util.showErr('数据加载失败');
+				})
+			},
 			closeshowPoster() {
 				this.showPoster = false;
 			},
@@ -308,14 +380,14 @@
 				this.current = item.index
 				if(this.current==1) {
 					if(this.commentList.length==0) {
-						this.params.page = 1;
+						this.paramsComment.page = 1;
 						this.getCommentList()
 					}
 				}
 				if(this.current==2) {
-					if(this.videoList.length==0) {
-						this.paramsCourse.page = 1;
-						this.getVideoList()
+					if(this.courseList.length==0) {
+						this.params.page = 1;
+						this.getCourseList()
 					}
 				}
 				console.log(item)
@@ -324,26 +396,24 @@
 				
 				let that = this;
 				uni.$u.api.appraiseList({
-						params: that.params
+						params: that.paramsComment
 					}).then(res => {
-						console.log(res)
-						that.commentList = res.data.data;
+						if(that.commentList.length>0) {
+							that.commentList = that.commentList.concat(res.data.data);
+						}
+						else {
+							that.commentList = res.data.data;
+						}
+						if(res.data.current_page == res.data.last_page) {
+							that.statusComment = 'noMore';
+						}
+						else {
+							that.statusComment = 'loadmore';
+						}
 					})
 					.catch(err => {
-						that.$u.util.showErr('头像上传失败');
-					})
-			},
-			getVideoList() {
-				
-				let that = this;
-				uni.$u.api.courseList({
-						params: that.paramsCourse
-					}).then(res => {
-						console.log(res)
-						that.videoList = res.data.data;
-					})
-					.catch(err => {
-						that.$u.util.showErr('头像上传失败');
+						that.statusComment = 'loadmore';
+						that.$u.util.showErr('数据加载失败');
 					})
 			},
 			goPage(path, params) {
@@ -445,6 +515,7 @@
 
 	.comment-view-all {
 		text-align: center;
+		color:  #aaa;
 	}
 
 	.bottom-button-box {

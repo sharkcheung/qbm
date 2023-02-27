@@ -4,7 +4,7 @@
 			<u-swiper :list="bannerList" keyName="logo" :autoplay="false"></u-swiper>
 		</view>
 		<view class="notice-bar-container">
-			<u-notice-bar :text="noticeMsg"></u-notice-bar>
+			<u-notice-bar direction="column" duration="3000" @click="noticeClick" :text="noticeList"></u-notice-bar>
 		</view>
 		<u-gap height="10" bgColor="#efefef"></u-gap>
 		<view class="service-container">
@@ -19,8 +19,9 @@
 		<u-sticky bgColor="#fff">
 			<u-tabs :list="serviceList" @click="changeService"></u-tabs>
 		</u-sticky>
-		<view class="teacher-container">
+		<view class="teacher-container" :style="{marginBottom: $u.util.isIphoneX() ? '128rpx' : '80rpx' }">
 			<teacher-list :listData="teacherList"></teacher-list>
+			<u-loadmore :status="status" marginBottom="18"/>
 		</view>
 		<u-tabbar :value="vuex_currentTab" :placeholder="false">
 			<u-tabbar-item v-for="(item,index) in tabList" @click="changeTab(item)" :text="item.name" :icon="item.icon" :key="index"></u-tabbar-item>
@@ -33,6 +34,7 @@
 		options: { styleIsolation: 'shared' },
 		data() {
 			return {
+				status: 'loadmore',
 				tabList: [
 				],
 				current: 0,
@@ -55,7 +57,7 @@
 				],
 				serviceTypeList: [
 				],
-				noticeMsg: '热烈庆祝刘老师入驻',
+				noticeList: [],
 				bannerList: [
 				],
 				params: {
@@ -75,7 +77,29 @@
 			this.params.sort = 'mark';
 			this.getTeacherList();
 		},
+		onPullDownRefresh() {
+			console.log('refresh');
+			this.getHomeData();
+			this.status = 'loadmore';
+			this.params.page = 1;
+			this.params.order = 'desc';
+			this.params.sort = 'mark';
+			this.getTeacherList();
+			setTimeout(function () {
+				uni.stopPullDownRefresh();
+			}, 1000);
+		},
+		onReachBottom() {
+			if(this.status !== 'noMore') {
+				this.status = 'loading';
+				this.params.page++;
+				this.getTeacherList()
+			}
+		},
 		methods: {
+			noticeClick(index) {
+				console.log(index)
+			},
 			getHomeData() {
 				let that=this;
 				uni.$u.api.homeData().then(res=>{
@@ -83,6 +107,7 @@
 					that.serviceList = arr.concat(res.data.serviceAllList);
 					that.serviceTypeList = res.data.serviceTypeAllList;
 					that.bannerList = res.data.bannerList
+					that.noticeList = res.data.notice.map(item=>item.title);
 				})
 				.catch(err=>{
 					uni.hideLoading()
@@ -90,6 +115,8 @@
 			},
 			changeService(e) {
 				console.log(e);
+				this.teacherList = [];
+				this.status = 'loadmore';
 				this.params.type = e.id;
 				this.params.page = 1;
 				if(e.id == 0) {
@@ -127,7 +154,18 @@
 				let that=this;
 				uni.$u.api.teacherList({ params: that.params}).then(res=>{
 					console.log(res)
-					that.teacherList = res.data.data
+					if(that.teacherList.length>0) {
+						that.teacherList = that.teacherList.concat(res.data.data);
+					}
+					else {
+						that.teacherList = res.data.data;
+					}
+					if(res.data.current_page == res.data.last_page) {
+						that.status = 'noMore';
+					}
+					else {
+						that.status = 'loadmore';
+					}
 				})
 				.catch(err=>{
 					uni.hideLoading()

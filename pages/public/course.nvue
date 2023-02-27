@@ -1,7 +1,8 @@
 <template>
 	<view>
 		<view class="video-box">
-			<video-list :listData="videoList"></video-list>
+			<video-list :listData="courseList" :showTeacher="true"></video-list>
+			<u-loadmore :status="status" marginBottom="18" @loadmore="loadmore"/>
 		</view>
 		<u-tabbar :value="currentTab" :placeholder="false">
 			<u-tabbar-item v-for="(item,index) in tabList" @click="changeTab(item)" :text="item.name" :icon="item.icon" :key="index"></u-tabbar-item>
@@ -13,53 +14,70 @@
 	export default {
 		data() {
 			return {
-				
-				videoList: [
-					{
-						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-						title: '数字化转型之亢龙有悔',
-						num: '322',
-					},
-					{
-						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-						title: '数字化转型之亢龙有悔',
-						num: '322',
-					},
-					{
-						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-						title: '数字化转型之亢龙有悔',
-						num: '322',
-					},
-					{
-						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-						title: '数字化转型之亢龙有悔',
-						num: '322',
-					},
-					{
-						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-						title: '数字化转型之亢龙有悔',
-						num: '322',
-					},
-					{
-						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-						title: '数字化转型之亢龙有悔',
-						num: '322',
-					},
-					{
-						pic: 'https://imgcache.cjmx.com/star/201610/20161007145403690.jpg',
-						title: '数字化转型之亢龙有悔',
-						num: '322',
-					},
+				status: 'loadmore',
+				courseList: [
 				],
 				tabList: [
 				],
 				currentTab: 2,
+				params: {
+					page: 1,
+					order: '',
+					sort: '',
+					type: '',
+				},
 			};
 		},
 		created() {
 			this.tabList = this.$configs.tabList;
+			this.getCourseList();
+		},
+		onPullDownRefresh() {
+			console.log('refresh');
+			this.params.page = 1;
+			this.status = 'loadmore';
+			this.getCourseList();
+			setTimeout(function () {
+				uni.stopPullDownRefresh();
+			}, 1000);
+		},
+		onReachBottom() {
+			if(this.status !== 'noMore') {
+				this.status = 'loading';
+				this.params.page++;
+				this.getCourseList()
+			}
 		},
 		methods:{
+			loadmore() {
+				if(this.status !== 'noMore') {
+					this.status = 'loading';
+					this.params.page++;
+					this.getCourseList()
+				}
+			},
+			getCourseList() {
+				let that=this;
+				uni.$u.api.courseList({ params: that.params}).then(res=>{
+					console.log(res)
+					if(that.courseList.length>0) {
+						that.courseList = that.courseList.concat(res.data.data);
+					}
+					else {
+						that.courseList = res.data.data;
+					}
+					if(res.data.current_page == res.data.last_page) {
+						that.status = 'noMore';
+					}
+					else {
+						that.status = 'loadmore';
+					}
+					console.log(that.status)
+				})
+				.catch(err=>{
+					uni.hideLoading()
+				})
+			},
 			changeTab(item) {
 				uni.$u.route({
 					type: 'switchTab',
