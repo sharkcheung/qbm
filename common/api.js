@@ -25,7 +25,7 @@ module.exports = (vm) => {
 	let courseList = (params, config = {}) => http.get('/Course/index', params, config)
 	let courseDetail = (params, config = {}) => http.get('/Course/detail', params, config)
 	let updateStudyNums = (params, config = {}) => http.get('/Course/updateStudyNums', params, config)
-	let rewardPay = (params, config = {}) => http.post('/reward/pay', params, config)
+	let rewardPay = (params, config = {}) => http.get('/Appraise/rewardPay', params, config)
 	uni.$u.api = {
 		homeData,
 		login,

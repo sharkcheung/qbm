@@ -83,11 +83,11 @@
 					membeinfo: {
 						we_com_qrcode: '',
 						company_name: '',
-						area: '北京',
-						address: '朝阳区一号',
-						website: 'https://jd.com',
-						official_account: '京东',
-						video_account: '京东',
+						area: '',
+						address: '',
+						website: '',
+						official_account: '',
+						video_account: '',
 					}
 				},
 			}

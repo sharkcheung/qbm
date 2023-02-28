@@ -17,7 +17,8 @@
 			</view>
 			<view class="button-group" v-if="item.status == 1 || item.status == 4">
 				<u-button v-if="item.status == 1" type="primary" text="去支付"></u-button>
-				<u-button type="warning" v-if="!item.is_evaluated" text="我要评价" @click.native.stop="appraise($event)"></u-button>
+				<u-button type="warning" v-if="item.reward_status===null" text="我要评价" @click.native.stop="appraise($event,item)"></u-button>
+				<u-button type="primary" v-if="item.reward_status===0&&item.reward>0" text="我要打赏" @click.native.stop="reward($event,item)"></u-button>
 				<u-button type="warning" v-if="item.status == 4 && item.begin_time && $u.util.formatRemainTime(item.begin_time, 0)>0" text="结束订单"></u-button>
 			</view>
 			<view class="order-residue-time" v-if="$u.util.formatRemainTime(item.begin_time, 0)>0&&item.status == 3">
@@ -42,9 +43,17 @@ export default {
 		console.log(this.listData);
 	},
 	methods: {
-		appraise(e) {
+		appraise(e,item) {
 			e.preventDefault();
-			this.openPage('/pages/my/appraise/appraise')
+			this.openPage('/pages/my/appraise/appraise',{ order_num: item.order_num })
+		},
+		reward(e,item) {
+			e.preventDefault();
+			this.openPage('/pages/my/appraise/result',{ 
+									id: item.appraise_id,
+									reward: item.reward,
+									type: 1,
+			})
 		},
 		onChange(e, index) {
 			this.timeData[index] = e

@@ -1,6 +1,6 @@
 <template>
 	<view class="order-result-box">
-		<view class="result-msg">{{ order.result }}</view>
+		<view class="result-msg" v-if="type==0">{{ order.result }}</view>
 		<view class="result-tip">打赏金额：￥{{ order.reward }}</view>
 		<view class="result-button"><u-button v-if="order.reward==0" type="info" text="返回" @click="back"></u-button><u-button type="warning" text="去支付" @click="goPay" v-if="order.reward>0"></u-button></view>
 	</view>
@@ -14,6 +14,7 @@
 					result: '评价成功！',
 					reward: 0,
 					id: '',
+					type: 0,
 				}
 			}
 		},
@@ -21,6 +22,12 @@
 			let that = this;
 			that.order.id = options.id;
 			that.order.reward = options.reward;
+			that.order.type = options.type;
+			if(that.order.type == 1) {
+				uni.setNavigationBarTitle({
+					title: '打赏'
+				});
+			}
 		},
 		methods: {
 			back() {
@@ -30,7 +37,7 @@
 				
 				if(this.order.reward>0){
 					let that=this;
-					uni.$u.api.rewardPay(this.order).then(res=>{
+					uni.$u.api.rewardPay({params: this.order}).then(res=>{
 						
 						// #ifdef MP-WEIXIN
 						uni.requestPayment({
@@ -38,8 +45,8 @@
 							timeStamp: String(res.data.timeStamp),
 							nonceStr: res.data.nonceStr,
 							package: res.data.package,
-							signType: 'MD5',
-							paySign: res.data.sign,
+							signType: res.data.signType,
+							paySign: res.data.paySign,
 							success: function(ret) {
 								uni.showToast({
 									title: '支付成功',
