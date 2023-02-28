@@ -48,12 +48,10 @@
 							signType: res.data.signType,
 							paySign: res.data.paySign,
 							success: function(ret) {
+								console.log(ret);
 								uni.showToast({
 									title: '支付成功',
 									icon: 'none'
-								});
-								uni.navigateBack({
-									delta: 1
 								});
 							},
 							fail: function (err) {
