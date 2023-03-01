@@ -49,6 +49,12 @@
 							paySign: res.data.paySign,
 							success: function(ret) {
 								console.log(ret);
+								
+								uni.$u.api.queryRewardOrder({params: { order_num: res.reward_order_num }}).then(resp=>{
+									console.log(resp);
+								})
+								.catch(err=>{
+								})
 								uni.showToast({
 									title: '支付成功',
 									icon: 'none'

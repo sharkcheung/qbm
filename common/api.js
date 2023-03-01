@@ -26,6 +26,7 @@ module.exports = (vm) => {
 	let courseDetail = (params, config = {}) => http.get('/Course/detail', params, config)
 	let updateStudyNums = (params, config = {}) => http.get('/Course/updateStudyNums', params, config)
 	let rewardPay = (params, config = {}) => http.get('/Appraise/rewardPay', params, config)
+	let queryRewardOrder = (params, config = {}) => http.get('/Order/queryOutTradeNo', params, config)
 	uni.$u.api = {
 		homeData,
 		login,
@@ -53,5 +54,6 @@ module.exports = (vm) => {
 		courseDetail,
 		updateStudyNums,
 		rewardPay,
+		queryRewardOrder,
 	}
 }
