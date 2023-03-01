@@ -48,21 +48,22 @@
 							signType: res.data.signType,
 							paySign: res.data.paySign,
 							success: function(ret) {
-								console.log(ret);
+								console.log(res);
 								
-								uni.$u.api.queryRewardOrder({params: { order_num: res.reward_order_num }}).then(resp=>{
-									console.log(resp);
-								})
-								.catch(err=>{
-								})
+								uni.$u.api.updateAppraiseOrder({params: { id: that.order.id }});
 								uni.showToast({
 									title: '支付成功',
-									icon: 'none'
+									icon: 'success'
 								});
+								
+								setTimeout(()=> {
+									uni.navigateBack();
+								}, 1000)
+								
 							},
 							fail: function (err) {
 								console.log(err)
-								if(err.errMsg.indexOf('payment微信:-2') > -1) {
+								if(err.errMsg == 'requestPayment:fail cancel') {
 									
 								}
 								else {
@@ -73,42 +74,6 @@
 						// #endif
 					})
 					.catch(err=>{
-						let res = {
-							data: {
-								timeStamp: '12312412313',
-								nonceStr: '12312412313',
-								package: '12312412313',
-								sign: '12312412313',
-							}
-						}
-						// #ifdef MP-WEIXIN
-						uni.requestPayment({
-							provider: 'wxpay',
-							timeStamp: String(res.data.timeStamp),
-							nonceStr: res.data.nonceStr,
-							package: res.data.package,
-							signType: 'MD5',
-							paySign: res.data.sign,
-							success: function(ret) {
-								uni.showToast({
-									title: '支付成功',
-									icon: 'none'
-								});
-								uni.navigateBack({
-									delta: 1
-								});
-							},
-							fail: function (err) {
-								console.log(err)
-								if(err.errMsg.indexOf('payment微信:-2') > -1) {
-									
-								}
-								else {
-									that.$u.util.showErr('支付失败')
-								}
-							}
-						});
-						// #endif
 						console.log(err)
 						that.$u.util.showErr('支付请求失败')
 					})
