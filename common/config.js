@@ -1,5 +1,5 @@
 module.exports = {
-    baseUrl: process.env.NODE_ENV === 'production' ? 'https://console-qbt.qebang.cn' : 'http://www.qbtadmin.com/api',
+    baseUrl: process.env.NODE_ENV === 'production' ? 'https://console-qbt.qebang.cn/api' : 'http://www.qbtadmin.com/api',
     staticUrl:  process.env.NODE_ENV === 'production' ? 'https://static.miniapp.qbt.qebang.cn/' : 'http://www.qbtadmin.com',
 	tabList: [
 		{

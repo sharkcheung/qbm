@@ -23,10 +23,9 @@
 				<u-form-item label="团队情况" prop="team_info" ref="item3"><u--textarea placeholder="不低于3个字" v-model="modelOrder.team_info" count></u--textarea></u-form-item>
 				<u-form-item
 					label="项目启动时间"
-					prop="hotel"
+					prop="start_time"
 					@click="
-						showCalendar = true;
-						hideKeyboard();
+						show = true;
 					"
 				>
 					<u--input v-model="modelOrder.start_time" disabled disabledColor="#ffffff" placeholder="请选择项目启动时间" border="none"></u--input>
@@ -41,7 +40,14 @@
 		</view>
 
 		<u-action-sheet :show="showService" :actions="actions" title="请选择预约服务" @close="showService = false" @select="serviceSelect"></u-action-sheet>
-		<u-calendar :show="showCalendar" @confirm="calendarConfirm" @close="calendarClose"></u-calendar>
+		<!-- <u-calendar :show="showCalendar" minDate="1950-01-01" defaultDate="" @confirm="calendarConfirm" @close="calendarClose"></u-calendar> -->
+		<u-datetime-picker
+		ref="datetimePicker"
+				:show="show"
+				v-model="value"
+				@confirm="confirm"
+				mode="date"
+		></u-datetime-picker>
 	</view>
 </template>
 
@@ -49,6 +55,8 @@
 export default {
 	data() {
 		return {
+			value: Number(new Date()),
+			show: false,
 			actions: [
 				{
 					id: 1,
@@ -133,6 +141,7 @@ export default {
 		};
 	},
 	onLoad(options) {
+		this.getServiceList();
 		console.log(options);
 		let title = ''
 		if(options.service_type_id == 1) {
@@ -155,6 +164,26 @@ export default {
 		
 	},
 	methods: {
+		getServiceList() {
+			let that=this;
+			uni.$u.api.serviceAll().then(res=>{
+				that.actions = res.data;
+			})
+			.catch(err=>{
+			})
+		},
+		formatter(type, value) {
+			if (type === 'year') {
+				return `${value}年`
+			}
+			if (type === 'month') {
+				return `${value}月`
+			}
+			if (type === 'day') {
+				return `${value}日`
+			}
+			return value
+		},
 		hideKeyboard() {
 			uni.hideKeyboard();
 		},
@@ -174,7 +203,7 @@ export default {
 						uni.$u.route({
 							url: '/pages/teacher/order_result',
 							params: {
-								order_num: result.order_num
+								order_num: result.data
 							}
 						})
 					})
@@ -192,6 +221,10 @@ export default {
 			this.modelOrder.service_id = e.id;
 			this.$refs.formOrder.validateField('service_id');
 		},
+		confirm(e) {
+			this.modelOrder.start_time = uni.$u.timeFormat(e.value, 'yyyy-mm-dd');
+			this.show = false;
+		},
 		calendarConfirm(e) {
 			this.showCalendar = false;
 			this.modelOrder.start_time = e[0];
@@ -204,6 +237,8 @@ export default {
 	onReady() {
 		//如果需要兼容微信小程序，并且校验规则中含有方法等，只能通过setRules方法设置规则。
 		this.$refs.formOrder.setRules(this.rules);
+		// 微信小程序需要用此写法
+		this.$refs.datetimePicker.setFormatter(this.formatter)
 	}
 };
 </script>

@@ -28,7 +28,7 @@
 				}
 			}
 		},
-		onLoad() {
+		onLoad(options) {
 			let that = this;
 			that.order.order_num = options.order_num;
 			uni.$u.api.orderInfo({
@@ -73,5 +73,9 @@
 				border-radius: 20rpx;
 			}
 		}
+	}
+	.u-page__item {
+		text-align: left;
+		margin-top: 32rpx;
 	}
 </style>

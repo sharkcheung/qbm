@@ -187,7 +187,7 @@
 							// 	})
 							// }
 							uni.$u.route({
-								type: 'reLaunch',
+								type: 'redirectTo',
 								url: '/pages/my/appraise/result',
 								params: {
 									id: result.data,
