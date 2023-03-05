@@ -9,7 +9,7 @@
 			</template>
 		</u-cell-group>
 		</view>
-		<view class="button-box">
+		<view class="button-box" v-if="vuex_token">
 			<u-button type="primary" size="normal" shape="circle" text="退出" @click="logout"></u-button>
 		</view>
 	</view>
@@ -55,7 +55,8 @@
 				})
 			},
 			logout(){
-				
+				uni.$u.vuex('vuex_user', {});
+				uni.$u.vuex('vuex_token', '');
 			},
 			changeTab(item) {
 				uni.$u.route({

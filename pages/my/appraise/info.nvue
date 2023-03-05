@@ -1,0 +1,137 @@
+<template>
+
+	<view class="appraise-box">
+		<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
+		<u--form labelPosition="left" :model="modelAppraise" ref="formAppraise" labelWidth="100">
+			<u-form-item label="评分" prop="rate" ref="itemRate">
+				<u-rate count="5" size="24" readonly :gutter="6" v-model="modelAppraise.rate"></u-rate>
+			</u-form-item>
+			<u-form-item label="打赏金额" prop="reward" ref="itemReward" v-if="modelAppraise.rate>0">
+				<!-- #ifndef APP-NVUE -->
+				<u-input placeholder="" v-model="modelAppraise.reward" border="none" disabled disabledColor="#ffffff">
+				<!-- #endif -->
+				<!-- #ifdef APP-NVUE -->
+				<u--input placeholder="" v-model="modelAppraise.reward" border="none" disabled disabledColor="#ffffff">
+				<!-- #endif -->
+					<u--text
+						text="￥"
+						slot="prefix"
+					></u--text>
+				<!-- #ifndef APP-NVUE -->
+				</u-input>
+				<!-- #endif -->
+				<!-- #ifdef APP-NVUE -->
+				</u--input>
+				<!-- #endif -->
+			</u-form-item>
+			<u-form-item v-if="modelAppraise.pic" label="评价图片" prop="pic" ref="itemPic">
+				<u--image :showLoading="true" :src="modelAppraise.pic" width="80px" height="80px" @click="click"></u--image>
+			</u-form-item>
+			<u-form-item v-if="modelAppraise.video" label="评价视频" prop="video" ref="itemVideo">
+				<video :src="modelAppraise.video" style="width: 90%;"></video>
+			</u-form-item>
+			<u-form-item label="评价内容" prop="content" ref="itemContent">
+				{{modelAppraise.content}}
+			</u-form-item>
+		</u--form>
+		<view class="result-button"><u-button v-if="modelAppraise.reward==0" type="info" text="返回" @click="back"></u-button><u-button type="warning" text="去打赏" @click="reward" v-if="modelAppraise.reward>0&&modelAppraise.reward_status==0"></u-button></view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				fileListpic: [],
+				fileListvideo: [],
+				modelAppraise: {
+					pic: '',
+					rate: 0,
+					reward: 0,
+					video: '',
+					content: ''
+				},
+				rules: {
+					rate: {
+						type: 'number',
+						required: true,
+						message: '请选择评分',
+						min: 1,
+						trigger: ['blur', 'change']
+					},
+					content: {
+						type: 'string',
+						required: true,
+						message: '评价内容不少于3个字',
+						min: 3,
+						trigger: ['change']
+					}
+				}
+			};
+		},
+		methods: {
+			openPage(path, item) {
+				uni.$u.route({
+					url: path,
+					params: item
+				});
+			},
+			reward() {
+				this.openPage('/pages/my/appraise/result',{ 
+					id: this.modelAppraise.id,
+					reward: this.modelAppraise.reward,
+					type: 1,
+				})
+			},
+			click() {
+				uni.previewImage({
+					current: 0,
+					urls: [this.modelAppraise.pic]
+				})
+			},
+			rateChange(e) {
+				if (e == 1 || e == 2) {
+					this.modelAppraise.reward = 0
+				} else if (e == 3 || e == 4) {
+					this.modelAppraise.reward = 299
+				} else {
+					this.modelAppraise.reward = 599
+				}
+			},
+		},
+		onLoad(options) {
+			let that = this;
+			let order_id = 0;
+			order_id = options.order_id;
+			uni.$u.api.appraiseInfo({
+					params: {
+						order_id: order_id
+					}
+				}).then(res => {
+					that.modelAppraise = res.data;
+				})
+				.catch(err => {})
+		},
+		onReady() {
+			//如果需要兼容微信小程序，并且校验规则中含有方法等，只能通过setRules方法设置规则。
+			this.$refs.formAppraise.setRules(this.rules);
+		}
+	}
+</script>
+
+<style lang="scss">
+	.appraise-box {
+		padding: 32rpx;
+	}
+	.button-box {
+		margin-top: 20rpx;
+	}
+	.result-button {
+		margin-top: 20px;
+		flex-direction: row;
+		gap: 10rpx;
+		.u-button--square {
+			border-radius: 20rpx;
+		}
+	}
+</style>

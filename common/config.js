@@ -1,6 +1,8 @@
 module.exports = {
     baseUrl: process.env.NODE_ENV === 'production' ? 'https://console-qbt.qebang.cn/api' : 'http://www.qbtadmin.com/api',
     staticUrl:  process.env.NODE_ENV === 'production' ? 'https://static.miniapp.qbt.qebang.cn/' : 'http://www.qbtadmin.com',
+	meeting_tmpl_id: 'Nk3i7CsWS-xGXcoo4yWVMEqvHrYrrGjxHJ9_drZiULA',
+	withdraw_tmpl_id: 'pWYHyS7YptDQqfIhAPYh5EjL-7qRfTGCnPjO_Xfcazg',
 	tabList: [
 		{
 			name: '首页',

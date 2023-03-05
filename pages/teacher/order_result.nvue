@@ -5,7 +5,7 @@
 		<view class="result-button"><u-button type="info" text="返回" @click="back"></u-button><u-button v-if="order.service_type_id==2" type="warning" text="去支付" @click="goPay"></u-button></view>
 		<view class="u-page__item">
 			<u-cell-group>
-				<u-cell :border="false" title="下单时间" :value="order.create_time"></u-cell>
+				<u-cell :border="false" title="下单时间" :value="$u.timeFormat(order.create_time, 'yyyy-mm-dd hh:MM:ss')"></u-cell>
 				<u-cell :border="false" title="订单号" :value="order.order_num"></u-cell>
 				<u-cell :border="false" title="服务类型" :value="order.service_type_name"></u-cell>
 				<u-cell :border="false" title="服务内容" :value="order.service_name"></u-cell>

@@ -14,7 +14,7 @@ try{
 }
 
 // 需要永久存储，且下次APP启动需要取出的，在state中的变量名
-let saveStateKeys = ['vuex_user', 'vuex_token'];
+let saveStateKeys = ['vuex_user', 'vuex_token', 'vuex_subscribe_meeting_msg'];
 
 // 保存变量到本地存储中
 const saveLifeData = function(key, value){
@@ -38,6 +38,8 @@ const store = new Vuex.Store({
         vuex_user: lifeData.vuex_user ? lifeData.vuex_user : {},
         // 用户token
         vuex_token: lifeData.vuex_token ? lifeData.vuex_token : '',
+        // 是否订阅会议通知模板消息
+        vuex_subscribe_meeting_msg: lifeData.vuex_subscribe_meeting_msg ? lifeData.vuex_subscribe_meeting_msg : false,
 		// 当前导航
 		vuex_currentTab: lifeData.vuex_currentTab ? lifeData.vuex_currentTab : 0
     },

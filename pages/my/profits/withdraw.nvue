@@ -2,7 +2,7 @@
 
 	<view class="appraise">
 		<view class="appraise-box">
-			<view class="amount-box">当前剩余金额<text>{{ info.balance.toFixed(2) }}</text></view>
+			<view class="amount-box">当前剩余金额<text>￥{{ info.balance }}</text></view>
 			
 			<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
 			<u--form labelPosition="left" :model="modelApply" ref="formAppraise" labelWidth="80">
@@ -24,7 +24,7 @@
 		data() {
 			return {
 				info: {
-					balance: 299,
+					balance: 0,
 				},
 				modelApply: {
 					money: '',
@@ -40,21 +40,62 @@
 				}
 			};
 		},
+		onShow() {
+			this.info.balance = this.vuex_user.balance;
+		},
 		methods: {
+			subcribeMsg() {
+				let that = this;
+				let withdraw_tmpl_id = that.$configs.withdraw_tmpl_id;
+				uni.requestSubscribeMessage({
+				  tmplIds: [withdraw_tmpl_id],
+				  success (res) { 
+					 that.withdraw();
+				  },
+				  fail (err) {
+					 that.withdraw();
+				  }
+				})
+			},
 			submit() {
+				let that = this;
 				// 如果有错误，会在catch中返回报错信息数组，校验通过则在then中返回true
 				this.$refs.formAppraise
 					.validate()
 					.then(res => {
-						uni.$u.route({
-							type: 'redirectTo',
-							url: '/pages/my/profits/withdraw_result'
-						})
+						if(!parseFloat(that.modelApply.money)) {
+							uni.$u.util.showErr('提现金额必须大于0');
+							return false;
+						}
+						if(parseFloat(that.modelApply.money)>that.info.balance) {
+							uni.$u.util.showErr('提现金额不能大于余额');
+							return false;
+						}
+						that.subcribeMsg();
 					})
 					.catch(errors => {
 						console.log(errors)
 					});
 			},
+			withdraw() {
+				let that = this;
+				uni.$u.api.withdraw(that.modelApply).then(result => {
+					let userinfo = that.vuex_user;
+					userinfo.balance = uni.$u.util.jian(userinfo.balance, that.modelApply.money, 2);
+					uni.$u.vuex('vuex_user', userinfo);
+					uni.$u.route({
+						type: 'redirectTo',
+						url: '/pages/my/profits/withdraw_result',
+						params: {
+							order_num: result.data
+						}
+					})
+				})
+				.catch(err => {
+					console.log(err);
+					uni.$u.util.showErr('提现申请失败');
+				})
+			}
 		},
 		onReady() {
 			//如果需要兼容微信小程序，并且校验规则中含有方法等，只能通过setRules方法设置规则。

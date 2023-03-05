@@ -1,25 +1,11 @@
 <template>
 	<view class="">
-		
-		<u-sticky bgColor="#fff">
-			<u-tabs
-				:list="tabList"
-				lineWidth="30"
-				lineColor="#f56c6c"
-				:activeStyle="{
-					color: '#303133',
-					fontWeight: 'bold',
-					transform: 'scale(1.05)'
-				}"
-				:inactiveStyle="{
-					color: '#606266',
-					transform: 'scale(1)'
-				}"
-				itemStyle="padding-left: 15px; padding-right: 15px; height: 34px;"
-				@change="tabChange"
-			></u-tabs>
-		</u-sticky>
-		<view class="invite-container"><invite-list :listData="dataList"></invite-list></view>
+		<view class="invite-container">
+			<invite-list :listData="dataList"></invite-list>
+			<u-loadmore v-if="dataList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
+			<u-empty mode="data" text="暂无邀请用户" :show="dataList.length==0">
+			</u-empty>
+		</view>
 	</view>
 </template>
 
@@ -32,68 +18,57 @@ export default {
 	data() {
 		return {
 			dataList:[],
-			tabList: [
-				{
-					id: 1,
-					name: '约聊'
-				},
-				{
-					id: 2,
-					name: '内训'
-				},
-				{
-					id: 3,
-					name: '陪跑'
-				}
-			],
-			indexList: [
-				{
-					id: 1,
-					order_num: '2023020917013685',
-					avatar_url: 'http://qebang.cn/uploads/image/20230210/50a34b448b22972b17d344bd12562225.jpg',
-					nick_name: '马小腾',
-					true_name: '马化腾',
-					order_type_name: '内训',
-					order_type: 2,
-					service_type_name: '全域规划',
-					service_type: 1,
-					create_time: '2023-02-09',
-				},
-				{
-					id: 2,
-					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					nick_name: '马小云',
-					true_name: '马云',
-					order_type_name: '约聊',
-					order_type: 1,
-					service_type_name: '全域规划',
-					service_type: 1,
-					create_time: '2023-02-09',
-				},
-				{
-					id: 3,
-					order_num: '2023020917013685',
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					nick_name: '马小云',
-					true_name: '马云',
-					order_type_name: '约聊',
-					order_type: 1,
-					service_type_name: '全域规划',
-					service_type: 1,
-					create_time: '2023-02-09',
-				},
-			]
+			status: 'loadmore',
+			params: {
+				page: 1,
+				status: 1,
+			}
 		};
 	},
-	created() {
-		this.dataList = this.indexList
+	onShow() {
+		this.dataList = [];
+		this.params.page = 1;
+		this.getInviteList();
+	},
+	onPullDownRefresh() {
+		console.log('refresh');
+		this.dataList = [];
+		this.status = 'loadmore';
+		this.params.page = 1;
+		this.getInviteList();
+		setTimeout(function () {
+			uni.stopPullDownRefresh();
+		}, 1000);
+	},
+	onReachBottom() {
+		if(this.status !== 'noMore') {
+			this.status = 'loading';
+			this.params.page++;
+			this.getInviteList()
+		}
 	},
 	methods: {
-		tabChange(e) {
-			this.dataList = this.indexList.filter(item=>item.order_type==e.id)
-			console.log(this.dataList)
-		}
+		getInviteList() {
+			let that=this;
+			uni.$u.api.inviteList().then(res=>{
+				console.log(res)
+				if(that.dataList.length>0) {
+					that.dataList = that.dataList.concat(res.data.data);
+				}
+				else {
+					that.dataList = res.data.data;
+				}
+				if(res.data.current_page == res.data.last_page) {
+					that.status = 'noMore';
+				}
+				else {
+					that.status = 'loadmore';
+				}
+			})
+			.catch(err=>{
+				uni.hideLoading()
+			})
+		},
 	}
 };
 </script>

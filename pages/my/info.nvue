@@ -1,7 +1,7 @@
 <template>
 	<view class="cell-page">
 		<view class="u-page__item">
-			<text class="u-page__item__title">个人信息</text>
+			<text class="u-page__item__title">个人信息（{{ getStatus(info.membeinfo.person_verify_status) }}）</text>
 			<u-cell-group>
 				<u-cell
 					:border="false"
@@ -33,7 +33,7 @@
 			</u-cell-group>
 		</view>
 		<view class="u-page__item">
-			<text class="u-page__item__title">企业信息</text>
+			<text class="u-page__item__title">企业信息（{{ getStatus(info.membeinfo.company_verify_status) }}）</text>
 			<u-cell-group>
 				<u-cell
 					:border="false"
@@ -82,6 +82,8 @@
 					mobile: '',
 					membeinfo: {
 						we_com_qrcode: '',
+						company_verify_status: 0,
+						person_verify_status: 0,
 						company_name: '',
 						area: '',
 						address: '',
@@ -103,6 +105,25 @@
 			})
 		},
 		methods: {
+			getStatus(status) {
+				switch (status){
+					case 0:
+						return '未认证';
+						break;
+					case 1:
+						return '审核中';
+						break;
+					case 2:
+						return '已认证';
+						break;
+					case 3:
+						return '未通过';
+						break;
+					default:
+						return '未认证';
+						break;
+				}
+			},
 			getType(type) {
 				if(type == 1) {
 					return '注册用户'

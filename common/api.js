@@ -27,6 +27,12 @@ module.exports = (vm) => {
 	let updateStudyNums = (params, config = {}) => http.get('/Course/updateStudyNums', params, config)
 	let rewardPay = (params, config = {}) => http.get('/Appraise/rewardPay', params, config)
 	let updateAppraiseOrder = (params, config = {}) => http.get('/Appraise/updateOrder', params, config)
+	let appraiseInfo = (params, config = {}) => http.get('/Appraise/detail', params, config)
+	let withdraw = (params, config = {}) => http.post('/Withdraw/withdraw', params, config)
+	let withdrawList = (params, config = {}) => http.get('/Withdraw/index', params, config)
+	let profitsList = (params, config = {}) => http.get('/Profits/index', params, config)
+	let myadvisor = (params, config = {}) => http.get('/Membe/myadvisor', params, config)
+	let inviteList = (params, config = {}) => http.get('/Membe/myinvite', params, config)
 	uni.$u.api = {
 		homeData,
 		login,
@@ -55,5 +61,11 @@ module.exports = (vm) => {
 		updateStudyNums,
 		rewardPay,
 		updateAppraiseOrder,
+		appraiseInfo,
+		withdraw,
+		withdrawList,
+		profitsList,
+		myadvisor,
+		inviteList,
 	}
 }

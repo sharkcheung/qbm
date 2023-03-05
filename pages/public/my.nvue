@@ -12,7 +12,7 @@
 		<view class="cell-box">
 		<u-cell-group :border="false">
 				<u-cell v-if="info.advisor||info.teacher" icon="http://qebang.cn/uploads/image/20230208/d668697a29496a304c8b6e4da5b2c292.png" title="我的服务" url="/pages/my/customer/customer" :border="false" :isLink="true"></u-cell>
-				<u-cell v-if="info.advisor||info.teacher" icon="http://qebang.cn/uploads/image/20230208/82821983ccdfc2167f5997a3deacc1e9.png" title="我的收益" url="/pages/my/profits/profits" :border="false" :isLink="true" value="￥299"></u-cell>
+				<u-cell v-if="info.advisor||info.teacher" icon="http://qebang.cn/uploads/image/20230208/82821983ccdfc2167f5997a3deacc1e9.png" title="我的收益" url="/pages/my/profits/profits" :border="false" :isLink="true" :value="balance"></u-cell>
 				
 				<u-gap v-if="info.advisor||info.teacher" height="10" bgColor="#efefef"></u-gap>
 				
@@ -36,6 +36,7 @@
 			return {
 				tabList: [
 				],
+				balance:'￥0.00',
 				currentTab: 3,
 				info: {
 					avatar_url: '',
@@ -54,21 +55,22 @@
 			};
 		},
 		onShow() {
-			this.info = this.vuex_user;
-		},
-		created() {
-			this.tabList = this.$configs.tabList;
 			console.log(this.vuex_token)
+			let that = this;
 			if(this.vuex_token) {
 				uni.$u.api.userInfo().then(res=>{
-					console.log(res)
-					this.info = res.data
+					that.info = res.data
+					console.log(that.info.balance)
+					that.balance = '￥'+that.info.balance;
 					uni.$u.vuex('vuex_user', res.data)
 				})
 				.catch(err => {
 					console.log(err)
 				})
 			}
+		},
+		created() {
+			this.tabList = this.$configs.tabList;
 		},
 		methods: {
 			goLogin() {

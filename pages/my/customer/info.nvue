@@ -3,9 +3,9 @@
 		<view class="order-result-box">
 			<view class="result-msg">订单{{ $u.util.getStatus(info.status, 1) }}</view>
 			<view class="result-tip">
-				<template v-if="info.status==3&&$u.util.formatRemainTime(info.begin_time, 0)>0">
+				<template v-if="info.status==3&&remainTime>0">
 					距离{{ info.service_type_name }}还有：
-					<u-count-down :time="$u.util.formatRemainTime(info.begin_time, 0)" format="DD:HH:mm:ss" autoStart millisecond @change="onChange">
+					<u-count-down :time="remainTime" format="DD:HH:mm:ss" autoStart millisecond @change="onChange">
 						<view class="time">
 							<text class="time__item">{{ timeData.days }}&nbsp;天</text>
 							<text class="time__item">{{ timeData.hours}}&nbsp;时</text>
@@ -15,14 +15,16 @@
 					</u-count-down>
 				</template>
 				
-				<template v-if="info.status!==3">
+				<template>
 					{{ getTips(info.status) }}
 				</template>
 			</view>
 			<view class="result-button">
 				<u-button type="info" text="返回" @click="back"></u-button>
 				<u-button v-if="info.status == 2" type="warning" text="确认订单" @click="confirmOrder"></u-button>
-				<u-button v-if="info.status==3&&$u.util.formatRemainTime(info.begin_time, 0)<=0" type="primary" text="进入会议" @click="showMeeting=true"></u-button>
+				<u-button v-if="info.status==3&&info.begin_time&&remainTime<=0" type="primary" text="进入会议" @click="showMeeting=true"></u-button>
+				<u-button type="primary" v-if="info.status == 4 && info.is_evaluated" text="查看评价" @click="viewappraise()">
+				</u-button>
 			</view>
 		</view>
 
@@ -84,6 +86,7 @@
 	export default {
 		data() {
 			return {
+				remainTime: 0,
 				showMeeting: false,
 				showFinish: false,
 				timeData: {},
@@ -122,10 +125,20 @@
 					}
 				}).then(res => {
 					that.info = res.data;
+					console.log(that.info);
+					that.remainTime = uni.$u.util.formatRemainTime(that.info.begin_time, 0);
 				})
 				.catch(err => {})
 		},
 		methods: {
+			viewappraise() {
+				uni.$u.route({
+					url: '/pages/my/appraise/info',
+					params: {
+						order_id: this.info.id,
+					}
+				})
+			},
 			closeMeeting() {
 				this.showMeeting = false
 			},
@@ -208,7 +221,12 @@
 						break;
 					case 3:
 						// 待开始
-						result = '距离约聊还有' + uni.$u.util.formatRemainTime(this.info.begin_time, 1) + '！';
+						if(this.remainTime<=0) {
+							result = '会议已开始';
+						}
+						else {
+							result = '';
+						}
 						break;
 					case 4:
 						// 已结束
@@ -254,8 +272,9 @@
 							duration: 2000
 						});
 						that.info.begin_time = that.model.begin_time
+						that.remainTime = uni.$u.util.formatRemainTime(that.info.begin_time, 0);
 						that.info.status = 3;
-						console.log(that.info);
+						// console.log(that.info);
 					})
 					.catch(err => {
 						that.show = false;

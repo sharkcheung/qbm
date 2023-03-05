@@ -18,7 +18,12 @@
 				itemStyle="padding-left: 15px; padding-right: 15px; height: 34px;"
 			></u-tabs>
 		</u-sticky>
-		<view class="order-container"><order-list :listData="dataList"></order-list></view>
+		<view class="order-container">
+			<order-list :listData="dataList"></order-list>
+			<u-loadmore v-if="dataList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
+			<u-empty mode="order" :text="emptyTitle" :show="dataList.length==0">
+			</u-empty>
+		</view>
 	</view>
 </template>
 
@@ -44,7 +49,9 @@ export default {
 					name: '陪跑'
 				}
 			],
+			emptyTitle: '暂无约聊订单',
 			dataList: [],
+			status: 'loadmore',
 			params: {
 				page: 1,
 				order: '',
@@ -58,19 +65,56 @@ export default {
 	created() {
 		this.getOrderList()
 	},
+	onPullDownRefresh() {
+		console.log('refresh');
+		this.dataList = [];
+		this.params.page = 1;
+		this.status = 'loadmore';
+		this.getOrderList();
+		setTimeout(function () {
+			uni.stopPullDownRefresh();
+		}, 1000);
+	},
+	onReachBottom() {
+		if(this.status !== 'noMore') {
+			this.status = 'loading';
+			this.params.page++;
+			this.getOrderList()
+		}
+	},
 	methods: {
 		getOrderList() {
 			let that=this;
 			uni.$u.api.orderList({ params: that.params}).then(res=>{
-				console.log(res)
-				that.dataList = res.data.data
+				if(that.dataList.length>0) {
+					that.dataList = that.dataList.concat(res.data.data);
+				}
+				else {
+					that.dataList = res.data.data;
+				}
+				if(res.data.current_page == res.data.last_page) {
+					that.status = 'noMore';
+				}
+				else {
+					that.status = 'loadmore';
+				}
 			})
 			.catch(err=>{
 			})
 		},
 		tabChange(e) {
+			this.dataList = [];
 			this.params.service_type_id = e.id;
 			this.params.page = 1;
+			if(e.id==1) {
+				this.emptyTitle = '暂无约聊订单';
+			}
+			else if(e.id==2) {
+				this.emptyTitle = '暂无内训订单';
+			}
+			else {
+				this.emptyTitle = '暂无陪跑订单';
+			}
 			this.getOrderList();
 		}
 	}

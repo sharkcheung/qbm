@@ -9,15 +9,15 @@
 			</view>
 			<view class="item-box">
 				<view class="item-title">简介：</view>
-				<view class="item-value">{{ info.desc }}</view>
+				<view class="item-value">{{ info.intro }}</view>
 			</view>
 			<view class="item-box advisor-skill">
 				<view class="item-title">企微：</view>
-				<view class="item-value"><u--image slot="value" :showLoading="true" :src="info.weCom" width="100px" height="100px"></u--image></view>
+				<view class="item-value"><u--image slot="value" :showLoading="true" :src="info.we_com_qrcode" width="100px" height="100px"></u--image></view>
 			</view>
 			<view class="item-box advisor-skill">
 				<view class="item-title">电话：</view>
-				<view class="item-value"><u--text mode="phone" :text="info.phone"></u--text></view>
+				<view class="item-value"><u--text mode="phone" :text="info.mobile"></u--text></view>
 			</view>
 		</view>
 		<view class="button-group">
@@ -25,7 +25,7 @@
 		</view>
 		<u-popup :show="show" :closeable="true" @close="close">
 			<view class="show-box">
-				<u--image :showLoading="true" :src="info.weCom" width="160px" height="160px"></u--image>
+				<u--image :showLoading="true" :src="info.we_com_qrcode" width="160px" height="160px"></u--image>
 				<text>长按图片识别即可与顾问联系</text>
 			</view>
 		</u-popup>
@@ -38,13 +38,30 @@
 			return {
 				show: false,
 				info: {
-					avatar_url: 'http://qebang.cn/uploads/image/20230210/8049268a1c36dc1afff34e7df6ce81a1.jpg',
-					name: '王小姐',
-					weCom: 'http://qebang.cn/uploads/image/20230211/c34ce3c85bb841fb3a9c416ea2077951.jpg',
-					desc: '数十年服务经验，服务了上万家企业，现遍布全国各地',
-					phone: 13699665855,
+					avatar_url: '',
+					name: '',
+					we_com_qrcode: '',
+					intro: '',
+					mobile: '',
 				},
 			};
+		},
+		created() {
+			let that=this;
+			uni.$u.api.myadvisor().then(res=>{
+				if(!res.data) {
+					uni.$u.util.showErr('暂未分配顾问');
+					setTimeout(()=>{
+						uni.navigateBack()
+					}, 1500)
+				}
+				else {
+					this.info = res.data
+				}
+			})
+			.catch(err=>{
+				uni.hideLoading()
+			})
 		},
 		methods: {
 			showModule() {

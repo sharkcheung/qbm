@@ -5,7 +5,9 @@
 		</u-sticky>
 		<view class="teacher-container" :style="{marginBottom: $u.util.isIphoneX() ? '168rpx' : '120rpx' }">
 			<teacher-list :listData="teacherList"></teacher-list>
-			<u-loadmore :status="status" marginBottom="18" @loadmore="loadmore"/>
+			<u-loadmore v-if="teacherList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
+			<u-empty mode="data" :text="emptyTitle" :show="teacherList.length==0">
+			</u-empty>
 		</view>
 		
 		<u-tabbar :value="currentTab" :placeholder="false">
@@ -18,6 +20,7 @@
 	export default {
 		data() {
 			return {
+				emptyTitle: '暂无老师',
 				status: 'loadmore',
 				serviceList: [
 				],
@@ -45,6 +48,7 @@
 		},
 		onPullDownRefresh() {
 			console.log('refresh');
+			this.teacherList = [];
 			this.params.page = 1;
 			this.status = 'loadmore';
 			this.getTeacherList();
@@ -72,6 +76,7 @@
 				this.status = 'loadmore';
 				this.params.type = e.id;
 				this.params.page = 1;
+				this.teacherList = [];
 				if(e.id == 0) {
 					this.params.sort = 'mark';
 					this.params.order = 'desc';

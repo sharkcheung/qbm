@@ -3,13 +3,13 @@
 		<view class="profits-item" v-for="(item, index) in listData" :key="index" @click="openPage('/pages/my/order/info')">
 			<view class="profits-item-top">
 				<view class="profits-item-top-left">
-					<u-avatar shape="circle" size="48" :src="item.avatar_url" customStyle="margin: 0 15px -3px 0"></u-avatar>
+					<!-- <u-avatar shape="circle" size="48" :src="item.avatar_url" customStyle="margin: 0 15px -3px 0"></u-avatar> -->
 					<view class="profits-item-top-left-title">
-						<text>{{ item.desc }}</text>
-						<text>{{ item.create_time }}</text>
+						<text>{{ item.remark }}</text>
+						<text>{{ $u.timeFormat(item.create_time, 'yyyy-mm-dd hh:MM:ss') }}</text>
 					</view>
 				</view>
-				<view class="profits-item-top-right">+{{ item.money.toFixed(2) }}</view>
+				<view class="profits-item-top-right" :class="item.type==0?'jian':'jia'">{{ item.type==0 ? '-' : '+' }}{{ item.amount }}</view>
 			</view>
 		</view>
 	</view>
@@ -68,9 +68,11 @@ export default {
 				}
 			}
 		}
-		.profits-item-top-right {
+		.jian {
 			color: #dc9494;
-			
+		}
+		.jia {
+			color: #00b300;
 		}
 	}
 	.profits-item-bottom {

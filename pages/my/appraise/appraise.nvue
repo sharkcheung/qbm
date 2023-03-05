@@ -191,7 +191,8 @@
 								url: '/pages/my/appraise/result',
 								params: {
 									id: result.data,
-									reward: that.modelAppraise.reward
+									reward: that.modelAppraise.reward,
+									type: 0,
 								}
 							})
 						})

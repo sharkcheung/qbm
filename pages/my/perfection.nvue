@@ -158,9 +158,11 @@ export default {
 	align-items: center;
 	margin-top: 32rpx;
 	margin-bottom: 48rpx;
+	.avatar-wrapper{
+		margin-bottom: 16rpx;
+	}
 	.nick-box {
 		flex-direction: row;
-		margin-top: 16rpx;
 	}
 }
 .bottom-button-box {

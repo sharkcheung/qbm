@@ -2,15 +2,14 @@
 	<view>
 		<view class="invite-item" v-for="(item, index) in listData" :key="index">
 			<view class="invite-item-bottom">
-				<text class="invite-num">订单号：{{ item.order_num }}</text>
-				<text>{{ item.create_time }}</text>
+				<text class="invite-num">注册时间：{{ $u.timeFormat(item.create_time, 'yyyy-mm-dd hh:MM:ss') }}</text>
 			</view>
 			<view class="invite-item-top">
 				<view class="invite-item-top-left">
-					<u-avatar shape="circle" size="48" :src="item.avatar_url" customStyle="margin: 0 15px -3px 0"></u-avatar>
+					<u-avatar shape="circle" size="48" :src="item.pic" customStyle="margin: 0 15px -3px 0"></u-avatar>
 					<view class="invite-item-top-left-title">
-						{{ item.service_type_name }}
-						<text>{{ item.nick_name }} - {{ item.true_name }}</text>
+						{{ item.nickname }}
+						<text>{{ item.username }}</text>
 					</view>
 				</view>
 			</view>

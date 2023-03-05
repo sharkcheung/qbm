@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<u-sticky bgColor="#fff">
+<!-- 		<u-sticky bgColor="#fff">
 			<u-tabs
 				:list="tabList"
 				lineWidth="30"
@@ -17,8 +17,13 @@
 				itemStyle="padding-left: 15px; padding-right: 15px; height: 34px;"
 				@change="tabChange"
 			></u-tabs>
-		</u-sticky>
-		<view class="profits-container"><profits-list :listData="dataList"></profits-list></view>
+		</u-sticky> -->
+		<view class="profits-container">
+			<profits-list :listData="dataList"></profits-list>
+			<u-loadmore v-if="dataList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
+			<u-empty mode="data" :text="emptyTitle" :show="dataList.length==0">
+			</u-empty>
+		</view>
 	</view>
 </template>
 
@@ -30,6 +35,7 @@ export default {
 	},
 	data() {
 		return {
+			emptyTitle: '暂无收益记录',
 			dataList: [],
 			tabList: [
 				{
@@ -45,32 +51,61 @@ export default {
 					name: '陪跑'
 				}
 			],
-			indexList: [
-				{
-					id: 1,
-					avatar_url: 'http://qebang.cn/uploads/image/20230210/50a34b448b22972b17d344bd12562225.jpg',
-					money: 20,
-					desc: '马小腾参加约聊打赏返佣',
-					create_time: '2023-02-09',
-					order_type: 1,
-				},
-				{
-					id: 2,
-					avatar_url: 'http://qebang.cn/uploads/image/20230210/50a34b448b22972b17d344bd12562225.jpg',
-					money: 2000,
-					desc: '马小云参加内训服务返佣',
-					create_time: '2023-02-09',
-					order_type: 2,
-				},
-			]
+			status: 'loadmore',
+			params: {
+				page: 1,
+			}
 		};
 	},
-	created() {
-		this.dataList = this.indexList.filter(item=>item.order_type==1)
+	onPullDownRefresh() {
+		console.log('refresh');
+		this.dataList = [];
+		this.status = 'loadmore';
+		this.params.page = 1;
+		this.getProfitsList();
+		setTimeout(function () {
+			uni.stopPullDownRefresh();
+		}, 1000);
+	},
+	onReachBottom() {
+		if(this.status !== 'noMore') {
+			this.status = 'loading';
+			this.params.page++;
+			this.getProfitsList()
+		}
+	},
+	onShow() {
+		this.dataList = [];
+		this.params.page = 1;
+		this.getProfitsList();
 	},
 	methods: {
+		getProfitsList() {
+			let that=this;
+			uni.$u.api.profitsList({ params: that.params}).then(res=>{
+				console.log(res)
+				if(that.dataList.length>0) {
+					that.dataList = that.dataList.concat(res.data.data);
+				}
+				else {
+					that.dataList = res.data.data;
+				}
+				if(res.data.current_page == res.data.last_page) {
+					that.status = 'noMore';
+				}
+				else {
+					that.status = 'loadmore';
+				}
+			})
+			.catch(err=>{
+				uni.hideLoading()
+			})
+		},
 		tabChange(e) {
-			this.dataList = this.indexList.filter(item=>item.order_type==e.id)
+			this.params.status = e.id;
+			this.params.page = 1;
+			this.dataList = [];
+			this.getProfitsList();
 		}
 	}
 };

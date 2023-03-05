@@ -1,15 +1,15 @@
 <template>
 	<view>
-		<view class="withdraw-item" v-for="(item, index) in listData" :key="index" @click="openPage('/pages/my/order/info')">
+		<view class="withdraw-item" v-for="(item, index) in listData" :key="index" @click="openPage('/pages/my/order/info',item)">
 			<view class="withdraw-item-top">
 				<view class="withdraw-item-top-left">
 					<view class="withdraw-item-top-left-title">
-						提现{{ item.money.toFixed(2) }}
-						<text v-if="item.desc">{{ item.desc }}</text>
-						<text>{{ item.create_time }}</text>
+						提现￥{{ item.money }}
+						<text v-if="item.failure_reason">{{ item.failure_reason }}</text>
+						<text>{{ $u.timeFormat(item.create_time, 'yyyy-mm-dd hh:MM:ss') }}</text>
 					</view>
 				</view>
-				<view class="withdraw-item-top-right"><u--text :text="item.status_name" :color="getColor(item.status)"></u--text></view>
+				<view class="withdraw-item-top-right"><u--text :text="getStatus(item.status)" :color="getColor(item.status)"></u--text></view>
 			</view>
 		</view>
 	</view>
@@ -23,6 +23,20 @@ export default {
 	},
 	data() {
 		return {
+			statusList: [
+				{
+					id: 1,
+					name: '审核中'
+				},
+				{
+					id: 2,
+					name: '提现成功'
+				},
+				{
+					id: 3,
+					name: '提现失败'
+				}
+			],
 			timeData: []
 		};
 	},
@@ -36,10 +50,19 @@ export default {
 		onChange(e, index) {
 			this.timeData[index] = e
 		},
-		openPage(path) {
+		openPage(path,item) {
 			uni.$u.route({
-				url: path
+				url: path,
+				params: {
+					id: item.id
+				}
 			});
+		},
+		getStatus(status) {
+			let arr = this.statusList.find(item=> {
+				return item.id==status
+			});
+			return arr['name'];
 		},
 		getColor(status) {
 			let color = '#303133';

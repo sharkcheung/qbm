@@ -48,6 +48,8 @@
 				@confirm="confirm"
 				mode="date"
 		></u-datetime-picker>
+		
+		<u-modal :show="showConfirm"  @cancel="showConfirm=false;" @confirm="confirmMsg" :title="title" :content='content' :showCancelButton="true"></u-modal>
 	</view>
 </template>
 
@@ -55,6 +57,9 @@
 export default {
 	data() {
 		return {
+			showConfirm: false,
+			title: '订阅消息提醒',
+			content: '为了确保服务质量，请先订阅会议通知模板消息',
 			value: Number(new Date()),
 			show: false,
 			actions: [
@@ -106,7 +111,7 @@ export default {
 			},
 			showService: false,
 			rules: {
-				service_type_id: {
+				service_name: {
 					type: 'string',
 					required: true,
 					message: '请选择预约服务',
@@ -136,7 +141,13 @@ export default {
 					message: '请选择项目启动时间',
 					min: 2,
 					trigger: ['change']
-				}
+				},
+				intro: {
+					type: 'string',
+					required: true,
+					message: '请填写咨询简述',
+					trigger: ['blur', 'change']
+				},
 			}
 		};
 	},
@@ -164,6 +175,10 @@ export default {
 		
 	},
 	methods: {
+		confirmMsg() {
+			this.showConfirm = false;
+			this.subcribeMsg();
+		},
 		getServiceList() {
 			let that=this;
 			uni.$u.api.serviceAll().then(res=>{
@@ -187,34 +202,50 @@ export default {
 		hideKeyboard() {
 			uni.hideKeyboard();
 		},
+		subcribeMsg() {
+			let that = this;
+			uni.requestSubscribeMessage({
+			  tmplIds: ['Nk3i7CsWS-xGXcoo4yWVMEqvHrYrrGjxHJ9_drZiULA'],
+			  success (res) { 
+				  that.order();
+			  },
+			  fail (err) {
+				  uni.$u.util.showErr('您拒绝订阅会议通知模板消息');
+			  }
+			})
+		},
 		submit() {
 			let that = this;
 			// 如果有错误，会在catch中返回报错信息数组，校验通过则在then中返回true
 			this.$refs.formOrder
 				.validate()
 				.then(res => {
-					
-					uni.showLoading({
-						title: '正在提交数据'
-					})
-					uni.$u.api.order(that.modelOrder).then(result=>{
-						console.log(result)
-						uni.hideLoading()
-						uni.$u.route({
-							url: '/pages/teacher/order_result',
-							params: {
-								order_num: result.data
-							}
-						})
-					})
-					.catch(err=>{
-						uni.hideLoading()
-						uni.$u.util.showErr('下单失败');
-					})
+					that.showConfirm = true;
 				})
 				.catch(errors => {
-					console.log(errors)
+					console.log(errors);
 				});
+		},
+		order() {
+			let that = this;
+			uni.showLoading({
+				title: '正在提交数据'
+			})
+			uni.$u.api.order(that.modelOrder).then(result=>{
+				console.log(result)
+				uni.hideLoading()
+				uni.$u.route({
+					type: 'redirectTo',
+					url: '/pages/teacher/order_result',
+					params: {
+						order_num: result.data
+					}
+				})
+			})
+			.catch(err=>{
+				uni.hideLoading()
+				uni.$u.util.showErr('下单失败');
+			})
 		},
 		serviceSelect(e) {
 			this.modelOrder.service_name = e.name;

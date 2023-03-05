@@ -15,9 +15,12 @@ export default {
 	data() {
 		return {
 			info: {
-				balance: 299
+				balance: 0
 			}
 		};
+	},
+	onShow() {
+		this.info.balance = this.vuex_user.balance;
 	}
 };
 </script>

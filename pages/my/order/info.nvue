@@ -25,14 +25,16 @@
 				<u-button type="warning" v-if="info.status == 4 && !info.is_evaluated" text="我要评价" @click="appraise()">
 				</u-button>
 				<u-button type="warning" v-if="info.status == 3 &&info.begin_time&&remainTime<=0" text="结束订单" @click="finishOrder"></u-button>
-				<u-button v-if="info.status==4&&info.pay_fee>0&&!info.pay_time" type="primary" text="去打赏"></u-button>
+				<u-button v-if="info.status==4&&info.reward>0&&info.reward_status==0" type="warning" text="去打赏" @click="reward"></u-button>
+				<u-button type="primary" v-if="info.status == 4 && info.is_evaluated" text="查看评价" @click="viewappraise()">
+				</u-button>
 			</view>
 		</view>
 
 		<view class="u-page__item">
 			<u-cell-group>
 				<u-cell :border="false" title="支付金额" :value="info.pay_fee?'￥' + info.pay_fee:'免费'"></u-cell>
-				<u-cell :border="false" title="下单时间" :value="$u.timeFormat(info.create_time, 'yyyy-mm-dd hh:MM:ss')">
+				<u-cell :border="false" title="下单时间" :value="$u.timeFormat(info.create_time, 'yyyy-mm-dd')">
 				</u-cell>
 				<u-cell :border="false" title="订单号" :value="info.order_num"></u-cell>
 				<u-cell :border="false" title="服务类型" :value="info.service_type_name"></u-cell>
@@ -81,6 +83,9 @@
 					create_time: '',
 					order_num: '',
 					is_evaluated: 0,
+					reward: 0,
+					appraise_id: 0,
+					reward_status: 0,
 					teacher_name: '',
 				},
 				orderList: [
@@ -102,6 +107,27 @@
 				.catch(err => {})
 		},
 		methods: {
+			openPage(path, item) {
+				uni.$u.route({
+					url: path,
+					params: item
+				});
+			},
+			reward() {
+				this.openPage('/pages/my/appraise/result',{ 
+					id: this.info.appraise_id,
+					reward: this.info.reward,
+					type: 1,
+				})
+			},
+			viewappraise() {
+				uni.$u.route({
+					url: '/pages/my/appraise/info',
+					params: {
+						order_id: this.info.id,
+					}
+				})
+			},
 			closeMeeting() {
 				this.showMeeting = false
 			},
@@ -124,7 +150,7 @@
 						break;
 					case 3:
 						// 待开始
-						console.log(this.remainTime);
+						// console.log(this.remainTime);
 						if(this.remainTime<=0) {
 							result = '会议已开始';
 						}

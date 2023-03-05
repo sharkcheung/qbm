@@ -6,7 +6,10 @@
 			</view>
 		</u-sticky>
 		<view class="teacher-container">
-			<teacher-list :listData="indexList"></teacher-list>
+			<teacher-list :listData="teacherList"></teacher-list>
+			<u-loadmore v-if="teacherList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
+			<u-empty mode="data" :text="emptyTitle" :show="teacherList.length==0">
+			</u-empty>
 		</view>
 	</view>
 </template>
@@ -15,9 +18,10 @@
 	export default {
 		data() {
 			return {
+				emptyTitle: '暂无老师',
 				sortField: '',
 				sortIndex: 0,
-				indexList: [
+				teacherList: [
 				],
 				params: {
 					page: 1,
@@ -26,7 +30,25 @@
 					type: '',
 				},
 				serviceTypeName: '',
+				status: 'loadmore',
 			};
+		},
+		onPullDownRefresh() {
+			console.log('refresh');
+			this.teacherList = [];
+			this.params.page = 1;
+			this.status = 'loadmore';
+			this.getTeacherList();
+			setTimeout(function () {
+				uni.stopPullDownRefresh();
+			}, 1000);
+		},
+		onReachBottom() {
+			if(this.status !== 'noMore') {
+				this.status = 'loading';
+				this.params.page++;
+				this.getTeacherList()
+			}
 		},
 		onLoad(options) {
 			let title = ''
@@ -53,6 +75,8 @@
 		},
 		methods: {
 			change(index) {
+				this.status = 'loadmore';
+				this.teacherList = [];
 				this.sortIndex = index
 				this.params.page = 1;
 				if(index == 0) {
@@ -73,7 +97,19 @@
 				let that=this;
 				uni.$u.api.teacherList({ params: that.params}).then(res=>{
 					console.log(res)
-					that.indexList = res.data.data
+					if(that.teacherList.length>0) {
+						that.teacherList = that.teacherList.concat(res.data.data);
+					}
+					else {
+						that.teacherList = res.data.data;
+					}
+					if(res.data.current_page == res.data.last_page) {
+						that.status = 'noMore';
+					}
+					else {
+						that.status = 'loadmore';
+					}
+					console.log(that.status)
 				})
 				.catch(err=>{
 					uni.hideLoading()

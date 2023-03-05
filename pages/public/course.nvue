@@ -2,7 +2,9 @@
 	<view>
 		<view class="video-box">
 			<video-list :listData="courseList" :showTeacher="true"></video-list>
-			<u-loadmore :status="status" marginBottom="18" @loadmore="loadmore"/>
+			<u-loadmore v-if="courseList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
+			<u-empty mode="data" :text="emptyTitle" :show="courseList.length==0">
+			</u-empty>
 		</view>
 		<u-tabbar :value="currentTab" :placeholder="false">
 			<u-tabbar-item v-for="(item,index) in tabList" @click="changeTab(item)" :text="item.name" :icon="item.icon" :key="index"></u-tabbar-item>
@@ -14,6 +16,7 @@
 	export default {
 		data() {
 			return {
+				emptyTitle: '暂无课程',
 				status: 'loadmore',
 				courseList: [
 				],
@@ -34,6 +37,7 @@
 		},
 		onPullDownRefresh() {
 			console.log('refresh');
+			this.courseList = [];
 			this.params.page = 1;
 			this.status = 'loadmore';
 			this.getCourseList();

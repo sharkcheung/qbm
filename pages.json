@@ -11,7 +11,7 @@
 		{
 			"path": "pages/public/home",
 			"style": {
-				"navigationBarTitleText": "首页",
+				"navigationBarTitleText": "企帮通",
 				"enablePullDownRefresh": true
 			}
 		},
@@ -83,7 +83,7 @@
 			"path": "list",
 			"style": {
 				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": true
 			}
 
 		}]
@@ -110,7 +110,7 @@
 			"path": "order/order",
 			"style": {
 				"navigationBarTitleText": "我的订单",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": true
 			}
 		}, {
 			"path": "appraise/appraise",
@@ -133,10 +133,17 @@
 			}
 
 		}, {
+			"path": "appraise/info",
+			"style": {
+				"navigationBarTitleText": "评价详情",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
 			"path": "invite/invite",
 			"style": {
 				"navigationBarTitleText": "我的邀请",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": true
 			}
 
 		}, {

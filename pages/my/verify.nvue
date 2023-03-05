@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<template v-if="type==0">
-			<view class="pic-info">
+			<view class="pic-info" v-if="modelPerson.person_verify_status!==0">
 				<view class="reason" v-if="modelPerson.person_verify_status===3">
 					认证未通过：{{modelPerson.person_refuse_reason}}
 				</view>
@@ -9,16 +9,16 @@
 					提交时间：{{modelPerson.person_apply_time}}
 				</view>
 			</view>
-			<u-gap height="10" bgColor="#efefef"></u-gap>
+			<u-gap height="10" bgColor="#efefef" v-if="modelPerson.person_verify_status!==0"></u-gap>
 		</template>
 		<template v-else>
-			<view class="pic-info">
+			<view class="pic-info" v-if="modelCompany.company_verify_status!==0">
 				<view class="reason" v-if="modelCompany.company_verify_status===3">认证未通过：{{modelCompany.company_refuse_reason}}</view>
 				<view class="submit-time">
 					提交时间：{{modelCompany.company_apply_time}}
 				</view>
 			</view>
-			<u-gap height="10" bgColor="#efefef"></u-gap>
+			<u-gap height="10" bgColor="#efefef" v-if="modelCompany.company_verify_status!==0"></u-gap>
 		</template>
 		<view class="verify-box">
 			<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->

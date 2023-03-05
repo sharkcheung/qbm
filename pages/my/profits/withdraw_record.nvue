@@ -18,7 +18,10 @@
 				itemStyle="padding-left: 15px; padding-right: 15px; height: 34px;"
 			></u-tabs>
 		</u-sticky>
-		<view class="withdraw-container"><withdraw-list :listData="dataList"></withdraw-list></view>
+		<view class="withdraw-container">
+			<withdraw-list :listData="dataList"></withdraw-list>
+			<u-loadmore :status="status" marginBottom="18"/>
+		</view>
 	</view>
 </template>
 
@@ -38,48 +41,70 @@ export default {
 				},
 				{
 					id: 2,
-					name: '成功'
+					name: '提现成功'
 				},
 				{
 					id: 3,
-					name: '失败'
+					name: '提现失败'
 				}
 			],
 			dataList: [],
-			indexList: [
-				{
-					id: 1,
-					money: 20,
-					create_time: '2023-02-09 12:12:59',
-					status: 1,
-					status_name: '审核中',
-					desc: '',
-				},
-				{
-					id: 2,
-					money: 2000,
-					create_time: '2023-02-09 12:12:59',
-					status: 2,
-					desc: '',
-					status_name: '成功',
-				},
-				{
-					id: 3,
-					money: 200,
-					create_time: '2023-02-09 12:12:59',
-					status: 3,
-					desc: '暂时不允许提现',
-					status_name: '失败',
-				},
-			]
+			status: 'loadmore',
+			params: {
+				page: 1,
+				status: 1,
+			}
 		};
 	},
-	created() {
-		this.dataList = this.indexList.filter(item=>item.status==1)
+	onPullDownRefresh() {
+		console.log('refresh');
+		this.dataList = [];
+		this.status = 'loadmore';
+		this.params.page = 1;
+		this.getWithdrawList();
+		setTimeout(function () {
+			uni.stopPullDownRefresh();
+		}, 1000);
+	},
+	onReachBottom() {
+		if(this.status !== 'noMore') {
+			this.status = 'loading';
+			this.params.page++;
+			this.getWithdrawList()
+		}
+	},
+	onShow() {
+		this.dataList = [];
+		this.params.page = 1;
+		this.getWithdrawList();
 	},
 	methods: {
+		getWithdrawList() {
+			let that=this;
+			uni.$u.api.withdrawList({ params: that.params}).then(res=>{
+				console.log(res)
+				if(that.dataList.length>0) {
+					that.dataList = that.dataList.concat(res.data.data);
+				}
+				else {
+					that.dataList = res.data.data;
+				}
+				if(res.data.current_page == res.data.last_page) {
+					that.status = 'noMore';
+				}
+				else {
+					that.status = 'loadmore';
+				}
+			})
+			.catch(err=>{
+				uni.hideLoading()
+			})
+		},
 		tabChange(e) {
-			this.dataList = this.indexList.filter(item=>item.status==e.id)
+			this.params.status = e.id;
+			this.params.page = 1;
+			this.dataList = [];
+			this.getWithdrawList();
 		}
 	}
 };
