@@ -5,7 +5,7 @@
 			<view class="result-tip">
 				<template v-if="info.status==3&&remainTime>0">
 					距离{{ info.service_type_name }}还有：
-					<u-count-down :time="remainTime" format="DD:HH:mm:ss" autoStart millisecond @change="onChange">
+					<u-count-down :time="remainTime" format="DD:HH:mm:ss" autoStart @change="onChange">
 						<view class="time">
 							<text class="time__item">{{ timeData.days }}&nbsp;天</text>
 							<text class="time__item">{{ timeData.hours}}&nbsp;时</text>
@@ -132,7 +132,10 @@
 				this.showMeeting = false
 			},
 			onChange(e) {
-				this.timeData = e
+				this.timeData = e;
+				if(e.days == 0 && e.hours == 0 && e.milliseconds == 0 && e.minutes == 0 && e.seconds == 0 && this.remainTime>0) {
+					this.remainTime = 0;
+				}
 			},
 			hideKeyboard() {
 				uni.hideKeyboard()

@@ -63,38 +63,6 @@ export default {
 			value: Number(new Date()),
 			show: false,
 			actions: [
-				{
-					id: 1,
-					name: '数字系统'
-				},
-				{
-					id: 2,
-					name: '全域规划'
-				},
-				{
-					id: 3,
-					name: '私域运营'
-				},
-				{
-					id: 4,
-					name: '活动策划'
-				},
-				{
-					id: 5,
-					name: '文案创意'
-				},
-				{
-					id: 6,
-					name: '服务规范'
-				},
-				{
-					id: 7,
-					name: '组织结构'
-				},
-				{
-					id: 8,
-					name: '团队绩效'
-				}
 			],
 			showCalendar: false,
 			modelOrder: {
@@ -152,7 +120,6 @@ export default {
 		};
 	},
 	onLoad(options) {
-		this.getServiceList();
 		console.log(options);
 		let title = ''
 		if(options.service_type_id == 1) {
@@ -172,6 +139,7 @@ export default {
 		this.modelOrder.service_type_name = options.service_type_name;
 		this.modelOrder.teacher_name = options.teacher_name;
 		this.modelOrder.teacher_id = options.teacher_id;
+		this.getServiceList();
 		
 	},
 	methods: {
@@ -181,7 +149,9 @@ export default {
 		},
 		getServiceList() {
 			let that=this;
-			uni.$u.api.serviceAll().then(res=>{
+			uni.$u.api.serviceAll({params: {
+				teacher_id: this.modelOrder.teacher_id
+			}}).then(res=>{
 				that.actions = res.data;
 			})
 			.catch(err=>{
@@ -204,13 +174,22 @@ export default {
 		},
 		subcribeMsg() {
 			let that = this;
+			let meeting_tmpl_id = that.vuex_base_config.meeting_tmpl_id;
 			uni.requestSubscribeMessage({
-			  tmplIds: ['Nk3i7CsWS-xGXcoo4yWVMEqvHrYrrGjxHJ9_drZiULA'],
+			  tmplIds: [meeting_tmpl_id],
 			  success (res) { 
-				  that.order();
+				  if(res[meeting_tmpl_id]=='accept') {
+					that.order();
+				  }
+				  else if(res[meeting_tmpl_id]=='reject'){
+					uni.$u.util.showErr('请订阅会议通知模板消息');
+				  }
+				  else if(res[meeting_tmpl_id]=='ban'){
+					that.order();
+				  }
 			  },
 			  fail (err) {
-				  uni.$u.util.showErr('您拒绝订阅会议通知模板消息');
+				that.order();
 			  }
 			})
 		},

@@ -113,7 +113,7 @@
 			},
 			subcribeMsg() {
 				let that = this;
-				let meeting_tmpl_id = that.$configs.meeting_tmpl_id;
+				let meeting_tmpl_id = that.vuex_base_config.meeting_tmpl_id;
 				uni.requestSubscribeMessage({
 				  tmplIds: [meeting_tmpl_id],
 				  success (res) { 
@@ -145,6 +145,7 @@
 					that.serviceTypeList = res.data.serviceTypeAllList;
 					that.bannerList = res.data.bannerList
 					that.noticeList = res.data.notice.map(item=>item.title);
+					uni.$u.vuex('vuex_base_config', res.data.baseConfig);
 				})
 				.catch(err=>{
 					uni.hideLoading()

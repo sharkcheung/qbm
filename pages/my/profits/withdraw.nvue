@@ -46,7 +46,7 @@
 		methods: {
 			subcribeMsg() {
 				let that = this;
-				let withdraw_tmpl_id = that.$configs.withdraw_tmpl_id;
+				let withdraw_tmpl_id = that.vuex_base_config.withdraw_tmpl_id;
 				uni.requestSubscribeMessage({
 				  tmplIds: [withdraw_tmpl_id],
 				  success (res) { 

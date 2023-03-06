@@ -90,18 +90,13 @@
 						min: 3,
 						trigger: ['change']
 					}
-				}
+				},
+				rewardMoney: []
 			};
 		},
 		methods: {
 			rateChange(e) {
-				if (e == 1 || e == 2) {
-					this.modelAppraise.reward = 0
-				} else if (e == 3 || e == 4) {
-					this.modelAppraise.reward = 2.99
-				} else {
-					this.modelAppraise.reward = 5.99
-				}
+				this.modelAppraise.reward = this.rewardMoney[e-1];
 			},
 			// 删除图片
 			deletePic(event) {
@@ -213,6 +208,7 @@
 						order_num: that.modelAppraise.order_num
 					}
 				}).then(res => {
+					that.rewardMoney = res.data.reward_money?res.data.reward_money.split(':'):[0,0,299,299,599];
 					that.modelAppraise.teacher_name = res.data.teacher_name;
 					that.modelAppraise.service_type_name = res.data.service_type_name;
 					that.modelAppraise.service_name = res.data.service_name;
