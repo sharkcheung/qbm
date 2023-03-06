@@ -76,6 +76,9 @@
 					params: item
 				});
 			},
+			back() {
+				uni.navigateBack();
+			},
 			reward() {
 				this.openPage('/pages/my/appraise/result',{ 
 					id: this.modelAppraise.id,

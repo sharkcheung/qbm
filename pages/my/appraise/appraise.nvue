@@ -98,9 +98,9 @@
 				if (e == 1 || e == 2) {
 					this.modelAppraise.reward = 0
 				} else if (e == 3 || e == 4) {
-					this.modelAppraise.reward = 299
+					this.modelAppraise.reward = 2.99
 				} else {
-					this.modelAppraise.reward = 599
+					this.modelAppraise.reward = 5.99
 				}
 			},
 			// 删除图片
