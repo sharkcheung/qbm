@@ -264,7 +264,7 @@
 					return false;
 				}
 				if (!this.model.meeting_qrcode) {
-					uni.$u.util.showErr('请选择' + this.info.service_type_name + '时间');
+					uni.$u.util.showErr('请上传腾讯会议小程序码');
 					return false;
 				}
 				let that = this;
@@ -277,6 +277,7 @@
 						that.info.begin_time = that.model.begin_time
 						that.remainTime = uni.$u.util.formatRemainTime(that.info.begin_time, 0);
 						that.info.status = 3;
+						that.info.meeting_qrcode = that.model.meeting_qrcode;
 						// console.log(that.info);
 					})
 					.catch(err => {

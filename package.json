@@ -7,5 +7,19 @@
 	"devDependencies": {
 		"eslint": "^8.2.0",
 		"eslint-config-airbnb": "^19.0.0"
+	},
+	"uni-app": {
+		"scripts": {
+			"test-weixin": {
+				"title": "小程序测试环境",
+				"BROWSER": "",
+				"env": {
+					"UNI_PLATFORM": "mp-weixin"
+				},
+				"define": {
+					"TEST-WEIXIN": true
+				}
+			}
+		}
 	}
 }
