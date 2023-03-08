@@ -61,7 +61,7 @@ export default {
 			}
 		};
 	},
-	created() {
+	onShow() {
 		if(this.vuex_token) {
 			if(this.vuex_user.advisor) {
 				this.params.type = 1;
@@ -73,6 +73,9 @@ export default {
 				this.params.type = 0;
 			}
 		}
+		this.dataList = [];
+		this.params.page = 1;
+		this.status = 'loadmore';
 		this.getCustomerList()
 		// this.dataList = this.indexList
 	},

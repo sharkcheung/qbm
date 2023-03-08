@@ -266,6 +266,7 @@ export default {
 	background-color: #ffffff;
 	.bottom-button-group {
 		margin: 0 32rpx;
+		margin-bottom: 16rpx;
 		flex-direction: row;
 		.u-button--square {
 			border-radius: 20rpx;

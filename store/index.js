@@ -3,12 +3,16 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex) // vue的插件机制
 
+let env = process.env.NODE_ENV
+// #ifdef TEST-WEIXIN
+env = 'test';
+// #endif
 
 let lifeData = {};
 
 try{
 	// 尝试获取本地是否存在lifeData变量，第一次启动APP时是不存在的，区分开发环境和生产环境
-	lifeData = uni.getStorageSync('qbm_Data_'+process.env.NODE_ENV);
+	lifeData = uni.getStorageSync('qbm_Data_'+env);
 }catch(e){
 	
 }
@@ -21,12 +25,12 @@ const saveLifeData = function(key, value){
 	// 判断变量名是否在需要存储的数组中
 	if(saveStateKeys.indexOf(key) != -1) {
 		// 获取本地存储的lifeData对象，将变量添加到对象中，区分开发环境和生产环境
-		let tmp = uni.getStorageSync('qbm_Data_'+process.env.NODE_ENV);
+		let tmp = uni.getStorageSync('qbm_Data_'+env);
 		// 第一次打开APP，不存在lifeData变量，故放一个{}空对象
 		tmp = tmp ? tmp : {};
 		tmp[key] = value;
 		// 执行这一步后，所有需要存储的变量，都挂载在本地的lifeData对象中，区分开发环境和生产环境
-		uni.setStorageSync('qbm_Data_'+process.env.NODE_ENV, tmp);
+		uni.setStorageSync('qbm_Data_'+env, tmp);
 	}
 }
 

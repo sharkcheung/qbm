@@ -95,16 +95,21 @@
 		onLoad(options) {
 			let that = this;
 			that.info.order_num = options.order_num;
-			uni.$u.api.orderInfo({
-					params: {
-						order_num: that.info.order_num
-					}
-				}).then(res => {
-					that.info = res.data;
-					that.remainTime = uni.$u.util.formatRemainTime(that.info.begin_time, 0);
-					console.log(that.remainTime);
-				})
-				.catch(err => {})
+		},
+		onShow() {
+			let that = this;
+			if(that.info.order_num) {
+				uni.$u.api.orderInfo({
+						params: {
+							order_num: that.info.order_num
+						}
+					}).then(res => {
+						that.info = res.data;
+						that.remainTime = uni.$u.util.formatRemainTime(that.info.begin_time, 0);
+						console.log(that.remainTime);
+					})
+					.catch(err => {})
+			}
 		},
 		methods: {
 			openPage(path, item) {

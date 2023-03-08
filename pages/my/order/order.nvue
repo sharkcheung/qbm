@@ -62,7 +62,10 @@ export default {
 			}
 		};
 	},
-	created() {
+	onShow() {
+		this.dataList = [];
+		this.params.page = 1;
+		this.status = 'loadmore';
 		this.getOrderList()
 	},
 	onPullDownRefresh() {
