@@ -42,6 +42,8 @@ const store = new Vuex.Store({
         vuex_user: lifeData.vuex_user ? lifeData.vuex_user : {},
         // 用户token
         vuex_token: lifeData.vuex_token ? lifeData.vuex_token : '',
+        // 邀请人id
+        vuex_invite_id: lifeData.vuex_invite_id ? lifeData.vuex_invite_id : '',
         // 是否订阅会议通知模板消息
         vuex_subscribe_meeting_msg: lifeData.vuex_subscribe_meeting_msg ? lifeData.vuex_subscribe_meeting_msg : false,
 		// 当前导航

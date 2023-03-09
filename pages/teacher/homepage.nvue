@@ -198,6 +198,10 @@
 			}
 		},
 		onLoad(options) {
+			console.log(options);
+			if(options.invite_id) {
+				uni.$u.vuex('invite_id', options.invite_id);
+			}
 			this.commentPng = this.$configs.staticUrl + '/uploads/api/icon/comment.png';
 			this.listPng = this.$configs.staticUrl + '/uploads/api/icon/list.png';
 			uni.showLoading({
@@ -207,7 +211,6 @@
 			uni.$u.api.teacherHome({
 					params: {
 						id: options.id,
-						invite_id: options.invite_id?options.invite_id:0,
 					}
 				}).then(res => {
 					console.log(res)

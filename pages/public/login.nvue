@@ -25,7 +25,7 @@
 				  success: function (loginRes) {
 				    console.log(loginRes);
 					let that=this;
-					uni.$u.api.login({ code: loginRes.code }).then(res=>{
+					uni.$u.api.login({ code: loginRes.code, invite_id: that.vuex_invite_id }).then(res=>{
 						console.log(res)
 						uni.hideLoading()
 						uni.showToast({
