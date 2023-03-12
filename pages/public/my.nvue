@@ -11,15 +11,15 @@
 		<u-gap height="10" bgColor="#efefef"></u-gap>
 		<view class="cell-box">
 		<u-cell-group :border="false">
-				<u-cell v-if="info.advisor||info.teacher" icon="http://qebang.cn/uploads/image/20230208/d668697a29496a304c8b6e4da5b2c292.png" title="我的服务" url="/pages/my/customer/customer" :border="false" :isLink="true"></u-cell>
-				<u-cell v-if="info.advisor||info.teacher" icon="http://qebang.cn/uploads/image/20230208/82821983ccdfc2167f5997a3deacc1e9.png" title="我的收益" url="/pages/my/profits/profits" :border="false" :isLink="true" :value="balance"></u-cell>
+				<u-cell v-if="vuex_token&&(info.advisor||info.teacher)" :icon="customerIcon" title="我的服务" url="/pages/my/customer/customer" :border="false" :isLink="true"></u-cell>
+				<u-cell v-if="vuex_token&&(info.advisor||info.teacher)" :icon="profitsIcon" title="我的收益" url="/pages/my/profits/profits" :border="false" :isLink="true" :value="balance"></u-cell>
 				
-				<u-gap v-if="info.advisor||info.teacher" height="10" bgColor="#efefef"></u-gap>
+				<u-gap v-if="vuex_token&&(info.advisor||info.teacher)" height="10" bgColor="#efefef"></u-gap>
 				
-				<u-cell icon="http://qebang.cn/uploads/image/20230208/c732039a121abe41803acf0cdb148a3c.png" title="我的订单" url="/pages/my/order/order" :border="false" :isLink="true"></u-cell>
-				<u-cell icon="http://qebang.cn/uploads/image/20230208/ae54f017ce24c1fc2472b79d62680c92.png" title="我的顾问" url="/pages/my/advisor" :border="false" :isLink="true"></u-cell>
-				<u-cell icon="http://qebang.cn/uploads/image/20230208/82821983ccdfc2167f5997a3deacc1e9.png" title="我的邀请" url="/pages/my/invite/invite" :border="false" :isLink="true"></u-cell>
-				<u-cell icon="http://qebang.cn/uploads/image/20230208/02e8d1bb25c4a108667154d98df7c110.png" title="系统设置" url="/pages/my/setting" :border="false" :isLink="true"></u-cell>
+				<u-cell :icon="orderIcon" title="我的订单" @click="goPage('/pages/my/order/order')" :border="false" :isLink="true"></u-cell>
+				<u-cell :icon="advisorIcon" title="我的顾问" @click="goPage('/pages/my/advisor')" :border="false" :isLink="true"></u-cell>
+				<u-cell :icon="inviteIcon" v-if="vuex_token&&vuex_user.agent" title="我的邀请" @click="goPage('/pages/my/invite/invite')" :border="false" :isLink="true"></u-cell>
+				<u-cell :icon="settingIcon" title="系统设置" url="/pages/my/setting" :border="false" :isLink="true"></u-cell>
 				
 		</u-cell-group>
 		</view>
@@ -34,6 +34,12 @@
 	export default {
 		data() {
 			return {
+				customerIcon: '',
+				profitsIcon: '',
+				orderIcon: '',
+				advisorIcon: '',
+				inviteIcon: '',
+				settingIcon: '',
 				tabList: [
 				],
 				balance:'￥0.00',
@@ -70,17 +76,38 @@
 			}
 		},
 		created() {
+			this.customerIcon = this.$configs.staticUrl + '/uploads/api/icon/customer.png';
+			this.orderIcon = this.$configs.staticUrl + '/uploads/api/icon/order.png';
+			this.profitsIcon = this.$configs.staticUrl + '/uploads/api/icon/profits.png';
+			this.advisorIcon = this.$configs.staticUrl + '/uploads/api/icon/advisor.png';
+			this.inviteIcon = this.$configs.staticUrl + '/uploads/api/icon/invite.png';
+			this.settingIcon = this.$configs.staticUrl + '/uploads/api/icon/setting.png';
 			this.tabList = this.$configs.tabList;
 		},
 		methods: {
+			goPage(url) {
+				let that = this;
+				if(!this.vuex_token) {
+					uni.showToast({
+						icon:'error',
+						title: '请先登录'
+					})
+					setTimeout(()=>{
+						that.$u.util.goLogin();
+					}, 1000)
+				}
+				else {
+					uni.$u.route({
+						url: url
+					})
+				}
+			},
 			goLogin() {
-				uni.$u.route({
-					url: '/pages/public/login'
-				})
+				this.$u.util.goLogin();
 			},
 			goInfo() {
 				if(!this.vuex_token) {
-					this.goLogin()
+					this.$u.util.goLogin();
 				}
 				else {
 					uni.$u.route({

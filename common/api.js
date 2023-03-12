@@ -26,7 +26,9 @@ module.exports = (vm) => {
 	let courseDetail = (params, config = {}) => http.get('/Course/detail', params, config)
 	let updateStudyNums = (params, config = {}) => http.get('/Course/updateStudyNums', params, config)
 	let rewardPay = (params, config = {}) => http.get('/Appraise/rewardPay', params, config)
+	let coursePay = (params, config = {}) => http.get('/Order/coursePay', params, config)
 	let updateAppraiseOrder = (params, config = {}) => http.get('/Appraise/updateOrder', params, config)
+	let updateCourseOrder = (params, config = {}) => http.get('/Order/updateCourseOrder', params, config)
 	let appraiseInfo = (params, config = {}) => http.get('/Appraise/detail', params, config)
 	let withdraw = (params, config = {}) => http.post('/Withdraw/withdraw', params, config)
 	let withdrawList = (params, config = {}) => http.get('/Withdraw/index', params, config)
@@ -60,7 +62,9 @@ module.exports = (vm) => {
 		courseDetail,
 		updateStudyNums,
 		rewardPay,
+		coursePay,
 		updateAppraiseOrder,
+		updateCourseOrder,
 		appraiseInfo,
 		withdraw,
 		withdrawList,

@@ -828,8 +828,15 @@ module.exports = (vm) => {
 	const jian = (arg1, arg2) => {
 	  return uni.$u.util.jia(arg1, -Number(arg2), arguments[2]);
 	}
+	
+	const goLogin = () => {
+		uni.$u.route({
+			url: '/pages/public/login'
+		})
+	}
 
 	uni.$u.util = {
+		goLogin,
 		writeLog,
 		urlParamHash,
 		jumpOpenBox,

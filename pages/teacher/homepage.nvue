@@ -3,14 +3,15 @@
 		<u-sticky bgColor="#fff">
 			<u-tabs :list="listTab" @click="clickTab"></u-tabs>
 		</u-sticky>
+		<view :style="{marginBottom: $u.util.isIphoneX() ? '128rpx' : '80rpx' }">
 		<template v-if="current==0">
 			<view class="teacher-container">
 				<view class="teacher-top">
 					<u-avatar shape="circle" size="100" :src="info.avatar_url" customStyle="margin: 0px 25px 5px 10px">
 					</u-avatar>
 					<view class="teacher-top-title">
-						<view class="teacher-name">{{ info.teacher_name }}</view>
-						<text v-for="(item_title, idx) in info.title" :key="idx">{{ item_title }}</text>
+						<view class="teacher-name">{{ info.teacher_name }}<view class="share" @click="showShare=true"><u-icon label="分享" color="#00b500" size="22" name="weixin-fill" labelSize="12"></u-icon></view></view>
+						<text class="tag-title" v-for="(item_title, idx) in info.title" :key="idx">{{ item_title }}</text>
 					</view>
 				</view>
 				<view class="item-box teacher-mark">
@@ -38,14 +39,17 @@
 						</u-scroll-list>
 					</view>
 				</view>
-				<view class="teacher-bottom">可免费约聊时长：{{ info.duration }} 分钟</view>
+				<!-- <view class="teacher-bottom">可免费约聊时长：{{ info.duration }} 分钟</view> -->
+				<view class="detail-box" v-if="info.detail">
+					<u-parse :content="info.detail"></u-parse>
+				</view>
 			</view>
-			<view class="button-group">
+<!-- 			<view class="button-group">
 				<u-button v-for="(item,index) in info.service_type" :key="index"
 					:type="item.id==1?'primary':item.id==2?'warning':'error'" :text="'我要'+item.name"
 					@click="order(item)"></u-button>
-			</view>
-			<view class="comment-box" v-for="(item,index) in info.comment" :key="index">
+			</view> -->
+			<!-- <view class="comment-box" v-for="(item,index) in info.comment" :key="index">
 				<view class="comment-top">
 					<view class="comment-top-left">
 						<u-avatar shape="circle" size="20" :src="info.avatar_url" customStyle="margin: 0px 5px 0px 0px">
@@ -57,7 +61,7 @@
 				<view class="comment-content">{{ info.content }}</view>
 			</view>
 			<view class="comment-view-all" @click="viewAllComment">{{ info.comment.length >0 ? '查看全部评价' : '暂无评价' }}
-			</view>
+			</view> -->
 		</template>
 		<template v-if="current==1">
 
@@ -93,10 +97,16 @@
 				<u-loadmore v-if="courseList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
 			</view>
 		</template>
+		</view>
 		<view class="bottom-button-box">
 			<view class="bottom-button-group">
-				<u-button icon="share" type="primary" openType="share" text="推荐好友"></u-button>
-				<u-button icon="coupon" type="warning" text="生成海报" @click="generatePoster"></u-button>
+				<template v-for="(item,index) in info.service_type">
+				<u-button :key="index" type="primary" v-if="item.id==1" shape="circle" text="免费约聊" @click="order(item)"></u-button>
+				<view :key="index" v-else class="button-view"><u-icon labelPos="bottom" :label="item.name" size="24" :name="item.picture" labelSize="12" @click="order(item)"></u-icon></view>
+				</template>
+				
+				<!-- <u-button icon="share" type="primary" openType="share" text="推荐好友"></u-button>
+				<u-button icon="coupon" type="warning" v-if="vuex_token&&vuex_user.agent" text="生成海报" @click="generatePoster"></u-button> -->
 			</view>
 			<u-safe-bottom></u-safe-bottom>
 		</view>
@@ -104,11 +114,34 @@
 			<u-button slot="confirmButton" :text="confirmText" type="primary" shape="circle" @click="confirmClick">
 			</u-button>
 		</u-modal>
+		<u-popup :show="showShare" @close="closeShare" round="16">
+			<view class="show-share-box">
+				<view class="show-main-box">
+					<view class="show-main-item">
+						<button openType="share">
+						<view class="show-main-icon">
+							
+							<u-icon color="#00b500" size="32" name="weixin-fill"></u-icon>
+						</view>
+						微信好友
+						</button>
+					</view>
+					<view class="show-main-item" @click="generatePoster">
+						<view class="show-main-icon">
+							<u-icon color="#ff5500" size="32" name="photo-fill"></u-icon>
+						</view>
+						生成海报
+					</view>
+					
+				</view>
+				<view class="show-cancel" @click="showShare=false">取消</view>
+			</view>
+		</u-popup>
 		<u-popup :show="showPoster" :closeable="true" @close="closeshowPoster">
 			<view class="show-box">
 				<u--image :showLoading="true" mode="aspectFit" :src="poster" height="360px"></u--image>
 				<text>保存图片到相册 分享到朋友圈吧</text>
-				<u-button type="warning" text="保存到相册" @click="savePhoto"></u-button>
+				<u-button type="warning" shape="circle" text="保存到相册" @click="savePhoto"></u-button>
 			</view>
 		</u-popup>
 	</div>
@@ -126,6 +159,7 @@
 				modalType: 0,
 				showPoster: false,
 				show: false,
+				showShare: false,
 				current: 0,
 				confirmText: '去登录',
 				content: '您还没有登录,暂时无法进行下单',
@@ -197,6 +231,9 @@
 				}
 			}
 		},
+		onShow() {
+			this.showPoster = false;
+		},
 		onLoad(options) {
 			console.log(options);
 			if(options.invite_id) {
@@ -264,6 +301,9 @@
 					that.$u.util.showErr('数据加载失败');
 				})
 			},
+			closeShare() {
+				this.showShare = false;
+			},
 			closeshowPoster() {
 				this.showPoster = false;
 			},
@@ -289,9 +329,10 @@
 				})
 			},
 			generatePoster() {
+				this.showShare = false;
 				this.showPoster = true;
 				uni.showLoading({
-					title: '生成中...'
+					title: '正在生成...'
 				})
 				let that = this;
 				uni.$u.api.generatePoster({
@@ -433,6 +474,7 @@
 	.teacher-container {
 		padding: 24rpx;
 		background-color: #f5f5f5;
+		margin-bottom: 20rpx;
 
 		.item-box {
 			flex-direction: row;
@@ -448,15 +490,26 @@
 			flex-direction: row;
 
 			.teacher-top-title {
+				flex:1;
 				.teacher-name {
+					width: 100%;
 					margin-bottom: 20rpx;
 					font-weight: bold;
 					font-size: 36rpx;
+					flex-direction: row;
+					justify-content: space-between;
+					.share {
+						flex-direction: row;
+						background-color: #ffffff;
+						border-radius: 18rpx;
+						padding: 0 16rpx;
+						align-items: center;
+					}
 				}
 
 				font-size: 32rpx;
 
-				text {
+				.tag-title {
 					font-size: 24rpx;
 					margin-top: 8rpx;
 				}
@@ -530,8 +583,12 @@
 		background-color: #ffffff;
 
 		.bottom-button-group {
+			padding: 10rpx 16rpx;
 			flex-direction: row;
-
+			align-items: center;
+			.button-view {
+				margin-left: 32rpx;
+			}
 			.u-button--square {
 				border-radius: 0;
 			}
@@ -545,10 +602,49 @@
 	.show-box {
 		padding: 68rpx 32rpx 0 32rpx;
 		align-items: center;
-
 		text {
 			margin-top: 32rpx;
 			margin-bottom: 32rpx;
+		}
+	}
+	
+	.show-share-box {
+		.show-main-box {
+			padding: 48rpx 120rpx;
+			justify-content: space-between;
+			flex-direction: row;
+			.show-main-item {
+				justify-content: center;
+				font-size: 24rpx;
+				button::after {
+					border: 0;
+				}
+				button {
+					background: transparent;
+					border-radius: 0;
+					line-height: normal;
+					justify-content: center;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					font-size: 24rpx;
+				}
+				.show-main-icon {
+					background-color: #f5f5f5;
+					border-radius: 50rpx;
+					width: 100rpx;
+					height: 100rpx;
+					justify-content: center;
+					align-items: center;
+					margin-bottom: 16rpx;
+				}
+			}
+		}
+		.show-cancel {
+			border-top: solid #f5f5f5 2rpx;
+			padding: 18rpx 0;
+			color: #424242;
+			text-align: center;
 		}
 	}
 </style>
