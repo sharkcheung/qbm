@@ -101,7 +101,7 @@
 		<view class="bottom-button-box">
 			<view class="bottom-button-group">
 				<template v-for="(item,index) in info.service_type">
-				<u-button :key="index" type="primary" v-if="item.id==1" shape="circle" text="免费约聊" @click="order(item)"></u-button>
+				<u-button :key="index" type="primary" v-if="item.id==1" icon="chat" shape="circle" :text="item.name" @click="order(item)"></u-button>
 				<view :key="index" v-else class="button-view"><u-icon labelPos="bottom" :label="item.name" size="24" :name="item.picture" labelSize="12" @click="order(item)"></u-icon></view>
 				</template>
 				
@@ -254,7 +254,7 @@
 					that.info = res.data.info;
 					that.params.teacher_id = that.info.id;
 					that.paramsComment.teacher_id = that.info.id;
-					uni.$u.mpShare.title = '企帮通名师推荐';
+					uni.$u.mpShare.title = that.info.teacher_share_title||'企帮通名师推荐';
 					uni.$u.mpShare.path = 'pages/teacher/homepage?id='+that.info.id+'&invite_id='+that.vuex_user.membe_id;
 					uni.hideLoading()
 				})
