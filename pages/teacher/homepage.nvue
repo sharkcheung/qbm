@@ -232,6 +232,7 @@
 			}
 		},
 		onShow() {
+			this.showShare = false;
 			this.showPoster = false;
 		},
 		onLoad(options) {

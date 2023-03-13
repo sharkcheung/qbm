@@ -237,6 +237,15 @@
                 }
                 
                 }
+                ,{
+                    "path" : "edit",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "用户信息修改",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
             ]
 	}],
 	// 原生的导航

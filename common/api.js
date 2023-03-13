@@ -33,6 +33,7 @@ module.exports = (vm) => {
 	let withdraw = (params, config = {}) => http.post('/Withdraw/withdraw', params, config)
 	let withdrawList = (params, config = {}) => http.get('/Withdraw/index', params, config)
 	let profitsList = (params, config = {}) => http.get('/Profits/index', params, config)
+	let infoEdit = (params, config = {}) => http.post('/Membe/update', params, config)
 	let myadvisor = (params, config = {}) => http.get('/Membe/myadvisor', params, config)
 	let inviteList = (params, config = {}) => http.get('/Membe/myinvite', params, config)
 	uni.$u.api = {
@@ -69,6 +70,7 @@ module.exports = (vm) => {
 		withdraw,
 		withdrawList,
 		profitsList,
+		infoEdit,
 		myadvisor,
 		inviteList,
 	}

@@ -22,7 +22,7 @@
 		</template>
 		<view class="verify-box">
 			<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
-			<u--form labelPosition="left" :model="modelPerson" ref="form" labelWidth="80" v-if="type==0">
+			<u--form labelPosition="right" :model="modelPerson" ref="form" labelWidth="80" v-if="type==0">
 				<u-form-item label="企微二维码" prop="we_com_qrcode">
 					<u-upload :fileList="fileList" @afterRead="afterRead" @delete="deletePic" name="we_com_qrcode" multiple
 						:maxCount="1"></u-upload>
@@ -40,7 +40,7 @@
 						:maxCount="1"></u-upload>
 				</u-form-item>
 			</u--form>
-			<u--form labelPosition="left" :model="modelCompany" ref="formCompany" labelWidth="80" v-else>
+			<u--form labelPosition="right" :model="modelCompany" ref="formCompany" labelWidth="80" v-else>
 				<u-form-item label="公司名" prop="company_name" required>
 					<u--input placeholder="请输入公司名" v-model="modelCompany.company_name" verify-border="none">
 					</u--input>
@@ -198,7 +198,7 @@ export default {
 				url: __this.$configs.baseUrl + '/Upload/upload', //仅为示例，非真实的接口地址
 				filePath: tempFilePaths,
 				header: {
-					token: __this.vuex_user.token,
+					token: __this.vuex_token,
 					contentType: 'application/json'
 				},
 				name: 'file',

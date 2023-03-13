@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<view class="swiper-container">
-			<u-swiper :list="bannerList" radius="0" keyName="logo" @click="bannerClick" :autoplay="false"></u-swiper>
+			<u-swiper height="200" :list="bannerList" radius="0" keyName="logo" @click="bannerClick" :autoplay="false"></u-swiper>
 		</view>
 		<view class="notice-bar-container">
 			<u-notice-bar direction="column" duration="3000" @click="noticeClick" :text="noticeList"></u-notice-bar>
@@ -35,6 +35,7 @@
 		options: { styleIsolation: 'shared' },
 		data() {
 			return {
+				height: '130',
 				showConfirm: false,
 				title: '订阅消息提醒',
 				content: '为了确保服务质量，请先订阅会议通知模板消息',
@@ -157,6 +158,7 @@
 					that.serviceTypeList = res.data.serviceTypeAllList;
 					that.bannerList = res.data.bannerList
 					that.noticeList = res.data.notice.map(item=>item.title);
+					that.height = res.data.banner_height||'130';
 					uni.$u.vuex('vuex_base_config', res.data.baseConfig);
 				})
 				.catch(err=>{

@@ -6,6 +6,8 @@
 				<u-cell
 					:border="false"
 				    title="头像"
+					isLink
+					@click="$u.route('pages/my/edit')"
 				>
 					<u-avatar slot="value" shape="circle" size="40" :src="info.pic"></u-avatar>
 				</u-cell>
@@ -13,6 +15,8 @@
 					:border="false"
 				    title="昵称"
 				    :value="info.nickname||'-'"
+					isLink
+					@click="$u.route('pages/my/edit')"
 				></u-cell>
 				<u-cell
 					:border="false"
@@ -94,7 +98,7 @@
 				},
 			}
 		},
-		created() {
+		onShow() {
 			let that=this;
 			uni.$u.api.userDetail({ params : {membe_id: that.vuex_user.membe_id }}).then(res=>{
 				console.log(res)
