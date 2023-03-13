@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<view class="swiper-container">
-			<u-swiper :list="bannerList" keyName="logo" :autoplay="false"></u-swiper>
+			<u-swiper :list="bannerList" radius="0" keyName="logo" @click="bannerClick" :autoplay="false"></u-swiper>
 		</view>
 		<view class="notice-bar-container">
 			<u-notice-bar direction="column" duration="3000" @click="noticeClick" :text="noticeList"></u-notice-bar>
@@ -107,6 +107,18 @@
 			}
 		},
 		methods: {
+			bannerClick(index) {
+				for (var i = 0; i < this.bannerList.length; i++) {
+					if(index==i) {
+						if(this.bannerList[i].url) {
+							uni.$u.route({
+								url: this.bannerList[i].url
+							})
+						}
+						break;
+					}
+				}
+			},
 			confirmMsg() {
 				this.showConfirm = false;
 				this.subcribeMsg();
