@@ -23,7 +23,11 @@
 			<teacher-list :listData="teacherList"></teacher-list>
 			<u-loadmore :status="status" marginBottom="18"/>
 		</view>
-		<u-modal :show="showConfirm" @confirm="confirmMsg" @cancel="showConfirm=false;" :title="title" :content='content' :showCancelButton="true"></u-modal>
+		<u-modal :show="show" :closeOnClickOverlay="true" title="温馨提示" :content="showContent">
+			<u-button slot="confirmButton" :text="confirmText" type="primary" shape="circle" @click="confirmClick">
+			</u-button>
+		</u-modal>
+		<!-- <u-modal :show="showConfirm" @confirm="confirmMsg" @cancel="showConfirm=false;" :title="title" :content='content' :showCancelButton="true"></u-modal> -->
 		<u-tabbar :value="vuex_currentTab" :placeholder="false">
 			<u-tabbar-item v-for="(item,index) in tabList" @click="changeTab(item)" :text="item.name" :icon="item.icon" :key="index"></u-tabbar-item>
 		</u-tabbar>
@@ -35,6 +39,9 @@
 		options: { styleIsolation: 'shared' },
 		data() {
 			return {
+				show: false,
+				confirmText: '去完善',
+				showContent: '为了更好的提供服务，请您先完善用户信息',
 				height: '130',
 				showConfirm: false,
 				title: '订阅消息提醒',
@@ -74,8 +81,8 @@
 			};
 		},
 		onShow() {
-			if(!this.vuex_subscribe_meeting_msg&&this.vuex_token) {
-				this.showConfirm = true;
+			if(this.vuex_user&&!this.vuex_user.mobile) {
+				this.show = true;
 			}
 		},
 		created() {
@@ -108,6 +115,12 @@
 			}
 		},
 		methods: {
+			confirmClick() {
+				this.show = false;
+				uni.$u.route({
+					url: '/pages/my/perfection'
+				})
+			},
 			bannerClick(index) {
 				for (var i = 0; i < this.bannerList.length; i++) {
 					if(index==i) {

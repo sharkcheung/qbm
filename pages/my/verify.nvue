@@ -20,7 +20,7 @@
 			</view>
 			<u-gap height="10" bgColor="#efefef" v-if="modelCompany.company_verify_status!==0"></u-gap>
 		</template>
-		<view class="verify-box">
+		<view class="verify-box" :style="{marginBottom: $u.util.isIphoneX() ? '128rpx' : '80rpx' }">
 			<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
 			<u--form labelPosition="right" :model="modelPerson" ref="form" labelWidth="80" v-if="type==0">
 				<u-form-item label="企微二维码" prop="we_com_qrcode">
@@ -70,10 +70,12 @@
 				</u-form-item>
 			</u--form>
 		</view>
+		
 		<view class="bottom-button-box">
-			<view class="bottom-button-group"><u-button type="primary" :disabled="modelCompany.company_verify_status==1" :text="buttonText" @click="submit"></u-button></view>
+			<view class="bottom-button-group"><u-button type="primary" :disabled="modelCompany.company_verify_status==1||modelCompany.company_verify_status==2" :text="buttonText" @click="subcribeMsg"></u-button></view>
 			<u-safe-bottom></u-safe-bottom>
 		</view>
+		
 	</view>
 </template>
 
@@ -163,6 +165,9 @@ export default {
 			}
 			else if(that.modelCompany.company_verify_status==3) {
 				that.buttonText = '重新提交'
+			}
+			else if(that.modelCompany.company_verify_status==2) {
+				that.buttonText = '已认证'
 			}
 			uni.hideLoading()
 		})
@@ -283,6 +288,19 @@ export default {
 		},
 		hideKeyboard() {
 			uni.hideKeyboard();
+		},
+		subcribeMsg() {
+			let that = this;
+			let verify_audit_tmpl_id = that.vuex_base_config.verify_audit_tmpl_id;
+			uni.requestSubscribeMessage({
+			  tmplIds: [verify_audit_tmpl_id],
+			  success (res) { 
+				that.submit();
+			  },
+			  fail (err) {
+				that.submit();
+			  }
+			})
 		},
 		submit() {
 			let that=this;

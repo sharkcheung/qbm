@@ -10,7 +10,7 @@
 					<u-avatar shape="circle" size="100" :src="info.avatar_url" customStyle="margin: 0px 25px 5px 10px">
 					</u-avatar>
 					<view class="teacher-top-title">
-						<view class="teacher-name">{{ info.teacher_name }}<view class="share" @click="showShare=true"><u-icon label="分享" color="#00b500" size="22" name="weixin-fill" labelSize="12"></u-icon></view></view>
+						<view class="teacher-name">{{ info.teacher_name }}<view class="share" v-if="vuex_user.agent" @click="showShare=true"><u-icon label="分享" color="#00b500" size="22" name="weixin-fill" labelSize="12"></u-icon></view></view>
 						<text class="tag-title" v-for="(item_title, idx) in info.title" :key="idx">{{ item_title }}</text>
 					</view>
 				</view>
