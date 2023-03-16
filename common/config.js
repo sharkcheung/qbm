@@ -13,22 +13,26 @@ module.exports = {
 	tabList: [
 		{
 			name: '首页',
-			icon: 'home',
+			activeIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/icon_qbt_sy2@1x.png',
+			inactiveIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/icon_qbt_sy@1x.png',
 			path: 'pages/public/home'
 		},
 		{
 			name: '明星老师',
-			icon: 'photo',
+			activeIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/icon_qbt_mxls2@1x.png',
+			inactiveIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/icon_qbt_jmxls@1x.png',
 			path: 'pages/public/teacher'
 		},
 		{
 			name: '精选课程',
-			icon: 'play-right',
+			activeIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/icon_qbt_jxkc2@1x.png',
+			inactiveIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/icon_qbt_jxkc@1x.png',
 			path: 'pages/public/course'
 		},
 		{
 			name: '我的',
-			icon: 'account',
+			activeIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/icon_qbt_wd2@1x.png',
+			inactiveIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/icon_qbt_wd@1x.png',
 			path: 'pages/public/my'
 		}
 	],

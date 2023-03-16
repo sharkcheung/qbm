@@ -24,9 +24,7 @@
 		</u-cell-group>
 		</view>
 		
-		<u-tabbar :value="currentTab" :placeholder="false">
-			<u-tabbar-item v-for="(item,index) in tabList" @click="changeTab(item)" :text="item.name" :icon="item.icon" :key="index"></u-tabbar-item>
-		</u-tabbar>
+		<cu-tabbar :currentTab="currentTab" :tabList="tabList"></cu-tabbar>
 	</view>
 </template>
 

@@ -35,7 +35,8 @@
 			<text
 			    class="u-tabbar-item__text"
 			    :style="{
-					color: isActive? parentData.activeColor : parentData.inactiveColor
+					color: isActive? parentData.activeColor : parentData.inactiveColor,
+					fontWeight: isActive? 'bold' : 'normal'
 				}"
 			>{{ text }}</text>
 		</slot>
