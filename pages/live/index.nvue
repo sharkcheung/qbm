@@ -1,0 +1,127 @@
+<template>
+	<view>
+		<u-sticky bgColor="#fff">
+		<u-tabs :list="statusList" :scrollable="false" :inactiveStyle="{color: '#2A3441'}" :activeStyle="{color: '#F35917'}" itemStyle="height:100rpx;font-size:32rpx;font-weight:bold;" lineColor="#F35917" lineWidth="64" @click="changeStatus" :current="current"></u-tabs>
+		<u-gap height="3" bgColor="#F6F9FE"></u-gap>
+		</u-sticky>
+		<view class="live-container" :style="{marginBottom: $u.util.isIphoneX() ? '168rpx' : '120rpx' }">
+			<live-list :listData="liveList"></live-list>
+			<u-loadmore v-if="liveList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
+			<u-empty mode="data" :text="emptyTitle" :show="liveList.length==0">
+			</u-empty>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				emptyTitle: '暂无直播内容',
+				status: 'loadmore',
+				current: 0,
+				liveList: [],
+				params: {
+					page: 1,
+					order: '',
+					sort: '',
+					type: '',
+				},
+				statusList: [
+					{
+						id: 101,
+						name: '正在直播'
+					},
+					{
+						id: 102,
+						name: '直播预告'
+					},
+					{
+						id: 103,
+						name: '往期回放'
+					},
+				]
+			};
+		},
+		created() {
+			this.getLiveList();
+		},
+		onPullDownRefresh() {
+			console.log('refresh');
+			this.liveList = [];
+			this.params.page = 1;
+			this.status = 'loadmore';
+			this.getLiveList();
+			setTimeout(function () {
+				uni.stopPullDownRefresh();
+			}, 1000);
+		},
+		onReachBottom() {
+			if(this.status !== 'noMore') {
+				this.status = 'loading';
+				this.params.page++;
+				this.getLiveList()
+			}
+		},
+		methods: {
+			loadmore() {
+				if(this.status !== 'noMore') {
+					this.status = 'loading';
+					this.params.page++;
+					this.getLiveList()
+				}
+			},
+			getLiveList() {
+				this.liveList = [{
+					start_time: 1679125756,
+					start_date: '今天',
+					start_hour: '16',
+					start_min: '00',
+					live_status: 103,
+					view_nums: 8933,
+					room_name: '首届微信爆破线上培训会线上培训会线上培…',
+					cover_img: 'https://lanhu-dds-backend.oss-cn-beijing.aliyuncs.com/merge_image/imgs/8a87cc23d1d14b6e8962dfdc01840798_mergeImage.png'
+				}];
+				return ;
+				let that=this;
+				uni.$u.api.liveList({ params: that.params}).then(res=>{
+					
+					if(that.liveList.length>0) {
+						that.liveList = that.liveList.concat(res.data.data);
+					}
+					else {
+						that.liveList = res.data.data;
+					}
+					if(res.data.current_page == res.data.last_page) {
+						that.status = 'noMore';
+					}
+					else {
+						that.status = 'loadmore';
+					}
+					console.log(that.status)
+				})
+				.catch(err=>{
+				})
+			},
+			changeStatus(e) {
+				console.log(e);
+				this.liveList = [];
+				this.status = 'loadmore';
+				this.params.live_status = e.id;
+				this.params.page = 1;
+				this.params.sort = '';
+				this.params.order = '';
+				this.getLiveList()
+			},
+		}
+	}
+</script>
+
+<style lang="scss">
+
+	.live-container {
+		padding: 40rpx 32rpx;
+		overflow: scroll;
+		flex: 1;
+	}
+</style>

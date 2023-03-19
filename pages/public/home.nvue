@@ -6,7 +6,7 @@
 		<view class="notice-bar-container">
 			<u-notice-bar direction="column" duration="3000" @click="noticeClick" :text="noticeList"></u-notice-bar>
 		</view>
-		<u-gap height="10" bgColor="#efefef"></u-gap>
+		<u-gap height="10" bgColor="#F6F9FE"></u-gap>
 		<view class="service-container">
 			<u-grid :border="false">
 				<u-grid-item v-for="(baseListItem, baseListIndex) in serviceTypeList" :key="baseListIndex">
@@ -15,13 +15,38 @@
 				</u-grid-item>
 			</u-grid>
 		</view>
-		<u-gap height="10" bgColor="#efefef"></u-gap>
-		<u-sticky bgColor="#fff">
-			<u-tabs :list="serviceList" @click="changeService"></u-tabs>
-		</u-sticky>
+		<u-gap height="10" bgColor="#F6F9FE" v-if="liveList.length>0"></u-gap>
+		
+		<view class="section_3 flex-col" v-if="liveList.length>0">
+		  <view class="block_1 flex-row justify-between">
+			<text class="text_2">企帮通直播</text>
+			<view class="image-text_3 flex-row justify-between" @click="goUrl('pages/live/index', {})">
+			  <u-icon name="arrow-right" label-pos="left" label="查看更多"></u-icon>
+			</view>
+		  </view>
+		  <live-list :listData="liveList"></live-list>
+		</view>
+		<u-gap height="10" bgColor="#F6F9FE"></u-gap>
+		<view class="section_4 flex-col">
+		  <text class="text_3">服务项目</text>
+		  <view class="grid_1 flex-row justify-between">
+			<view
+			  class="image-text_5 flex-col"
+			  v-for="(item, index) in serviceListAll"
+			  :key="index"
+			  @click="goService(index)"
+			>
+			  <u--image :src="item.picture" width="80rpx" height="80rpx"></u--image>
+			  <text class="text-group_5">{{ item.name }}</text>
+			</view>
+		  </view>
+		</view>
+		<u-gap height="10" bgColor="#F6F9FE"></u-gap>
+		
+		<u-tabs :list="serviceList" :inactiveStyle="{color: '#737D96'}" :activeStyle="{color: '#434E5E'}" itemStyle="height:100rpx;font-size:28rpx;font-weight:bold;" lineColor="#F35917" lineWidth="30" @click="changeService" :current="current"></u-tabs>
 		<view class="teacher-container" :style="{marginBottom: $u.util.isIphoneX() ? '128rpx' : '80rpx' }">
 			<teacher-list :listData="teacherList"></teacher-list>
-			<u-loadmore :status="status" marginBottom="18"/>
+			<u-loadmore :status="status" marginBottom="10"/>
 		</view>
 		<u-modal :show="show" :closeOnClickOverlay="true" title="温馨提示" :content="showContent">
 			<u-button slot="confirmButton" :text="confirmText" type="primary" shape="circle" @click="confirmClick">
@@ -49,6 +74,7 @@
 				],
 				current: 0,
 				currentNum: 0,
+				liveList: [],
 				teacherList: [
 				],
 				urls: [
@@ -64,6 +90,8 @@
 					'https://cdn.uviewui.com/uview/album/10.jpg',
 				],
 				serviceList: [
+				],
+				serviceListAll: [
 				],
 				serviceTypeList: [
 				],
@@ -86,6 +114,7 @@
 		created() {
 			this.tabList = this.$configs.tabList;
 			this.getHomeData()
+			this.getLiveList();
 			// this.getServiceType();
 			// this.getServiceList();
 			this.params.order = 'desc';
@@ -95,7 +124,9 @@
 		onPullDownRefresh() {
 			console.log('refresh');
 			this.teacherList = [];
+			this.liveList = [];
 			this.getHomeData();
+			this.getLiveList();
 			this.status = 'loadmore';
 			this.params.page = 1;
 			this.params.order = 'desc';
@@ -113,6 +144,16 @@
 			}
 		},
 		methods: {
+			goService(index) {
+				this.current = index+1;
+				this.teacherList = [];
+				this.status = 'loadmore';
+				this.params.type = this.current;
+				this.params.page = 1;
+				this.params.sort = '';
+				this.params.order = '';
+				this.getTeacherList()
+			},
 			confirmClick() {
 				this.show = false;
 				uni.$u.route({
@@ -164,7 +205,8 @@
 			getHomeData() {
 				let that=this;
 				uni.$u.api.homeData().then(res=>{
-					let arr = [ { id: 0, name: '推荐' } ];
+					let arr = [ { id: 0, name: '推荐老师' } ];
+					that.serviceListAll = res.data.serviceAllList;
 					that.serviceList = arr.concat(res.data.serviceAllList);
 					that.serviceTypeList = res.data.serviceTypeAllList;
 					that.bannerList = res.data.bannerList
@@ -234,8 +276,33 @@
 					uni.hideLoading()
 				})
 			},
+			getLiveList() {
+				this.liveList = [{
+					start_time: 1679125756,
+					start_date: '今天',
+					start_hour: '16',
+					start_min: '00',
+					live_status: 103,
+					view_nums: 8933,
+					room_name: '首届微信爆破线上培训会线上培训会线上培…',
+					cover_img: 'https://lanhu-dds-backend.oss-cn-beijing.aliyuncs.com/merge_image/imgs/8a87cc23d1d14b6e8962dfdc01840798_mergeImage.png'
+				}];
+				return ;
+				let that=this;
+				uni.$u.api.liveList({ params: that.params}).then(res=>{
+					that.liveList = res.data.data;
+				})
+				.catch(err=>{
+				})
+			},
 			click1(e) {
 				console.log('click1', e);
+			},
+			goUrl(url, params) {
+				uni.$u.route({
+					url: url,
+					params: params
+				})
 			},
 			click(item) {
 				uni.$u.route({
@@ -255,12 +322,95 @@
 
 <style lang="scss" >
 	.service-container {
-		padding: 30rpx 0;
+		padding: 0 0 30rpx 0;
 		.grid-text {
 			margin-top: 8rpx;
 		}
 	}
 	.teacher-container {
-		padding: 24rpx;
+		padding: 0 30rpx 32rpx 30rpx;
+		background-color: #F6F9FE;
 	}
+	
+	.section_3 {
+	    box-shadow: 0px 2px 10px 0px rgba(85, 112, 105, 0.1);
+	    background-color: rgba(255, 255, 255, 1);
+	    margin-top: -2rpx;
+	    padding: 30rpx 30rpx 46rpx 30rpx;
+	    .block_1 {
+			margin-bottom: 30rpx;
+	      .text_2 {
+	        overflow-wrap: break-word;
+	        color: rgba(67, 78, 94, 1);
+	        font-size: 32rpx;
+	        font-family: PingFangSC-Medium;
+	        font-weight: bold;
+	        text-align: left;
+	        white-space: nowrap;
+	        line-height: 44rpx;
+	      }
+	      .image-text_3 {
+	        width: 152rpx;
+	        margin: 2rpx 0 2rpx 0;
+	        .text-group_3 {
+	          overflow-wrap: break-word;
+	          color: rgba(134, 142, 157, 1);
+	          font-size: 28rpx;
+	          font-family: PingFang-SC-Medium;
+	          font-weight: NaN;
+	          text-align: right;
+	          white-space: nowrap;
+	          line-height: 40rpx;
+	        }
+	        .thumbnail_4 {
+	          width: 32rpx;
+	          height: 32rpx;
+	          margin: 4rpx 0 4rpx 0;
+	        }
+	      }
+	    }
+	  }
+	  
+	  
+	  .section_4 {
+	      box-shadow: 0px 2px 10px 0px rgba(85, 112, 105, 0.1);
+	      background-color: rgba(255, 255, 255, 1);
+	      padding: 30rpx 30rpx 0rpx 30rpx;
+	      .text_3 {
+	        overflow-wrap: break-word;
+	        color: rgba(67, 78, 94, 1);
+	        font-size: 32rpx;
+	        font-family: PingFangSC-Medium;
+	        font-weight: bold;
+	        text-align: left;
+	        white-space: nowrap;
+	        line-height: 44rpx;
+	        margin-bottom: 30rpx;
+	      }
+	      .grid_1 {
+			  flex-wrap: wrap;
+	        .image-text_5 {
+	          margin-bottom: 40rpx;
+			  width: 24%;
+			  display: flex;
+			  align-items: center;
+	          .label_1 {
+	            align-self: center;
+	          }
+	          .text-group_5 {
+	            overflow-wrap: break-word;
+	            color: rgba(125, 135, 155, 1);
+	            font-size: 24rpx;
+	            font-family: PingFang-SC-Medium;
+	            text-align: center;
+	            white-space: nowrap;
+	            line-height: 34rpx;
+	            margin-top: 14rpx;
+	          }
+	        }
+			.image-text_5:not(:nth-child(4n)) {
+			margin-right: calc(4% / 3);
+			}
+	      }
+	    }
 </style>

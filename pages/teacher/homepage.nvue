@@ -4,105 +4,106 @@
 			<u-tabs :list="listTab" @click="clickTab"></u-tabs>
 		</u-sticky>
 		<view :style="{marginBottom: $u.util.isIphoneX() ? '128rpx' : '80rpx' }">
-		<template v-if="current==0">
-			<view class="teacher-container">
-				<view class="teacher-top">
-					<u-avatar shape="circle" size="100" :src="info.avatar_url" customStyle="margin: 0px 25px 5px 10px">
-					</u-avatar>
-					<view class="teacher-top-title">
-						<view class="teacher-name">{{ info.teacher_name }}<view class="share" v-if="vuex_user.agent" @click="showShare=true"><u-icon label="分享" color="#00b500" size="22" name="weixin-fill" labelSize="12"></u-icon></view></view>
-						<text class="tag-title" v-for="(item_title, idx) in info.title" :key="idx">{{ item_title }}</text>
+			<template v-if="current==0">
+				<u-gap height="10" bgColor="#F6F9FE"></u-gap>
+				<view class="teacher-container">
+					<view class="teacher-top flex-row">
+						<u-avatar size="80" shape="square" :src="info.avatar_url" customStyle="border-radius:20rpx;">
+						</u-avatar>
+						<view class="teacher-top-title">
+							<view class="teacher-name flex-row justify-between">{{ info.teacher_name }}<view class="share flex-row align-center" v-if="vuex_user.agent" @click="showShare=true"><u-icon label="分享" color="#00b500" size="22" name="weixin-fill" labelSize="12"></u-icon></view></view>
+							<text class="tag-title" v-for="(item_title, idx) in info.title" :key="idx">{{ item_title }}</text>
+						</view>
 					</view>
-				</view>
-				<view class="item-box teacher-mark">
-					<view class="item-title">评分：</view>
-					<view class="item-value">
-						<u-rate :value="info.mark" readonly activeColor="#f9ae3d"></u-rate>
-					</view>
-				</view>
-				<view class="item-box">
-					<view class="item-title">履历：</view>
-					<view class="item-value">{{ info.resume }}</view>
-				</view>
-				<view class="item-box">
-					<view class="item-title">荣誉：</view>
-					<view class="item-value">{{ info.honor }}</view>
-				</view>
-				<view class="item-box teacher-skill">
-					<view class="item-title">擅长：</view>
-					<view class="item-value">
-						<u-scroll-list indicatorColor="#fff0f0" indicatorActiveColor="#f56c6c">
-							<view class="scroll-list" style="flex-direction: row;">
-								<u-tag v-for="(item_item, index_item) in info.service" :key="index_item"
-									:text="item_item.name" plain size="mini" type="warning"></u-tag>
+					<view class="line-view"><text></text></view>
+					<view class="padding-box">
+						<view class="item-box flex-row teacher-mark">
+							<view class="item-title">星级评分：</view>
+							<view class="item-value">
+								<u-rate :value="info.mark" readonly activeColor="#f9ae3d"></u-rate>
 							</view>
-						</u-scroll-list>
+						</view>
+						<view class="item-box flex-row">
+							<view class="item-title">个人履历：</view>
+							<view class="item-value resume">{{ info.resume }}</view>
+						</view>
+						<view class="item-box flex-row">
+							<view class="item-title">荣誉称号：</view>
+							<view class="item-value honor flex-row"><text v-for="(item_item, index_item) in info.honor" :key="index_item">{{ item_item }}</text></view>
+						</view>
+						<view class="item-box flex-row teacher-skill">
+							<view class="item-title">擅长项目：</view>
+							<view class="item-value">
+								<view class="scroll-list flex-row flex-wrap">
+									<text v-for="(item_item, index_item) in info.service" :key="index_item">{{ item_item.name }}</text>
+								</view>
+							</view>
+						</view>
+					</view>
+					<!-- <view class="teacher-bottom">可免费约聊时长：{{ info.duration }} 分钟</view> -->
+					<view class="detail-box" v-if="info.detail">
+						<u-parse :content="info.detail"></u-parse>
 					</view>
 				</view>
-				<!-- <view class="teacher-bottom">可免费约聊时长：{{ info.duration }} 分钟</view> -->
-				<view class="detail-box" v-if="info.detail">
-					<u-parse :content="info.detail"></u-parse>
-				</view>
-			</view>
-<!-- 			<view class="button-group">
-				<u-button v-for="(item,index) in info.service_type" :key="index"
-					:type="item.id==1?'primary':item.id==2?'warning':'error'" :text="'我要'+item.name"
-					@click="order(item)"></u-button>
-			</view> -->
-			<!-- <view class="comment-box" v-for="(item,index) in info.comment" :key="index">
-				<view class="comment-top">
-					<view class="comment-top-left">
-						<u-avatar shape="circle" size="20" :src="info.avatar_url" customStyle="margin: 0px 5px 0px 0px">
-						</u-avatar>
-						{{ info.nick_name }}
+	<!-- 			<view class="button-group">
+					<u-button v-for="(item,index) in info.service_type" :key="index"
+						:type="item.id==1?'primary':item.id==2?'warning':'error'" :text="'我要'+item.name"
+						@click="order(item)"></u-button>
+				</view> -->
+				<!-- <view class="comment-box" v-for="(item,index) in info.comment" :key="index">
+					<view class="comment-top">
+						<view class="comment-top-left">
+							<u-avatar shape="circle" size="20" :src="info.avatar_url" customStyle="margin: 0px 5px 0px 0px">
+							</u-avatar>
+							{{ info.nick_name }}
+						</view>
+						<view class="comment-top-right">{{ info.create_time }}</view>
 					</view>
-					<view class="comment-top-right">{{ info.create_time }}</view>
+					<view class="comment-content">{{ info.content }}</view>
 				</view>
-				<view class="comment-content">{{ info.content }}</view>
-			</view>
-			<view class="comment-view-all" @click="viewAllComment">{{ info.comment.length >0 ? '查看全部评价' : '暂无评价' }}
-			</view> -->
-		</template>
-		<template v-if="current==1">
+				<view class="comment-view-all" @click="viewAllComment">{{ info.comment.length >0 ? '查看全部评价' : '暂无评价' }}
+				</view> -->
+			</template>
+			<template v-if="current==1">
 
-			<view class="comment-box comment-item" v-for="(item, index) in commentList" :key="index">
-				<view class="comment-top">
-					<view class="comment-top-left">
-						<u-avatar shape="circle" size="20" :src="item.pic" customStyle="margin: 0px 5px 0px 0px">
-						</u-avatar>
-						{{ item.nickname }}
+				<view class="comment-box comment-item" v-for="(item, index) in commentList" :key="index">
+					<view class="comment-top">
+						<view class="comment-top-left">
+							<u-avatar shape="circle" size="20" :src="item.pic" customStyle="margin: 0px 5px 0px 0px">
+							</u-avatar>
+							{{ item.nickname }}
+						</view>
+						<view class="comment-top-right">{{ item.create_time }}</view>
 					</view>
-					<view class="comment-top-right">{{ item.create_time }}</view>
+					<view class="comment-content">{{ item.content }}</view>
 				</view>
-				<view class="comment-content">{{ item.content }}</view>
-			</view>
-			<u-empty
-				text='暂无评价'
-				:show="commentList.length==0"
-				mode="comment"
-				:icon="commentPng"
-			>
-			</u-empty>
-		</template>
-		<template v-if="current==2">
-			<view class="video-box">
-				<video-list :listData="courseList"></video-list>
 				<u-empty
-					text='暂无课程'
-					:show="courseList.length==0"
-					mode="list"
-					:icon="listPng"
+					text='暂无评价'
+					:show="commentList.length==0"
+					mode="comment"
+					:icon="commentPng"
 				>
 				</u-empty>
-				<u-loadmore v-if="courseList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
-			</view>
-		</template>
+			</template>
+			<template v-if="current==2">
+				<view class="video-box">
+					<video-list :listData="courseList"></video-list>
+					<u-empty
+						text='暂无课程'
+						:show="courseList.length==0"
+						mode="list"
+						:icon="listPng"
+					>
+					</u-empty>
+					<u-loadmore v-if="courseList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
+				</view>
+			</template>
 		</view>
 		<view class="bottom-button-box">
 			<view class="bottom-button-group">
 				<template v-for="(item,index) in info.service_type">
-				<u-button :key="index" type="primary" v-if="item.id==1" icon="chat" shape="circle" :text="item.name" @click="order(item)"></u-button>
-				<view :key="index" v-else class="button-view"><u-icon labelPos="bottom" :label="item.name" size="24" :name="item.picture" labelSize="12" @click="order(item)"></u-icon></view>
+				<view :key="index" class="chat-button-view flex-row justify-center" v-if="item.id==1" @click="order(item)"><u-icon labelPos="right" labelColor="#fff" :label="item.name" size="36" :name="chatImg" labelSize="16" @click="order(item)"></u-icon></view>
+				<view :key="index" v-else class="button-view"><u-icon labelPos="bottom" :label="item.name" size="29" :name="item.picture" labelColor="#868E9D" labelSize="12" @click="order(item)"></u-icon></view>
 				</template>
 				
 				<!-- <u-button icon="share" type="primary" openType="share" text="推荐好友"></u-button>
@@ -151,6 +152,7 @@
 	export default {
 		data() {
 			return {
+				chatImg: '',
 				status: 'loadmore',
 				statusComment: 'loadmore',
 				poster: '',
@@ -167,6 +169,10 @@
 				],
 				courseList: [
 				],
+				customStyle: {
+					background: 'linear-gradient(270deg, #FFC37C 0%, #EE5929 100%)',
+					borderRadius: '40rpx'
+				},
 				info: {
 					avatar_url: '',
 					teacher_name: '',
@@ -236,6 +242,7 @@
 			this.showPoster = false;
 		},
 		onLoad(options) {
+			this.chatImg = this.$configs.staticUrl + '/uploads/api/icon/icon_qbt_yl.svg'
 			console.log(options);
 			if(options.invite_id) {
 				uni.$u.vuex('invite_id', options.invite_id);
@@ -473,38 +480,47 @@
 
 <style lang="scss">
 	.teacher-container {
-		padding: 24rpx;
-		background-color: #f5f5f5;
+		background-color: #fff;
 		margin-bottom: 20rpx;
 
 		.item-box {
-			flex-direction: row;
 			margin-top: 20rpx;
-
+			.item-title {
+				font-weight: bold;
+				color: rgba(67, 78, 94, 1)
+			}
 			.item-value {
 				flex: 1;
+				font-weight: bold;
+				color: #434E5E;
+			}
+			.resume {
+				line-height: 150%;
+				font-weight: normal;
+			}
+			.honor {
+				color:#F35917;
+				gap: 40rpx;
 			}
 		}
 
 		.teacher-top {
-			margin-top: 20rpx;
-			flex-direction: row;
+			padding: 30rpx 30rpx 26rpx 30rpx;
 
 			.teacher-top-title {
+				margin-left: 30rpx;
 				flex:1;
 				.teacher-name {
 					width: 100%;
-					margin-bottom: 20rpx;
+					margin-bottom: 2rpx;
 					font-weight: bold;
-					font-size: 36rpx;
-					flex-direction: row;
-					justify-content: space-between;
+					font-size: 32rpx;
+					color: #434E5E;
 					.share {
-						flex-direction: row;
-						background-color: #ffffff;
-						border-radius: 18rpx;
-						padding: 0 16rpx;
-						align-items: center;
+						background: #F5F5F5;
+						color: #434E5E;
+						border-radius: 24rpx;
+						padding: 6rpx 14rpx;
 					}
 				}
 
@@ -512,9 +528,23 @@
 
 				.tag-title {
 					font-size: 24rpx;
-					margin-top: 8rpx;
+					margin-top: 12rpx;
+					color: #868E9D;
 				}
 			}
+		}
+		
+		.line-view {
+			background-color: #44598B;
+			height: 6rpx;
+			text {
+				width: 220rpx;
+				background-color: #F35917;
+				height: 6rpx;
+			}
+		}
+		.padding-box {
+			padding: 10rpx 32rpx 20rpx 32rpx;
 		}
 
 		.teacher-skill {
@@ -526,7 +556,19 @@
 				flex-direction: row;
 
 				.scroll-list {
-					gap: 20rpx;
+					width: 100%;
+					text {
+						border: solid 2rpx #BECCE7;
+						color: #5B7EA9;
+						padding: 6rpx 12rpx;
+						border-radius: 24rpx;
+						font-size: 24rpx;
+						margin-bottom: 20rpx;
+					}
+					
+					text:not(:nth-child(4n)) {
+						margin-right: 20rpx;
+					}
 				}
 			}
 		}
@@ -584,11 +626,16 @@
 		background-color: #ffffff;
 
 		.bottom-button-group {
-			padding: 10rpx 16rpx;
 			flex-direction: row;
 			align-items: center;
+			.chat-button-view {
+				width: 66.7%;
+				background: linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);
+				border-radius: 40rpx;
+				margin: 10rpx 0rpx 10rpx 30rpx;
+			}
 			.button-view {
-				margin-left: 32rpx;
+				margin-left: 34rpx;
 			}
 			.u-button--square {
 				border-radius: 0;

@@ -97,7 +97,23 @@
 			}
 
 		}]
-	}, {
+	},{
+		"root": "pages/live",
+		"pages": [{
+			"path": "index",
+			"style": {
+				"navigationBarTitleText": "企帮通直播",
+				"enablePullDownRefresh": true
+			}
+		}, {
+			"path": "detail",
+			"style": {
+				"navigationBarTitleText": "直播预告",
+				"enablePullDownRefresh": false
+			}
+
+		}]
+	},  {
 		"root": "pages/my",
 		"pages": [{
 			"path": "info",
