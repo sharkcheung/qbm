@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<view class="live-list flex-col" v-for="(item,index) in listData" :key="index">
+		<view class="live-list flex-col" v-for="(item,index) in listData" :key="index" @click="goLive(item.roomid)">
 			<view class="live-preview flex-row justify-between" v-if="item.live_status==102||item.live_status==103">
 				<view v-if="item.live_status==102" class="flex-row live-time align-center">{{ item.start_date }} <text class="start-hour">{{ item.start_hour }}</text>:<text>{{ item.start_min }}</text></view>
 				<view v-if="item.live_status==103" class="playback"><u-icon color="#868E9D" size="24" name="eye" labelColor="#434E5E" :label="'观看数 '+item.view_nums" space="10"></u-icon></view>
@@ -10,7 +10,7 @@
 				</view>
 			</view>
 			<view class="live-title" v-if="item.live_status==102">
-				{{ item.room_name }}
+				{{ item.name }}
 			</view>
 			<view class="cover-img">
 			<u--image :src="item.cover_img" width="100%" height="350rpx"></u--image>
@@ -47,6 +47,14 @@
 			this.shareImg = this.$configs.staticUrl + '/uploads/api/icon/fx.svg'
 			console.log(this.listData)
 		},
+		methods: {
+			goLive(roomid) {
+				let url = "plugin-private://wx2b03c6e691cd7370/pages/live-player-plugin?room_id="+roomid
+				uni.$u.route({
+					url: url
+				})
+			}
+		}
 	}
 </script>
 

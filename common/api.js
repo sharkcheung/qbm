@@ -8,6 +8,7 @@ module.exports = (vm) => {
 	let userInfo = (params, config = {}) => http.get('/Membe/info', params, config)
 	let updateUserInfo = (params, config = {}) => http.post('/Membe/update', params, config)
 	let bannerList = (params, config = {}) => http.get('/Link/bannerList', params, config)
+	let liveList = (params, config = {}) => http.get('/Live/index', params, config)
 	let teacherList = (params, config = {}) => http.get('/Teacher/index', params, config)
 	let serviceTypeAll = (params, config = {}) => http.get('/Servicetype/all', params, config)
 	let serviceAll = (params, config = {}) => http.get('/Service/all', params, config)
@@ -45,6 +46,7 @@ module.exports = (vm) => {
 		userInfo,
 		updateUserInfo,
 		bannerList,
+		liveList,
 		teacherList,
 		serviceTypeAll,
 		serviceAll,

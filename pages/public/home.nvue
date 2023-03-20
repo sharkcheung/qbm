@@ -72,6 +72,7 @@
 				status: 'loadmore',
 				tabList: [
 				],
+				liveStatus: [],
 				current: 0,
 				currentNum: 0,
 				liveList: [],
@@ -107,7 +108,7 @@
 			};
 		},
 		onShow() {
-			if(this.vuex_user&&!this.vuex_user.mobile) {
+			if(this.vuex_token&&!this.vuex_user.mobile) {
 				this.show = true;
 			}
 		},
@@ -277,20 +278,39 @@
 				})
 			},
 			getLiveList() {
-				this.liveList = [{
-					start_time: 1679125756,
-					start_date: '今天',
-					start_hour: '16',
-					start_min: '00',
-					live_status: 103,
-					view_nums: 8933,
-					room_name: '首届微信爆破线上培训会线上培训会线上培…',
-					cover_img: 'https://lanhu-dds-backend.oss-cn-beijing.aliyuncs.com/merge_image/imgs/8a87cc23d1d14b6e8962dfdc01840798_mergeImage.png'
-				}];
-				return ;
+				// this.liveList = [{
+				// 	start_time: 1679125756,
+				// 	start_date: '今天',
+				// 	start_hour: '16',
+				// 	start_min: '00',
+				// 	live_status: 103,
+				// 	view_nums: 8933,
+				// 	room_name: '首届微信爆破线上培训会线上培训会线上培…',
+				// 	cover_img: 'https://lanhu-dds-backend.oss-cn-beijing.aliyuncs.com/merge_image/imgs/8a87cc23d1d14b6e8962dfdc01840798_mergeImage.png'
+				// }];
+				// return ;
 				let that=this;
-				uni.$u.api.liveList({ params: that.params}).then(res=>{
-					that.liveList = res.data.data;
+				uni.$u.api.liveList({ params: {page: 1, limit: 20}}).then(res=>{
+					that.liveStatus = res.data.live_status;
+					let arr = res.data.data;
+					that.liveList = [];
+					for (var i = 0; i < arr.length; i++) {
+						if(arr[i]['live_status'] == 101) {
+							that.liveList.push(arr[i]);
+							break;
+						}
+						if(arr[i]['live_status'] == 102) {
+							that.liveList.push(arr[i]);
+							break;
+						}
+						if(arr[i]['live_status'] == 103) {
+							that.liveList.push(arr[i]);
+							break;
+						}
+					}
+					if(that.liveList.length>0) {
+						// that.liveList[0]['start_date'] = 
+					}
 				})
 				.catch(err=>{
 				})

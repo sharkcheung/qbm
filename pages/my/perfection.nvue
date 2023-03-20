@@ -1,26 +1,28 @@
 <template>
 	<view>
-		<view class="pic-info">
-			<button class="avatar-wrapper" open-type="chooseAvatar" plain="true" style="border: 0;" @chooseavatar="onChooseAvatar">
-				<u-avatar :src="model.pic" size="70"></u-avatar>
-			</button>
-			<view class="nick-box" v-if="!isEdit" @click="isEdit=true"><u-icon labelPos="left" space="8" :label="model.nickname" name="edit-pen" size="20"></u-icon> </view>
-			<u--input v-if="isEdit" @blur="isEdit=false" :clearable="true" inputAlign="center" style="max-width: 120rpx;" type="nickname" v-model="model.nickname" :focus="true" class="u-text-left" placeholder="请输入昵称" border='none'></u--input>
-		</view>
-		<u-gap height="10" bgColor="#efefef"></u-gap>
 		<view class="perfection-box">
 			<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
 			<u--form labelPosition="left" :model="model" ref="form" labelWidth="100">
+				<u-form-item label="头像" prop="username">
+					<view style="flex-direction: row;align-items: center;">
+					<button class="avatar-wrapper" open-type="chooseAvatar" plain="true" style="border: 0;padding: 0;" @chooseavatar="onChooseAvatar">
+						<u-avatar :src="model.pic" size="50"></u-avatar>
+					</button> <text class="tips">点击头像更换</text>
+					</view>
+				</u-form-item>
+				<u-form-item label="昵称" prop="username">
+					<u--input :clearable="true" type="nickname" v-model="model.nickname" placeholder="请输入昵称" ></u--input>
+				</u-form-item>
 				<u-form-item
 					label="手机号"
 					prop="mobile"
 					ref="mobile"
 				>
-					<u--input v-if="hasPhone" disabledColor="#ffffff" inputAlign="right" v-model="model.mobile" :disabled="true" border='none'></u--input>
+					<u--input v-if="hasPhone" disabledColor="#ffffff" v-model="model.mobile" :disabled="true"></u--input>
 					<u-button v-if="!hasPhone" type="primary" size='small' open-type="getPhoneNumber" @getphonenumber="decryptPhoneNumber">获取手机号</u-button>
 				</u-form-item>
 				<u-form-item label="姓名" prop="username">
-					<u--input placeholder="请输入姓名" v-model="model.username" inputAlign="right" border="none">
+					<u--input placeholder="请输入姓名" v-model="model.username">
 					</u--input>
 				</u-form-item>
 			</u--form>
