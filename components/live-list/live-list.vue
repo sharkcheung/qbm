@@ -5,7 +5,7 @@
 				<view v-if="item.live_status==102" class="flex-row live-time align-center">{{ item.start_date }} <text class="start-hour">{{ item.start_hour }}</text>:<text>{{ item.start_min }}</text></view>
 				<view v-if="item.live_status==103" class="playback"><u-icon color="#868E9D" size="24" name="eye" labelColor="#434E5E" :label="'观看数 '+item.view_nums" space="10"></u-icon></view>
 				<view class="flex-row">
-					<text class="tips align-center justify-center" v-if="item.live_status==102">开播提醒</text>
+					<view class="tips align-center justify-center" v-if="item.live_status==102"><button open-type="subscribe" @click.stop="" :room-id="item.roomid" @subscribe="subscribeCallBack">开播提醒</button></view>
 					<u-icon size="20" :name="shareImg"></u-icon>
 				</view>
 			</view>
@@ -48,9 +48,12 @@
 			console.log(this.listData)
 		},
 		methods: {
+			subscribeCallBack(e) {
+				console.log(e);
+			},
 			goLive(roomid) {
 				let url = "plugin-private://wx2b03c6e691cd7370/pages/live-player-plugin?room_id="+roomid
-				uni.$u.route({
+				uni.navigateTo({
 					url: url
 				})
 			}
@@ -67,12 +70,18 @@
 			.flex-row {
 				.tips {
 					margin-right: 40rpx;
-					width: 128rpx;
-					height: 52rpx;
-					background: linear-gradient(180deg, #FF9760 0%, #EE5F15 100%);
-					border-radius: 10rpx;
-					font-size: 24rpx;
-					color: #fff;
+					button {
+						width: 128rpx;
+						height: 52rpx;
+						background: linear-gradient(180deg, #FF9760 0%, #EE5F15 100%);
+						border-radius: 10rpx;
+						font-size: 24rpx;
+						line-height: normal;
+						padding: 0;
+						color: #fff;
+						border: 0;
+						line-height: 52rpx;
+					}
 				}
 			}
 			.live-time {

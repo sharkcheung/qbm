@@ -3,7 +3,7 @@
 		<u-sticky bgColor="#fff">
 			<u-tabs :list="listTab" @click="clickTab"></u-tabs>
 		</u-sticky>
-		<view :style="{marginBottom: $u.util.isIphoneX() ? '128rpx' : '80rpx' }">
+		<view :style="{marginBottom: $u.util.isIphoneX() ? '168rpx' : '80rpx' }">
 			<template v-if="current==0">
 				<u-gap height="10" bgColor="#F6F9FE"></u-gap>
 				<view class="teacher-container">
@@ -41,9 +41,10 @@
 						</view>
 					</view>
 					<!-- <view class="teacher-bottom">可免费约聊时长：{{ info.duration }} 分钟</view> -->
-					<view class="detail-box" v-if="info.detail">
-						<u-parse :content="info.detail"></u-parse>
-					</view>
+				</view>
+				<u-gap height="10" bgColor="#F6F9FE" v-if="info.detail"></u-gap>
+				<view class="detail-box" v-if="info.detail">
+					<u-parse :content="info.detail"></u-parse>
 				</view>
 	<!-- 			<view class="button-group">
 					<u-button v-for="(item,index) in info.service_type" :key="index"
@@ -349,7 +350,7 @@
 						}
 					}).then(res => {
 						console.log(res)
-						that.poster = res.data;
+						that.poster = res.data + '?r='+ Math.random();
 						uni.hideLoading()
 					})
 					.catch(err => {
