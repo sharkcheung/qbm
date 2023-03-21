@@ -13,7 +13,7 @@
 						<view class="title-text">
 							<text v-for="(item_title, idx) in item.title.split(',')" :key="idx">{{ item_title }}</text>
 						</view>
-						<view class="chat-btn flex-row justify-center align-center"><u-icon label="约聊" labelPos="right" size="23" :name="chatImg" labelColor="#fff" labelSize="14"></u-icon></view>
+						<view class="chat-btn flex-row justify-center align-center" @click.stop="order(item)"><u-icon label="约聊" labelPos="right" size="23" :name="chatImg" labelColor="#fff" labelSize="14"></u-icon></view>
 					</view>
 				</view>
 				
@@ -27,6 +27,10 @@
 				</view>
 			</view>
 		</view>
+		<u-modal :show="show" :closeOnClickOverlay="true" title="温馨提示" :content="content">
+			<u-button slot="confirmButton" :text="confirmText" type="primary" shape="circle" @click="confirmClick">
+			</u-button>
+		</u-modal>
 	</view>
 </template>
 
@@ -38,6 +42,10 @@
 		},
 		data() {
 			return {
+				modalType: 0,
+				show: false,
+				confirmText: '去登录',
+				content: '您还没有登录,暂时无法进行下单',
 				chatImg: ''
 			};
 		},
@@ -46,6 +54,72 @@
 			console.log(this.listData)
 		},
 		methods:{
+			confirmClick() {
+				this.show = false;
+				if (this.modalType == 0) {
+					uni.$u.route({
+						url: '/pages/public/login'
+					})
+				} else if (this.modalType == 1) {
+					uni.$u.route({
+						url: '/pages/my/verify',
+						params: {
+							type: 2
+						}
+					})
+				} else if (this.modalType == 2) {
+					uni.$u.route({
+						url: '/pages/my/perfection'
+					})
+				}
+			},
+			order(item) {
+				if (!this.vuex_token) {
+					this.modalType = 0;
+					this.show = true;
+					this.content = '您还没有登录,暂时无法进行下单';
+					this.confirmText = '去登录';
+					console.log(!this.vuex_token);
+					return false;
+				}
+				if (!this.vuex_user.mobile) {
+					this.modalType = 2;
+					this.show = true;
+					this.content = '请先完善信息再下单';
+					this.confirmText = '去完善';
+					return false;
+				}
+
+				uni.showLoading({
+					title: '数据请求中...'
+				})
+				let that = this;
+				uni.$u.api.checkUserOrder({
+						params: {
+							teacher_id: item.id
+						}
+					}).then(res => {
+						uni.hideLoading()
+						if (res.msg !== '') {
+							that.modalType = 1;
+							that.show = true;
+							that.confirmText = '去认证';
+							that.content = res.msg;
+							return false;
+						}
+						that.goPage('/pages/teacher/order', {
+							company_name: res.data.company_name,
+							service_type_id: item.id,
+							service_type_name: item.name,
+							teacher_id: that.info.id,
+							teacher_name: that.info.teacher_name
+						})
+					})
+					.catch(err => {
+						uni.hideLoading()
+						that.$u.util.showErr(err.msg);
+					})
+			},
 			openPage(path, params) {
 				uni.$u.route({
 					url: path,
