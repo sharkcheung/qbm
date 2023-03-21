@@ -7,7 +7,7 @@
 		<view class="live-container" :style="{marginBottom: $u.util.isIphoneX() ? '168rpx' : '120rpx' }">
 			<live-list :listData="liveList"></live-list>
 			<u-loadmore v-if="liveList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
-			<u-empty mode="data" :text="emptyTitle" :show="liveList.length==0">
+			<u-empty mode="data" :text="emptyTitle" :icon="emptyIcon" :show="liveList.length==0">
 			</u-empty>
 		</view>
 	</view>
@@ -17,7 +17,8 @@
 	export default {
 		data() {
 			return {
-				emptyTitle: '暂无直播内容',
+				emptyTitle: '暂无记录',
+				emptyIcon: '',
 				status: 'loadmore',
 				current: 0,
 				liveList: [],
@@ -44,6 +45,7 @@
 			};
 		},
 		created() {
+			this.emptyIcon = this.$configs.staticUrl + '/uploads/api/icon/img_qbt_kym.svg'
 			this.getLiveList();
 		},
 		onPullDownRefresh() {
@@ -72,17 +74,6 @@
 				}
 			},
 			getLiveList() {
-				this.liveList = [{
-					start_time: 1679125756,
-					start_date: '今天',
-					start_hour: '16',
-					start_min: '00',
-					live_status: 103,
-					view_nums: 8933,
-					room_name: '首届微信爆破线上培训会线上培训会线上培…',
-					cover_img: 'https://lanhu-dds-backend.oss-cn-beijing.aliyuncs.com/merge_image/imgs/8a87cc23d1d14b6e8962dfdc01840798_mergeImage.png'
-				}];
-				return ;
 				let that=this;
 				uni.$u.api.liveList({ params: that.params}).then(res=>{
 					

@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<u-sticky bgColor="#fff">
-			<u-tabs :list="listTab" @click="clickTab"></u-tabs>
+			<u-tabs :list="listTab" lineColor="#F35917" lineWidth="30" :inactiveStyle="{color: '#737D96'}" :activeStyle="{color: '#434E5E'}" itemStyle="height:100rpx;font-size:28rpx;font-weight:bold;" @click="clickTab"></u-tabs>
 		</u-sticky>
 		<view :style="{marginBottom: $u.util.isIphoneX() ? '168rpx' : '80rpx' }">
 			<template v-if="current==0">
@@ -104,7 +104,7 @@
 			<view class="bottom-button-group">
 				<template v-for="(item,index) in info.service_type">
 				<view :key="index" class="chat-button-view flex-row justify-center" v-if="item.id==1" @click="order(item)"><u-icon labelPos="right" labelColor="#fff" :label="item.name" size="36" :name="chatImg" labelSize="16" @click="order(item)"></u-icon></view>
-				<view :key="index" v-else class="button-view"><u-icon labelPos="bottom" :label="item.name" size="29" :name="item.picture" labelColor="#868E9D" labelSize="12" @click="order(item)"></u-icon></view>
+				<view :key="index" v-else class="button-view"><u-icon labelPos="bottom" :label="item.name" size="29" :name="item.picture" labelColor="#868E9D" labelSize="12" space="0" @click="order(item)"></u-icon></view>
 				</template>
 				
 				<!-- <u-button icon="share" type="primary" openType="share" text="推荐好友"></u-button>
@@ -649,7 +649,7 @@
 	}
 
 	.show-box {
-		padding: 68rpx 32rpx 0 32rpx;
+		padding: 68rpx 32rpx 32rpx 32rpx;
 		align-items: center;
 		text {
 			margin-top: 32rpx;

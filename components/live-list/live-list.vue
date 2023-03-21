@@ -65,6 +65,7 @@
 	.live-list {
 		width: 100%;
 		border-radius: 8px;
+		margin-bottom: 40rpx;
 		.live-preview {
 			margin-bottom: 20rpx;
 			.flex-row {
@@ -77,10 +78,13 @@
 						border-radius: 10rpx;
 						font-size: 24rpx;
 						line-height: normal;
-						padding: 0;
+						padding-left: 0;
+						padding-right: 0;
 						color: #fff;
 						border: 0;
 						line-height: 52rpx;
+						outline: none;
+						background-color: transparent;
 					}
 				}
 			}
@@ -139,5 +143,8 @@
 				 padding: 8rpx 26rpx 8rpx 26rpx;
 			}
 		}
+	}
+	.live-list:last-child {
+		margin-bottom: 0;
 	}
 </style>

@@ -12,7 +12,12 @@
 			"path": "pages/public/home",
 			"style": {
 				"navigationBarTitleText": "企帮通",
-				"enablePullDownRefresh": true
+				"enablePullDownRefresh": true,
+				"mp-weixin": {
+				    "usingComponents": {
+				        "subscribe": "plugin-private://wx2b03c6e691cd7370/components/subscribe/subscribe"
+				    }
+				}
 			}
 		},
 		{

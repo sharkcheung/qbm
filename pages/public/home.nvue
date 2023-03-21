@@ -9,8 +9,8 @@
 		<u-gap height="10" bgColor="#F6F9FE"></u-gap>
 		<view class="service-container">
 			<u-grid :border="false">
-				<u-grid-item v-for="(baseListItem, baseListIndex) in serviceTypeList" :key="baseListIndex">
-					<u--image shape="circle" :showLoading="true" :src="baseListItem.picture" width="60px" height="60px" @click="click(baseListItem)"></u--image>
+				<u-grid-item v-for="(baseListItem, baseListIndex) in serviceTypeList" :key="baseListIndex" @click="click(baseListItem)">
+					<u--image shape="circle" :showLoading="true" :src="baseListItem.picture" width="60px" height="60px"></u--image>
 					<text class="grid-text">{{ baseListItem.name }}</text>
 				</u-grid-item>
 			</u-grid>
@@ -19,7 +19,7 @@
 		
 		<view class="section_3 flex-col" v-if="liveList.length>0">
 		  <view class="block_1 flex-row justify-between">
-			<text class="text_2">企帮通直播</text>
+			<text class="text_2">企帮通直播 <button open-type="subscribe" :room-id="4" @subscribe="subscribeCallBack">开播提醒</button></text>
 			<view class="image-text_3 flex-row justify-between" @click="goUrl('pages/live/index', {})">
 			  <u-icon name="arrow-right" label-pos="left" label="查看更多"></u-icon>
 			</view>
@@ -45,6 +45,7 @@
 		
 		<u-tabs :list="serviceList" :inactiveStyle="{color: '#737D96'}" :activeStyle="{color: '#434E5E'}" itemStyle="height:100rpx;font-size:28rpx;font-weight:bold;" lineColor="#F35917" lineWidth="30" @click="changeService" :current="current"></u-tabs>
 		<view class="teacher-container" :style="{marginBottom: $u.util.isIphoneX() ? '128rpx' : '80rpx' }">
+			<u-loading-icon :show="status=='loading'"></u-loading-icon>
 			<teacher-list :listData="teacherList"></teacher-list>
 			<u-loadmore :status="status" marginBottom="10"/>
 		</view>

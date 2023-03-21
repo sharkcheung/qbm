@@ -107,14 +107,14 @@
             "subPackages" : true
         },
         "usingComponents" : {
-			"subscribe": "plugin-private://wx2b03c6e691cd7370/components/subscribe/subscribe"
-		},
-		"plugins": {
-			"live-player-plugin": {
-				"version": "1.3.5", 
-				"provider": "wx2b03c6e691cd7370" 
-			}
-		}
+            "subscribe" : "plugin-private://wx2b03c6e691cd7370/components/subscribe/subscribe"
+        },
+        "plugins" : {
+            "live-player-plugin" : {
+                "version" : "1.3.5",
+                "provider" : "wx2b03c6e691cd7370"
+            }
+        }
     },
     "mp-alipay" : {
         "usingComponents" : true,
