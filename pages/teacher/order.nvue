@@ -137,6 +137,10 @@ export default {
 		this.modelOrder.company_name = options.company_name;
 		this.modelOrder.service_type_id = options.service_type_id;
 		this.modelOrder.service_type_name = options.service_type_name;
+		if(Number(options.service_id)!=0) {
+			this.modelOrder.service_id = options.service_id;
+			this.modelOrder.service_name = options.service_name;
+		}
 		this.modelOrder.teacher_name = options.teacher_name;
 		this.modelOrder.teacher_id = options.teacher_id;
 		this.getServiceList();

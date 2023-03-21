@@ -5,7 +5,10 @@
 				<view v-if="item.live_status==102" class="flex-row live-time align-center">{{ item.start_date }} <text class="start-hour">{{ item.start_hour }}</text>:<text>{{ item.start_min }}</text></view>
 				<view v-if="item.live_status==103" class="playback"><u-icon color="#868E9D" size="24" name="eye" labelColor="#434E5E" :label="'观看数 '+item.view_nums" space="10"></u-icon></view>
 				<view class="flex-row">
-					<view class="tips align-center justify-center" v-if="item.live_status==102"><button open-type="subscribe" @click.stop="" :room-id="item.roomid" @subscribe="subscribeCallBack">开播提醒</button></view>
+					<view class="tips align-center justify-center" v-if="item.live_status==102"><subscribe
+    :room-id="item.roomid"
+    @subscribe="subscribeCallBack">
+</subscribe><!-- <button open-type="subscribe" @click.stop="" :room-id="item.roomid" @subscribe="subscribeCallBack">开播提醒</button> --></view>
 					<u-icon size="20" :name="shareImg"></u-icon>
 				</view>
 			</view>

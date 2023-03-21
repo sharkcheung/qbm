@@ -38,7 +38,15 @@
 	export default {
 		name:"teacher-list",
 		props: {
-			listData: Array
+			listData: Array,
+			serviceId: {
+				type: Number,
+				default: 0
+			},
+			serviceName: {
+				type: String,
+				default: ''
+			},
 		},
 		data() {
 			return {
@@ -79,7 +87,6 @@
 					this.show = true;
 					this.content = '您还没有登录,暂时无法进行下单';
 					this.confirmText = '去登录';
-					console.log(!this.vuex_token);
 					return false;
 				}
 				if (!this.vuex_user.mobile) {
@@ -107,18 +114,28 @@
 							that.content = res.msg;
 							return false;
 						}
-						that.goPage('/pages/teacher/order', {
-							company_name: res.data.company_name,
-							service_type_id: item.id,
-							service_type_name: item.name,
-							teacher_id: that.info.id,
-							teacher_name: that.info.teacher_name
+						uni.$u.route({
+							url: 'pages/teacher/order',
+							params: {
+								company_name: res.data.company_name,
+								service_type_id: 1,
+								service_id: that.serviceId,
+								service_name: that.serviceName,
+								teacher_id: item.id,
+								teacher_name: item.teacher_name
+							}
 						})
 					})
 					.catch(err => {
 						uni.hideLoading()
 						that.$u.util.showErr(err.msg);
 					})
+			},
+			goPage(path, params) {
+				uni.$u.route({
+					url: path,
+					params: params
+				})
 			},
 			openPage(path, params) {
 				uni.$u.route({
