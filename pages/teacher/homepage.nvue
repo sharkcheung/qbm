@@ -112,7 +112,7 @@
 			</view>
 			<u-safe-bottom></u-safe-bottom>
 		</view>
-		<u-modal :show="show" :closeOnClickOverlay="true" title="温馨提示" :content="content">
+		<u-modal :show="show" :closeOnClickOverlay="true" title="温馨提示" @close="close" :content="content">
 			<u-button slot="confirmButton" :text="confirmText" type="primary" shape="circle" @click="confirmClick">
 			</u-button>
 		</u-modal>
@@ -139,7 +139,7 @@
 				<view class="show-cancel" @click="showShare=false">取消</view>
 			</view>
 		</u-popup>
-		<u-popup :show="showPoster" :closeable="true" @close="closeshowPoster">
+		<u-popup zIndex="10072" :show="showPoster" :closeable="true" @close="closeshowPoster">
 			<view class="show-box">
 				<u--image :showLoading="true" mode="aspectFit" :src="poster" height="360px"></u--image>
 				<text>保存图片到相册 分享到朋友圈吧</text>
@@ -153,6 +153,7 @@
 	export default {
 		data() {
 			return {
+				id: '',
 				chatImg: '',
 				status: 'loadmore',
 				statusComment: 'loadmore',
@@ -164,16 +165,13 @@
 				show: false,
 				showShare: false,
 				current: 0,
+				showCancelButton: false,
 				confirmText: '去登录',
 				content: '您还没有登录,暂时无法进行下单',
 				commentList: [
 				],
 				courseList: [
 				],
-				customStyle: {
-					background: 'linear-gradient(270deg, #FFC37C 0%, #EE5929 100%)',
-					borderRadius: '40rpx'
-				},
 				info: {
 					avatar_url: '',
 					teacher_name: '',
@@ -239,24 +237,18 @@
 			}
 		},
 		onShow() {
-			this.showShare = false;
-			this.showPoster = false;
-		},
-		onLoad(options) {
 			this.chatImg = this.$configs.staticUrl + '/uploads/api/icon/icon_qbt_yl.svg'
-			console.log(options);
-			if(options.invite_id) {
-				uni.$u.vuex('invite_id', options.invite_id);
-			}
 			this.commentPng = this.$configs.staticUrl + '/uploads/api/icon/comment.png';
 			this.listPng = this.$configs.staticUrl + '/uploads/api/icon/list.png';
+			this.showShare = false;
+			this.showPoster = false;
 			uni.showLoading({
 				title: '数据加载中...'
 			})
 			let that = this;
 			uni.$u.api.teacherHome({
 					params: {
-						id: options.id,
+						id: that.id,
 					}
 				}).then(res => {
 					console.log(res)
@@ -271,6 +263,13 @@
 					uni.hideLoading()
 					that.$u.util.showErr('头像上传失败');
 				})
+		},
+		onLoad(options) {
+			console.log(options);
+			this.id = options.id;
+			if(options.invite_id) {
+				uni.$u.vuex('invite_id', options.invite_id);
+			}
 		},
 		methods: {
 			loadmore() {
@@ -331,6 +330,14 @@
 								})
 							},
 							fail(err) {
+								if(err.errMsg=='saveImageToPhotosAlbum:fail auth deny') {
+									that.showPoster = false;
+									that.show = true;
+									that.modalType = 999;
+									that.content = '需要您授权保存相册';
+									that.confirmText = '去授权';
+									return false;
+								}
 								console.log(err);
 							}
 						})
@@ -359,8 +366,12 @@
 					})
 
 			},
-			confirmClick() {
+			close() {
 				this.show = false;
+			},
+			confirmClick() {
+				let that = this;
+				that.show = false;
 				if (this.modalType == 0) {
 					uni.$u.route({
 						url: '/pages/public/login'
@@ -375,6 +386,23 @@
 				} else if (this.modalType == 2) {
 					uni.$u.route({
 						url: '/pages/my/perfection'
+					})
+				}
+				else {
+					uni.openSetting({
+						success(settingdata) {
+							if (settingdata.authSetting['scope.writePhotosAlbum']) {
+								uni.showToast({
+									title: '获取权限成功,再次保存图片即可成功',
+								})
+							} else {
+								uni.showToast({
+									title: '获取权限失败，无法保存到相册',
+									icon: 'none'
+								})
+							}
+							that.showPoster = true;
+						}
 					})
 				}
 			},

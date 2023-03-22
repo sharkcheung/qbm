@@ -22,16 +22,16 @@ module.exports = {
 			path: 'pages/public/home'
 		},
 		{
-			name: '明星老师',
-			activeIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/icon_qbt_mxls2@1x.png',
-			inactiveIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/icon_qbt_jmxls@1x.png',
-			path: 'pages/public/teacher'
-		},
-		{
 			name: '精选课程',
 			activeIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/icon_qbt_jxkc2@1x.png',
 			inactiveIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/icon_qbt_jxkc@1x.png',
 			path: 'pages/public/course'
+		},
+		{
+			name: '线下活动',
+			activeIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/icon_bql_xxhd2@1x.png',
+			inactiveIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/icon_bql_xxhd@1x.png',
+			path: 'pages/public/activity'
 		},
 		{
 			name: '我的',

@@ -20,7 +20,7 @@
 				],
 				tabList: [
 				],
-				currentTab: 1,
+				currentTab: 2,
 				params: {
 					page: 1,
 					order: '',

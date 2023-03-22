@@ -19,18 +19,16 @@
 				    }
 				}
 			}
-		},
-		{
-			"path": "pages/public/teacher",
-			"style": {
-				"navigationBarTitleText": "明星老师",
-				"enablePullDownRefresh": true
-			}
-		},
-		{
+		}, {
 			"path": "pages/public/course",
 			"style": {
 				"navigationBarTitleText": "精选课程",
+				"enablePullDownRefresh": true
+			}
+		}, {
+			"path": "pages/public/activity",
+			"style": {
+				"navigationBarTitleText": "线下活动",
 				"enablePullDownRefresh": true
 			}
 		}, {
@@ -48,7 +46,7 @@
 			}
 
 		}
-	],
+    ],
 	"subPackages": [{
 		"root": "pages/teacher",
 		"pages": [{
@@ -281,10 +279,10 @@
 				"pagePath": "pages/public/home"
 			},
 			{
-				"pagePath": "pages/public/teacher"
+				"pagePath": "pages/public/course"
 			},
 			{
-				"pagePath": "pages/public/course"
+				"pagePath": "pages/public/activity"
 			},
 			{
 				"pagePath": "pages/public/my"
@@ -299,8 +297,8 @@
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uView",
+		"navigationBarTitleText": "企帮通",
 		"navigationBarBackgroundColor": "#FFFFFF",
-		"backgroundColor": "#FFFFFF"
+		"backgroundColor": "#F6F9FE"
 	}
 }
