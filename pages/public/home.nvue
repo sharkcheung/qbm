@@ -42,7 +42,6 @@
 		  </view>
 		</view>
 		<u-gap height="10" bgColor="#F6F9FE"></u-gap>
-		
 		<u-tabs :list="serviceList" :inactiveStyle="{color: '#737D96'}" :activeStyle="{color: '#434E5E'}" itemStyle="height:100rpx;font-size:28rpx;font-weight:bold;" lineColor="#F35917" lineWidth="30" @click="changeService" :current="current"></u-tabs>
 		<view class="teacher-container" :style="{marginBottom: $u.util.isIphoneX() ? '128rpx' : '80rpx' }">
 			<u-loading-icon :show="status=='loading'"></u-loading-icon>
@@ -341,7 +340,6 @@
 	          color: rgba(134, 142, 157, 1);
 	          font-size: 28rpx;
 	          font-family: PingFang-SC-Medium;
-	          font-weight: NaN;
 	          text-align: right;
 	          white-space: nowrap;
 	          line-height: 40rpx;

@@ -1,9 +1,12 @@
 <template>
 	<view>
-		<view class="video-box">
-			<video-list :listData="courseList" :showTeacher="true"></video-list>
-			<u-loadmore v-if="courseList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
-			<u-empty mode="data" :text="emptyTitle" :show="courseList.length==0">
+		<u-sticky bgColor="#fff">
+		<u-tabs :list="tabsList" :scrollable="false" :inactiveStyle="{color: '#737D96'}" :activeStyle="{color: '#434E5E',fontWeight: 'bold'}" itemStyle="height:100rpx;font-size:32rpx;" lineColor="#F35917" lineWidth="30" @click="changeStatus" :current="current"></u-tabs>
+		</u-sticky>
+		<view class="video-box" :style="{marginBottom: $u.util.isIphoneX() ? '148rpx' : '120rpx' }">
+			<activity-list :listData="activityList" :showTeacher="true"></activity-list>
+			<u-loadmore v-if="activityList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
+			<u-empty mode="data" :text="emptyTitle" :show="activityList.length==0">
 			</u-empty>
 		</view>
 		<cu-tabbar :currentTab="currentTab" :tabList="tabList"></cu-tabbar>
@@ -16,7 +19,18 @@
 			return {
 				emptyTitle: '暂无课程',
 				status: 'loadmore',
-				courseList: [
+				current: 0,
+				activityList: [
+				],
+				tabsList: [
+					{
+						id: 0,
+						name: '线下活动'
+					},
+					{
+						id: 1,
+						name: '活动回顾'
+					},
 				],
 				tabList: [
 				],
@@ -31,14 +45,14 @@
 		},
 		created() {
 			this.tabList = this.$configs.tabList;
-			this.getCourseList();
+			this.getActivityList();
 		},
 		onPullDownRefresh() {
 			console.log('refresh');
-			this.courseList = [];
+			this.activityList = [];
 			this.params.page = 1;
 			this.status = 'loadmore';
-			this.getCourseList();
+			this.getActivityList();
 			setTimeout(function () {
 				uni.stopPullDownRefresh();
 			}, 1000);
@@ -47,7 +61,7 @@
 			if(this.status !== 'noMore') {
 				this.status = 'loading';
 				this.params.page++;
-				this.getCourseList()
+				this.getActivityList()
 			}
 		},
 		methods:{
@@ -55,18 +69,18 @@
 				if(this.status !== 'noMore') {
 					this.status = 'loading';
 					this.params.page++;
-					this.getCourseList()
+					this.getActivityList()
 				}
 			},
-			getCourseList() {
+			getActivityList() {
 				let that=this;
-				uni.$u.api.courseList({ params: that.params}).then(res=>{
+				uni.$u.api.activityList({ params: that.params}).then(res=>{
 					console.log(res)
-					if(that.courseList.length>0) {
-						that.courseList = that.courseList.concat(res.data.data);
+					if(that.activityList.length>0) {
+						that.activityList = that.activityList.concat(res.data.data);
 					}
 					else {
-						that.courseList = res.data.data;
+						that.activityList = res.data.data;
 					}
 					if(res.data.current_page == res.data.last_page) {
 						that.status = 'noMore';
@@ -80,19 +94,22 @@
 					uni.hideLoading()
 				})
 			},
-			changeTab(item) {
-				uni.$u.route({
-					type: 'switchTab',
-					url: item.path
-				})
+			changeStatus(e) {
+				console.log(e);
+				this.liveList = [];
+				this.status = 'loadmore';
+				this.params.live_status = e.id;
+				this.params.page = 1;
+				this.params.sort = '';
+				this.params.order = '';
+				this.getLiveList()
 			},
 		}
 	}
 </script>
 
 <style lang="scss">
-
-.video-box {
-	padding: 24rpx;
-}
+	.video-box {
+		background-color: #F6F9FE;
+	}
 </style>

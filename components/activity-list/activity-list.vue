@@ -1,10 +1,17 @@
 <template>
 	<view class="activity-list">
 		<view class="activity-item" v-for="(item, index) in listData" :key="index" @click="openPage('/pages/course/info',item)">
-			<u--image :showLoading="true" radius="4" :src="item.pic" width="100%" height="180rpx"></u--image>
-			<view class="activity-title">{{ item.course_name }}</view>
-			<view class="activity-study-num"><text>{{ item.views||0 }}人已学</text><text>{{ item.sale_price ? item.sale_price : '免费' }}</text></view>
-			<text v-if="showTeacher" class="teacher-name">{{ item.teacher.teacher_name}}</text>
+			<view class="item-top flex-row justify-between">
+				<u--image :showLoading="true" radius="4" :src="item.pic" width="268rpx" height="164rpx"></u--image>
+				<view class="item-right">
+					<view class="activity-title">{{ item.name }}</view>
+					<view class="activity-time align-center flex-row"><text>{{ item.start_time | date('mm/dd') }}~{{ item.end_time | date('mm/dd') }}</text>{{ item.address }}</view>
+				</view>
+			</view>
+			<view class="item-bottom align-center flex-row justify-between">
+				<view class="apply-time flex-row">报名截止时间：<text>{{ item.deadline_time | date('yyyy.mm.dd hh:MM') }}</text></view>
+				<view class="tips" :class="item.deadline_time>timestamp?'apply-btn':''">{{ (item.deadline_time>timestamp)?'立即报名':(item.deadline_time<=timestamp&&item.end_time>timestamp)?'报名已截止':'活动已结束' }}</view>
+			</view>
 		</view>
 	</view>
 </template>
@@ -19,9 +26,13 @@
 				default: false
 			},
 		},
+		mounted() {
+			this.timestamp = Date.parse(new Date())/1000;
+		},
 		data() {
 			return {
-				
+				timestamp: '',
+				btnName: '立即报名'
 			};
 		},
 		methods:{
@@ -39,32 +50,52 @@
 
 <style lang="scss">
 	.activity-list {
-		flex-direction: row;
-		flex-wrap: wrap;
-		justify-content: space-between;
 		.activity-item {
-			width: calc(50% - 10rpx);
-			position: relative;
-			.activity-title {
-				margin-top: 12rpx;
-				font-size: 28rpx;
-				display: -webkit-box;//定义为盒子模型显示
-				overflow: hidden;
-				text-overflow: ellipsis;
-				-webkit-line-clamp: 2;//用来限制在一个块元素显示的文本的行数
-				-webkit-box-orient: vertical;//从上到下垂直排列子元素（设置伸缩盒子的子元素排列方式）
-			}
-			.activity-study-num {
-				margin-top: 8rpx;
-				font-size: 24rpx;
-				color: #aaa;
-				flex-direction: row;
-				justify-content: space-between;
-				text:last-child {
-					color:#c00;
+			width: 100%;
+			padding: 30rpx 30rpx 20rpx 30rpx;
+			margin-top: 20rpx;
+			background: #FFFFFF;
+			font-size: 28rpx;
+			.item-top {
+				padding-bottom: 34rpx;
+				border-bottom: 2rpx solid #F5F5F5;
+				.item-right {
+					flex: 1;
+					margin-left: 20rpx;
 				}
 			}
-			margin-bottom: 24rpx;
+			.item-bottom {
+				margin-top: 30rpx;
+				.apply-time {
+					font-size: 24rpx;
+					color: #868E9D;
+					text {
+						color: #434E5E;
+					}
+				}
+				.tips {
+					color: #434E5E;
+				}
+				.apply-btn {
+					width: 180rpx;
+					height: 60rpx;
+					background: linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);
+					border-radius: 40rpx;
+					color: #FFFFFF;
+					text-align: center;
+					line-height: 60rpx;
+				}
+			}
+			.activity-title {
+				line-height: 40rpx;
+				color: #434E5E;
+				overflow-wrap: break-word;
+			}
+			.activity-time {
+				margin-top: 44rpx;
+				font-size: 24rpx;
+				color: #868E9D;
+			}
 			.teacher-name {
 				position: absolute;
 				left: 16rpx;
