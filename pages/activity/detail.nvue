@@ -5,10 +5,10 @@
 		</view>
 		<view class="activity-intro">
 			<view class="activity-title">{{ info.name }}</view>
-			<view class="activity-tip align-center justify-between"><u-icon color="#868E9D" size="24" name="eye" labelColor="#868E9D" :label="'浏览数 '+info.views" space="10"></u-icon><button openType="share" class="u-reset-button"><u-icon size="20" :name="shareImg"></u-icon></button></view>
+			<view class="activity-tip align-center justify-between"><u-icon color="#868E9D" size="24" name="eye" labelColor="#868E9D" :label="'浏览数 '+info.views" space="10"></u-icon><button openType="share" class="u-reset-button"><u-icon size="20" color="" :name="shareImg"></u-icon></button></view>
 		</view>
 		<u-gap height="10" bgColor="#efefef"></u-gap>
-		<view class="activity-content-box" :style="{marginBottom: $u.util.isIphoneX() ? '168rpx' : '120rpx' }">
+		<view class="activity-content-box" :style="{marginBottom: $u.util.isIphoneX() ? '128rpx' : '80rpx' }">
 			<!-- <view class="activity-fee">免费</view> -->
 			<view class="item">
 				<view class="flex-row item-title align-center"><text></text>活动时间</view>
@@ -30,9 +30,9 @@
 				<view class="flex-row item-title align-center"><text></text>报名截止时间</view>
 				<view class="flex-row item-value align-center"><text></text>{{ info.deadline_time | date('yyyy.mm.dd hh:MM') }}</view>
 			</view>
-			<view class="apply-list">
+			<view class="apply-list" v-if="applyList.length>0">
 				<view class="list-title">报名名单</view>
-				<view class="item-list flex-row justify-between" v-for="(item, index) in applyList">
+				<view class="item-list flex-row justify-between" v-for="(item, index) in applyList" :key="index">
 					<text>{{ item.name }}</text>
 					<text>{{ item.phone }}</text>
 				</view>
@@ -40,7 +40,7 @@
 		</view>
 		<view class="bottom-button-box">
 			<view class="bottom-button-group justify-center align-center" @click="apply" v-if="info.deadline_time>timestamp">
-				{{ info.isApply?'已报名':'我要报名' }}
+				{{ getStatus() }}
 			</view>
 			<u-safe-bottom></u-safe-bottom>
 		</view>
@@ -82,6 +82,8 @@
 					views: 0,
 					pic: '',
 					sale_price: 0,
+					detail:'',
+					flow: '',
 					isApply: true,
 				},
 				id: '',
@@ -106,10 +108,10 @@
 			this.shareImg = this.$configs.staticUrl + '/uploads/api/icon/fx.svg'
 			let that = this;
 			that.id = options.id;
-			this.timestamp = Date.parse(new Date())/1000;
 		},
 		onShow() {
 			let that = this;
+			this.timestamp = Date.parse(new Date())/1000;
 			uni.$u.api.activityDetail({
 					params: {
 						id: that.id
@@ -123,6 +125,25 @@
 				.catch(err => {})
 		},
 		methods:{
+			getStatus() {
+				let status = '';
+				if(Object.keys(this.info.applyInfo).length>0) {
+					status = '已报名';
+					if(this.info.applyInfo.status==0) {
+						status+= ',审核中';
+					}
+					else if(this.info.applyInfo.status==1) {
+						status+= ',已审核';
+					}
+					else {
+						status+= ',未通过';
+					}
+				}
+				else {
+					status+= '我要报名';
+				}
+				return status;
+			},
 			closeBuy() {
 				this.showBuy = false;
 			},
@@ -281,14 +302,19 @@
 			margin-bottom: 16rpx;
 		}
 		.apply-list {
+			color:#434E5E;
+			margin-bottom: 70rpx;
 			.list-title {
 				background: #F5F5F5;
 				height: 72rpx;
 				line-height: 72rpx;
 				text-align: center;
-				color:#434E5E;
 				font-size: 32rpx;
 				font-weight: bold;
+			}
+			.item-list {
+				padding: 20rpx 0;
+				border-bottom: solid 1rpx #DDDDDD;
 			}
 		}
 		.item-title {

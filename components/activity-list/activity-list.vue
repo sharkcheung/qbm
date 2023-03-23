@@ -10,7 +10,7 @@
 			</view>
 			<view class="item-bottom align-center flex-row justify-between">
 				<view class="apply-time flex-row">报名截止时间：<text>{{ item.deadline_time | date('yyyy.mm.dd hh:MM') }}</text></view>
-				<view class="tips" :class="item.deadline_time>timestamp?'apply-btn':''">{{ (item.deadline_time>timestamp)?'立即报名':(item.deadline_time<=timestamp&&item.end_time>timestamp)?'报名已截止':'活动已结束' }}</view>
+				<view @click.stop="apply(item)" class="tips" :class="item.deadline_time>timestamp?'apply-btn':''">{{ (item.deadline_time>timestamp)?'立即报名':(item.deadline_time<=timestamp&&item.end_time>timestamp)?'报名已截止':'活动已结束' }}</view>
 			</view>
 		</view>
 	</view>
@@ -44,6 +44,14 @@
 					}
 				})
 			},
+			apply(item) {
+				if(item.deadline_time>this.timestamp){
+					this.openPage('pages/activity/apply',{id:item.id})
+				}
+				else {
+					this.openPage('pages/activity/detail',{id:item.id})
+				}
+			}
 		}
 	}
 </script>

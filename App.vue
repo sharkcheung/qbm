@@ -1,9 +1,21 @@
 <script>
 	export default {
-		onLaunch: function() {
+		onLaunch: function(options) {
+			console.log('onLaunch')
+			console.log(options)
+			let that = this;
+			uni.$u.api.configData().then(res => {
+					console.log(res)
+					uni.$u.vuex('vuex_base_config', res.data);
+				})
+				.catch(err => {
+					uni.hideLoading()
+					that.$u.util.showErr('头像上传失败');
+				})
 		},
-		onShow: function() {
-			
+		onShow: function(options) {
+			console.log("show",options)  
+			console.log('App Show') 
 		},
 		onHide: function() {
 			

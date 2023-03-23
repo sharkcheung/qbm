@@ -48,6 +48,8 @@ const store = new Vuex.Store({
         vuex_subscribe_meeting_msg: lifeData.vuex_subscribe_meeting_msg ? lifeData.vuex_subscribe_meeting_msg : false,
 		// 当前导航
 		vuex_currentTab: lifeData.vuex_currentTab ? lifeData.vuex_currentTab : 0,
+		// 场景
+		vuex_scene: lifeData.vuex_scene ? lifeData.vuex_scene : 0,
         // 配置信息
         vuex_base_config: lifeData.vuex_base_config ? lifeData.vuex_base_config : {},
     },

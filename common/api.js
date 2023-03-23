@@ -1,6 +1,7 @@
 module.exports = (vm) => {
 	const { http } = uni.$u
 	let homeData = (params, config = {}) => http.get('/Home/index', params, config)
+	let configData = (params, config = {}) => http.get('/Home/config', params, config)
 	let login = (params, config = {}) => http.post('/Login/index', params, config)
 	let getPhone = (params, config = {}) => http.post('/Membe/getPhone', params, config)
 	let perfection = (params, config = {}) => http.post('/Membe/perfection', params, config)
@@ -39,8 +40,10 @@ module.exports = (vm) => {
 	let inviteList = (params, config = {}) => http.get('/Membe/myinvite', params, config)
 	let activityList = (params, config = {}) => http.get('/Activity/index', params, config)
 	let activityDetail = (params, config = {}) => http.get('/Activity/detail', params, config)
+	let activityApply = (params, config = {}) => http.post('/Activity/apply', params, config)
 	uni.$u.api = {
 		homeData,
+		configData,
 		login,
 		getPhone,
 		perfection,
@@ -79,5 +82,6 @@ module.exports = (vm) => {
 		inviteList,
 		activityList,
 		activityDetail,
+		activityApply
 	}
 }

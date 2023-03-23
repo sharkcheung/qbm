@@ -21,21 +21,14 @@
 				</u-form-item>
 			</u--form>
 			<view class="bottom-button-box">
-				<view class="bottom-button-group justify-center align-center" @click="submit">我要报名</view>
+				<view class="bottom-button-group justify-center align-center" @click="!submiting&&submit()">我要报名</view>
 			</view>
 		</view>
-
-		<u-action-sheet :show="showService" :actions="actions" title="请选择预约服务" @close="showService = false" @select="serviceSelect"></u-action-sheet>
-		<!-- <u-calendar :show="showCalendar" minDate="1950-01-01" defaultDate="" @confirm="calendarConfirm" @close="calendarClose"></u-calendar> -->
-		<u-datetime-picker
-		ref="datetimePicker"
-				:show="show"
-				v-model="value"
-				@confirm="confirm"
-				mode="date"
-		></u-datetime-picker>
 		
-		<u-modal :show="showConfirm"  @cancel="showConfirm=false;" @confirm="confirmMsg" :title="title" :content='content' :showCancelButton="true"></u-modal>
+		<u-modal :show="showConfirm"  @cancel="showConfirm=false;" @confirm="confirmMsg" :title="title" :content='content' :showCancelButton="showCancelButton">
+			<u-button slot="confirmButton" :text="confirmText" type="primary" shape="circle" @click="confirmClick">
+			</u-button>
+		</u-modal>
 	</view>
 </template>
 
@@ -43,27 +36,26 @@
 export default {
 	data() {
 		return {
+			submiting: false,
 			showConfirm: false,
+			showCancelButton:false,
 			title: '订阅消息提醒',
-			content: '为了确保服务质量，请先订阅会议通知模板消息',
+			confirmText: '去登录',
+			content: '为了确保服务质量，请先订阅活动审核通知模板消息',
 			value: Number(new Date()),
-			show: false,
 			actions: [
 			],
 			showCalendar: false,
 			model: {
-				id: '',
+				activity_id: '',
 				name: '',
 				position: '',
 				phone: '',
 				industry: '',
 				company: '',
+				membe_name: '',
+				membe_pic: '',
 			},
-			customStyle: {
-				background: '#F8F8F8',
-				border:0,
-			},
-			showService: false,
 			rules: {
 				name: {
 					type: 'string',
@@ -102,25 +94,53 @@ export default {
 		//如果需要兼容微信小程序，并且校验规则中含有方法等，只能通过setRules方法设置规则。
 		this.$refs.form.setRules(this.rules)
 	},
+	onShow() {
+		if (!this.vuex_token) {
+			this.modalType = 0;
+			this.showConfirm = true;
+			this.showCancelButton = false;
+			this.title = '温馨提醒';
+			this.content = '您还没有登录,暂时无法报名';
+			this.confirmText = '去登录';
+			return false;
+		}
+		this.model.name = this.vuex_user.username;
+		this.model.phone = this.vuex_user.mobile;
+		this.model.membe_name = this.vuex_user.nickname;
+		this.model.membe_pic = this.vuex_user.pic;
+		this.model.company = this.vuex_user.membeinfo.company_name;
+	},
 	onLoad(options) {
 		console.log(options);
-		this.model.id = options.id;
+		this.model.activity_id = options.id;
 		
 	},
 	methods: {
+		confirmClick() {
+			this.showConfirm = false;
+			if (this.modalType == 0) {
+				uni.$u.route({
+					url: '/pages/public/login'
+				})
+			} else if (this.modalType == 1) {
+				uni.$u.route({
+					url: '/pages/my/verify',
+					params: {
+						type: 2
+					}
+				})
+			} else if (this.modalType == 2) {
+				uni.$u.route({
+					url: '/pages/my/perfection'
+				})
+			}
+			else {
+				this.subcribeMsg();
+			}
+		},
 		confirmMsg() {
 			this.showConfirm = false;
 			this.subcribeMsg();
-		},
-		getServiceList() {
-			let that=this;
-			uni.$u.api.serviceAll({params: {
-				teacher_id: this.model.teacher_id
-			}}).then(res=>{
-				that.actions = res.data;
-			})
-			.catch(err=>{
-			})
 		},
 		formatter(type, value) {
 			if (type === 'year') {
@@ -139,17 +159,17 @@ export default {
 		},
 		subcribeMsg() {
 			let that = this;
-			let meeting_tmpl_id = that.vuex_base_config.meeting_tmpl_id;
+			let activity_audit_tmpl_id = that.vuex_base_config.activity_audit_tmpl_id;
 			uni.requestSubscribeMessage({
-			  tmplIds: [meeting_tmpl_id],
+			  tmplIds: [activity_audit_tmpl_id],
 			  success (res) { 
-				  if(res[meeting_tmpl_id]=='accept') {
+				  if(res[activity_audit_tmpl_id]=='accept') {
 					that.apply();
 				  }
-				  else if(res[meeting_tmpl_id]=='reject'){
+				  else if(res[activity_audit_tmpl_id]=='reject'){
 					uni.$u.util.showErr('请订阅活动报名结果通知模板消息');
 				  }
-				  else if(res[meeting_tmpl_id]=='ban'){
+				  else if(res[activity_audit_tmpl_id]=='ban'){
 					that.apply();
 				  }
 			  },
@@ -159,15 +179,21 @@ export default {
 			})
 		},
 		submit() {
+			this.submiting = true;
 			let that = this;
 			// 如果有错误，会在catch中返回报错信息数组，校验通过则在then中返回true
 			this.$refs.form
 				.validate()
 				.then(res => {
-					
+					that.title = '订阅消息提醒';
+					that.content = '为了确保服务质量，请先订阅活动审核通知模板消息';
+					that.confirmText = '立即订阅';
+					that.showConfirm = true;
+					that.modalType = 999;
 				})
 				.catch(errors => {
 					console.log(errors);
+					this.submiting = false;
 				});
 		},
 		apply() {
@@ -175,45 +201,28 @@ export default {
 			uni.showLoading({
 				title: '正在提交数据'
 			})
-			uni.$u.api.apply(that.model).then(result=>{
+			uni.$u.api.activityApply(that.model).then(result=>{
 				console.log(result)
 				uni.hideLoading()
-				uni.$u.route({
-					type: 'redirectTo',
-					url: '/pages/teacher/order_result',
-					params: {
-						order_num: result.data
-					}
+				uni.showToast({
+					title: result.msg
 				})
+				setTimeout(()=>{
+					uni.navigateBack()
+				},1500)
 			})
 			.catch(err=>{
 				uni.hideLoading()
 				uni.$u.util.showErr('报名失败');
+				that.submiting = false;
 			})
 		},
-		serviceSelect(e) {
-			this.model.service_name = e.name;
-			this.model.service_id = e.id;
-			this.$refs.form.validateField('service_id');
-		},
-		confirm(e) {
-			this.model.start_time = uni.$u.timeFormat(e.value, 'yyyy-mm-dd');
-			this.show = false;
-		},
-		calendarConfirm(e) {
-			this.showCalendar = false;
-			this.model.start_time = e[0];
-		},
-		calendarClose() {
-			this.showCalendar = false;
-			this.$refs.form.validateField('service_id');
-		}
 	},
 	onReady() {
 		//如果需要兼容微信小程序，并且校验规则中含有方法等，只能通过setRules方法设置规则。
 		this.$refs.form.setRules(this.rules);
 		// 微信小程序需要用此写法
-		this.$refs.datetimePicker.setFormatter(this.formatter)
+		// this.$refs.datetimePicker.setFormatter(this.formatter)
 	}
 };
 </script>
