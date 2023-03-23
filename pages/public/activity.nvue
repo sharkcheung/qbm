@@ -6,7 +6,8 @@
 		<view class="video-box" :style="{marginBottom: $u.util.isIphoneX() ? '148rpx' : '120rpx' }">
 			<activity-list :listData="activityList" :showTeacher="true"></activity-list>
 			<u-loadmore v-if="activityList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
-			<u-empty mode="data" :text="emptyTitle" :show="activityList.length==0">
+			<u-gap height="10" bgColor="#F6F9FE" v-if="activityList.length==0"></u-gap>
+			<u-empty mode="data" :text="emptyTitle" :icon="emptyIcon" marginTop="40" :show="activityList.length==0">
 			</u-empty>
 		</view>
 		<cu-tabbar :currentTab="currentTab" :tabList="tabList"></cu-tabbar>
@@ -17,7 +18,8 @@
 	export default {
 		data() {
 			return {
-				emptyTitle: '暂无课程',
+				emptyIcon: '',
+				emptyTitle: '暂无记录',
 				status: 'loadmore',
 				current: 0,
 				activityList: [
@@ -44,6 +46,7 @@
 			};
 		},
 		created() {
+			this.emptyIcon = this.$configs.staticUrl + '/uploads/api/icon/img_qbt_kym.svg'
 			this.tabList = this.$configs.tabList;
 			this.getActivityList();
 		},
@@ -110,6 +113,6 @@
 
 <style lang="scss">
 	.video-box {
-		background-color: #F6F9FE;
+		
 	}
 </style>

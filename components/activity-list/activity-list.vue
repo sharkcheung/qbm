@@ -1,11 +1,11 @@
 <template>
 	<view class="activity-list">
-		<view class="activity-item" v-for="(item, index) in listData" :key="index" @click="openPage('/pages/course/info',item)">
+		<view class="activity-item" v-for="(item, index) in listData" :key="index" @click="openPage('/pages/activity/detail',item)">
 			<view class="item-top flex-row justify-between">
 				<u--image :showLoading="true" radius="4" :src="item.pic" width="268rpx" height="164rpx"></u--image>
 				<view class="item-right">
 					<view class="activity-title">{{ item.name }}</view>
-					<view class="activity-time align-center flex-row"><text>{{ item.start_time | date('mm/dd') }}~{{ item.end_time | date('mm/dd') }}</text>{{ item.address }}</view>
+					<view class="activity-time align-center flex-row"><text>{{ item.start_time | date('mm/dd') }}~{{ item.end_time | date('mm/dd') }}</text>{{ item.city }}</view>
 				</view>
 			</view>
 			<view class="item-bottom align-center flex-row justify-between">
@@ -50,6 +50,7 @@
 
 <style lang="scss">
 	.activity-list {
+		background-color: #F6F9FE;
 		.activity-item {
 			width: 100%;
 			padding: 30rpx 30rpx 20rpx 30rpx;
@@ -93,8 +94,11 @@
 			}
 			.activity-time {
 				margin-top: 44rpx;
-				font-size: 24rpx;
+				font-size: 20rpx;
 				color: #868E9D;
+				text {
+					margin-right: 20rpx;
+				}
 			}
 			.teacher-name {
 				position: absolute;

@@ -1,0 +1,258 @@
+<template>
+	<view>
+		<view class="order-box">
+			<view class="apply-title">我要报名</view>
+			<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
+			<u--form labelAlign="center" :model="model" ref="form" :labelStyle="{color:'#434E5E'}">
+				<u-form-item label="姓名" :required="true" prop="name" ref="item1">
+					<view class="input-class"><u--input v-model="model.name" placeholder="请输入您的姓名" :border="false"></u--input></view>
+				</u-form-item>
+				<u-form-item label="职位" :required="true" prop="position" ref="itemPosition">
+					<view class="input-class"><u--input v-model="model.position" placeholder="请输入您的职位" :border="false"></u--input></view>
+				</u-form-item>
+				<u-form-item label="手机" :required="true" prop="phone" ref="itemPhone">
+					<view class="input-class"><u--input v-model="model.phone" placeholder="请输入您的手机" :border="false"></u--input></view>
+				</u-form-item>
+				<u-form-item label="公司" :required="true" prop="company" ref="itemCompanyName">
+					<view class="input-class"><u--input v-model="model.company" placeholder="请输入您的公司" :border="false"></u--input></view>
+				</u-form-item>
+				<u-form-item label="行业" :required="true" prop="industry" ref="itemIndustry">
+					<view class="input-class"><u--input v-model="model.industry" placeholder="请输入您的行业" :border="false"></u--input></view>
+				</u-form-item>
+			</u--form>
+			<view class="bottom-button-box">
+				<view class="bottom-button-group justify-center align-center" @click="submit">我要报名</view>
+			</view>
+		</view>
+
+		<u-action-sheet :show="showService" :actions="actions" title="请选择预约服务" @close="showService = false" @select="serviceSelect"></u-action-sheet>
+		<!-- <u-calendar :show="showCalendar" minDate="1950-01-01" defaultDate="" @confirm="calendarConfirm" @close="calendarClose"></u-calendar> -->
+		<u-datetime-picker
+		ref="datetimePicker"
+				:show="show"
+				v-model="value"
+				@confirm="confirm"
+				mode="date"
+		></u-datetime-picker>
+		
+		<u-modal :show="showConfirm"  @cancel="showConfirm=false;" @confirm="confirmMsg" :title="title" :content='content' :showCancelButton="true"></u-modal>
+	</view>
+</template>
+
+<script>
+export default {
+	data() {
+		return {
+			showConfirm: false,
+			title: '订阅消息提醒',
+			content: '为了确保服务质量，请先订阅会议通知模板消息',
+			value: Number(new Date()),
+			show: false,
+			actions: [
+			],
+			showCalendar: false,
+			model: {
+				id: '',
+				name: '',
+				position: '',
+				phone: '',
+				industry: '',
+				company: '',
+			},
+			customStyle: {
+				background: '#F8F8F8',
+				border:0,
+			},
+			showService: false,
+			rules: {
+				name: {
+					type: 'string',
+					required: true,
+					message: '请填写姓名',
+					trigger: ['blur']
+				},
+				position: {
+					type: 'string',
+					required: true,
+					message: '请填写职位',
+					trigger: ['blur', 'change']
+				},
+				phone: {
+					type: 'string',
+					required: true,
+					message: '请填写手机',
+					trigger: ['blur', 'change']
+				},
+				company: {
+					type: 'string',
+					required: true,
+					message: '请填写公司名称',
+					trigger: ['blur']
+				},
+				industry: {
+					type: 'string',
+					required: true,
+					message: '请填写行业',
+					trigger: ['blur']
+				},
+			}
+		};
+	},
+	onReady() {
+		//如果需要兼容微信小程序，并且校验规则中含有方法等，只能通过setRules方法设置规则。
+		this.$refs.form.setRules(this.rules)
+	},
+	onLoad(options) {
+		console.log(options);
+		this.model.id = options.id;
+		
+	},
+	methods: {
+		confirmMsg() {
+			this.showConfirm = false;
+			this.subcribeMsg();
+		},
+		getServiceList() {
+			let that=this;
+			uni.$u.api.serviceAll({params: {
+				teacher_id: this.model.teacher_id
+			}}).then(res=>{
+				that.actions = res.data;
+			})
+			.catch(err=>{
+			})
+		},
+		formatter(type, value) {
+			if (type === 'year') {
+				return `${value}年`
+			}
+			if (type === 'month') {
+				return `${value}月`
+			}
+			if (type === 'day') {
+				return `${value}日`
+			}
+			return value
+		},
+		hideKeyboard() {
+			uni.hideKeyboard();
+		},
+		subcribeMsg() {
+			let that = this;
+			let meeting_tmpl_id = that.vuex_base_config.meeting_tmpl_id;
+			uni.requestSubscribeMessage({
+			  tmplIds: [meeting_tmpl_id],
+			  success (res) { 
+				  if(res[meeting_tmpl_id]=='accept') {
+					that.apply();
+				  }
+				  else if(res[meeting_tmpl_id]=='reject'){
+					uni.$u.util.showErr('请订阅活动报名结果通知模板消息');
+				  }
+				  else if(res[meeting_tmpl_id]=='ban'){
+					that.apply();
+				  }
+			  },
+			  fail (err) {
+				that.apply();
+			  }
+			})
+		},
+		submit() {
+			let that = this;
+			// 如果有错误，会在catch中返回报错信息数组，校验通过则在then中返回true
+			this.$refs.form
+				.validate()
+				.then(res => {
+					
+				})
+				.catch(errors => {
+					console.log(errors);
+				});
+		},
+		apply() {
+			let that = this;
+			uni.showLoading({
+				title: '正在提交数据'
+			})
+			uni.$u.api.apply(that.model).then(result=>{
+				console.log(result)
+				uni.hideLoading()
+				uni.$u.route({
+					type: 'redirectTo',
+					url: '/pages/teacher/order_result',
+					params: {
+						order_num: result.data
+					}
+				})
+			})
+			.catch(err=>{
+				uni.hideLoading()
+				uni.$u.util.showErr('报名失败');
+			})
+		},
+		serviceSelect(e) {
+			this.model.service_name = e.name;
+			this.model.service_id = e.id;
+			this.$refs.form.validateField('service_id');
+		},
+		confirm(e) {
+			this.model.start_time = uni.$u.timeFormat(e.value, 'yyyy-mm-dd');
+			this.show = false;
+		},
+		calendarConfirm(e) {
+			this.showCalendar = false;
+			this.model.start_time = e[0];
+		},
+		calendarClose() {
+			this.showCalendar = false;
+			this.$refs.form.validateField('service_id');
+		}
+	},
+	onReady() {
+		//如果需要兼容微信小程序，并且校验规则中含有方法等，只能通过setRules方法设置规则。
+		this.$refs.form.setRules(this.rules);
+		// 微信小程序需要用此写法
+		this.$refs.datetimePicker.setFormatter(this.formatter)
+	}
+};
+</script>
+<style>
+	page{
+		background-color: #F6F9FE;
+	}
+</style>
+<style lang="scss">
+.order-box {
+	margin: 60rpx 30rpx;
+	padding: 40rpx 64rpx 56rpx 66rpx;
+	box-shadow: 0rpx 4rpx 20rpx 0rpx rgba(85,112,105,0.1);
+	border-radius: 20rpx;
+	background-color: #fff;
+	.apply-title {
+		margin-bottom: 40rpx;
+		color: #16202E;
+		font-size: 32rpx;
+		text-align: center;
+		font-weight: bold;
+	}
+	.input-class {
+		background: #F8F8F8;
+		border-radius: 10rpx;
+	}
+}
+.bottom-button-box {
+	width: 100%;
+	.bottom-button-group {
+		color: #FFFFFF;
+		margin: 40rpx 96rpx 0rpx 94rpx;
+		height: 80rpx;
+		font-size: 32rpx;
+		background: linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);
+		border-radius: 40rpx;
+		.u-button--square {
+			border-radius: 20rpx;
+		}
+	}
+}
+</style>

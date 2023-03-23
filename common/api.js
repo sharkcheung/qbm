@@ -38,6 +38,7 @@ module.exports = (vm) => {
 	let myadvisor = (params, config = {}) => http.get('/Membe/myadvisor', params, config)
 	let inviteList = (params, config = {}) => http.get('/Membe/myinvite', params, config)
 	let activityList = (params, config = {}) => http.get('/Activity/index', params, config)
+	let activityDetail = (params, config = {}) => http.get('/Activity/detail', params, config)
 	uni.$u.api = {
 		homeData,
 		login,
@@ -77,5 +78,6 @@ module.exports = (vm) => {
 		myadvisor,
 		inviteList,
 		activityList,
+		activityDetail,
 	}
 }

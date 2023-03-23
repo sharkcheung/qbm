@@ -1,0 +1,361 @@
+<template>
+	<view>
+		<view class="image-box">
+			<u--image width="100%" :src="info.pic" radius="8"></u--image>
+		</view>
+		<view class="activity-intro">
+			<view class="activity-title">{{ info.name }}</view>
+			<view class="activity-tip align-center justify-between"><u-icon color="#868E9D" size="24" name="eye" labelColor="#868E9D" :label="'浏览数 '+info.views" space="10"></u-icon><button openType="share" class="u-reset-button"><u-icon size="20" :name="shareImg"></u-icon></button></view>
+		</view>
+		<u-gap height="10" bgColor="#efefef"></u-gap>
+		<view class="activity-content-box" :style="{marginBottom: $u.util.isIphoneX() ? '168rpx' : '120rpx' }">
+			<!-- <view class="activity-fee">免费</view> -->
+			<view class="item">
+				<view class="flex-row item-title align-center"><text></text>活动时间</view>
+				<view class="flex-row item-value align-center"><text></text>{{ info.start_time | date('yyyy.mm.dd ') }}~{{ info.end_time | date('yyyy.mm.dd ') }}</view>
+			</view>
+			<view class="item">
+				<view class="flex-row item-title align-center"><text></text>活动地点</view>
+				<view class="flex-row item-value align-center"><text></text>{{ info.address }}</view>
+			</view>
+			<view class="item">
+				<view class="flex-row item-title align-center"><text></text>活动介绍</view>
+				<view class="flex-row item-value align-center"><text></text><u-parse :content="info.detail"></u-parse></view>
+			</view>
+			<view class="item">
+				<view class="flex-row item-title align-center"><text></text>活动流程</view>
+				<view class="flex-row item-value align-center"><text></text><u-parse :content="info.flow"></u-parse></view>
+			</view>
+			<view class="item">
+				<view class="flex-row item-title align-center"><text></text>报名截止时间</view>
+				<view class="flex-row item-value align-center"><text></text>{{ info.deadline_time | date('yyyy.mm.dd hh:MM') }}</view>
+			</view>
+			<view class="apply-list">
+				<view class="list-title">报名名单</view>
+				<view class="item-list flex-row justify-between" v-for="(item, index) in applyList">
+					<text>{{ item.name }}</text>
+					<text>{{ item.phone }}</text>
+				</view>
+			</view>
+		</view>
+		<view class="bottom-button-box">
+			<view class="bottom-button-group justify-center align-center" @click="apply" v-if="info.deadline_time>timestamp">
+				{{ info.isApply?'已报名':'我要报名' }}
+			</view>
+			<u-safe-bottom></u-safe-bottom>
+		</view>
+		<u-popup :show="showBuy" round="16" :closeable="true" @close="closeBuy">
+			<view class="show-buy">
+				<view class="item-box"><text>课程费用</text>￥{{ info.sale_price }}</view>
+				<view class="item-box"><text>账户余额</text>￥{{ vuex_user.balance }}</view>
+				<view class="item-box">
+					<text>支付方式</text>
+					<u-radio-group
+						slot="value"
+						v-model="payType"
+						@change="payTypeChange">
+						<u-radio label="微信支付" :name="0"></u-radio>
+						<u-radio label="余额支付" :name="1"></u-radio>
+						<!-- <u-radio label="积分支付"></u-radio> -->
+					</u-radio-group>
+				</view>
+				
+				<view class="buy-button"><u-button shape="circle" type="warning" :disabled="checkBuy" text="确认购买" @click="confirmBuy"></u-button></view>
+			</view>
+		</u-popup>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				timestamp: 0,
+				shareImg: '',
+				status: 'loadmore',
+				play: false,
+				showBuy: false,
+				payType: 0,
+				applyList: [],
+				info: {
+					name: '',
+					views: 0,
+					pic: '',
+					sale_price: 0,
+					isApply: true,
+				},
+				id: '',
+			};
+		},
+		computed:{
+			checkBuy() {
+				if(this.payType == 1) {
+					if(Number(this.info.sale_price)>Number(this.vuex_user.balance)) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+				else {
+					return false;
+				}
+			}
+		},
+		onLoad(options) {
+			this.shareImg = this.$configs.staticUrl + '/uploads/api/icon/fx.svg'
+			let that = this;
+			that.id = options.id;
+			this.timestamp = Date.parse(new Date())/1000;
+		},
+		onShow() {
+			let that = this;
+			uni.$u.api.activityDetail({
+					params: {
+						id: that.id
+					}
+				}).then(res => {
+					that.info = res.data;
+					that.applyList = res.data.applyList;
+					uni.$u.mpShare.title = that.info.name;
+					uni.$u.mpShare.path = 'pages/activity/detail?id='+that.info.id;
+				})
+				.catch(err => {})
+		},
+		methods:{
+			closeBuy() {
+				this.showBuy = false;
+			},
+			confirmBuy() {
+				let that=this;
+				uni.$u.api.coursePay({params: { id: that.info.id, payType: that.payType }}).then(res=>{
+					if(that.payType == 1) {
+						
+						uni.showToast({
+							title: '购买成功',
+							icon: 'success'
+						});
+						let userinfo = that.vuex_user;
+						userinfo.balance = parseFloat(userinfo.balance-that.info.sale_price).toFixed(2);
+						that.$u.vuex('vuex_user', userinfo)
+						that.info.isBuy = true;
+						that.showBuy = false;
+						return false;
+					}
+					// #ifdef MP-WEIXIN
+					uni.requestPayment({
+						provider: 'wxpay',
+						timeStamp: String(res.data.timeStamp),
+						nonceStr: res.data.nonceStr,
+						package: res.data.package,
+						signType: res.data.signType,
+						paySign: res.data.paySign,
+						success: function(ret) {
+							console.log(res);
+							uni.$u.api.updateCourseOrder({params: { order_num: res.data.out_trade_no }});
+							uni.showToast({
+								title: '购买成功',
+								icon: 'success'
+							});
+							that.info.isBuy = true;
+							that.showBuy = false;
+							
+						},
+						fail: function (err) {
+							console.log(err)
+							if(err.errMsg == 'requestPayment:fail cancel') {
+								that.$u.util.showErr('已取消支付')
+							}
+							else {
+								that.$u.util.showErr('支付失败')
+							}
+						}
+					});
+					// #endif
+				})
+				.catch(err=>{
+					console.log(err)
+					if(that.payType == 1) {
+						that.$u.util.showErr(err.msg);
+					}
+					else {
+						that.$u.util.showErr('支付请求失败')
+					}
+				})
+			},
+			payTypeChange(e) {
+				if(e==1) {
+					if(Number(this.info.sale_price)>Number(this.vuex_user.balance)) {
+						uni.showToast({
+							icon:'error',
+							title: '余额不足'
+						})
+					}
+				}
+			},
+			loadmore() {
+				if(this.status !== 'noMore') {
+					this.status = 'loading';
+					this.params.page++;
+					this.getCourseList();
+				}
+			},
+			goPage(url) {
+				uni.$u.route({
+					url: url,
+					params: { id: this.info.teacher_id }
+				})
+			},
+			apply() {
+				if(!this.vuex_token) {
+					uni.showToast({
+						icon:'error',
+						title: '请先登录'
+					})
+					setTimeout(()=>{
+						this.$u.util.goLogin();
+					}, 1000)
+				}
+				else {
+					uni.$u.route({
+						url: 'pages/activity/apply',
+						params: {
+							id: this.info.id
+						}
+					})
+				}
+			},
+		}
+	}
+</script>
+
+<style lang="scss">
+	video{
+	  width: 100%;
+	}
+	
+	.image-box {
+		position: relative;
+		margin: 20rpx 30rpx 32rpx 30rpx;
+	}
+	
+	.activity-intro {
+		margin: 0 30rpx;
+		.activity-title {
+			margin-bottom: 34rpx;
+			color: #434E5E;
+			font-size: 36rpx;
+			font-weight: bold;
+			line-height: 140%;
+		}
+		.activity-tip {
+			color: #868E9D;
+			font-size: 24rpx;
+			margin-bottom: 34rpx;
+			flex-direction: row;
+			justify-content: space-between;
+			text:last-child {
+				color:#c00;
+			}
+			button {
+				
+			}
+		}
+		.activity-teacher {
+			color: #565656;
+			font-size: 28rpx;
+			margin-top: 12rpx;
+		}
+	}
+	
+	.activity-content-box {
+		padding: 40rpx 30rpx;
+		.activity-fee {
+			margin-bottom: 40rpx;
+			color: #F35917;
+			font-weight: bold;
+			font-size: 36rpx;
+		}
+		.activity-title {
+			margin-top: 40rpx;
+			margin-bottom: 16rpx;
+		}
+		.apply-list {
+			.list-title {
+				background: #F5F5F5;
+				height: 72rpx;
+				line-height: 72rpx;
+				text-align: center;
+				color:#434E5E;
+				font-size: 32rpx;
+				font-weight: bold;
+			}
+		}
+		.item-title {
+			color: #434E5E;
+			font-size: 32rpx;
+			font-weight: bold;
+			text {
+				width: 18rpx;
+				height: 18rpx;
+				background: #FF8E01;
+				border-radius: 6rpx;
+				margin-right: 12rpx;
+			}
+		}
+		.item-value {
+			margin-top: 16rpx;
+			margin-bottom: 60rpx;
+			font-size: 28rpx;
+			text {
+				width: 18rpx;
+				height: 18rpx;
+				background: #FFFFFF;
+				border-radius: 6rpx;
+				margin-right: 12rpx;
+			}
+		}
+	}
+	
+	.bottom-button-box {
+		position: fixed;
+		width: 100%;
+		bottom: 0;
+		left: 0;
+		z-index: 999;
+		background-color: #ffffff;
+	
+		.bottom-button-group {
+			color: #FFFFFF;
+			margin: 10rpx 126rpx 8rpx 126rpx;
+			height: 80rpx;
+			font-size: 32rpx;
+			background: linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);
+			border-radius: 40rpx;
+			.u-button--square {
+				border-radius: 0;
+			}
+		}
+	}
+	.show-buy {
+		padding: 80rpx 0 32rpx 0;
+		align-items: center;
+		.item-box {
+			padding: 32rpx;
+			width: 100%;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+			.u-radio-group {
+				justify-content: flex-end;
+				.u-radio:last-child {
+					margin-left: 16rpx;
+				}
+			}
+		}
+		.buy-button {
+			width: 100%;
+			padding: 48rpx 32rpx 0rpx 32rpx;
+		}
+	}
+</style>

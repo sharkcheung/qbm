@@ -116,7 +116,24 @@
 			}
 
 		}]
-	},  {
+	}, {
+		"root": "pages/activity",
+		"pages": [ {
+			"path": "detail",
+			"style": {
+				"navigationBarTitleText": "活动详情",
+				"enablePullDownRefresh": false
+			}
+
+		},{
+			"path": "apply",
+			"style": {
+				"navigationBarTitleText": "活动报名",
+				"enablePullDownRefresh": false
+			}
+
+		}]
+	},   {
 		"root": "pages/my",
 		"pages": [{
 			"path": "info",
@@ -299,6 +316,6 @@
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "企帮通",
 		"navigationBarBackgroundColor": "#FFFFFF",
-		"backgroundColor": "#F6F9FE"
+		"backgroundColor": "#FFFFFF"
 	}
 }
