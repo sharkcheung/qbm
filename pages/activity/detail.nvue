@@ -30,16 +30,28 @@
 				<view class="flex-row item-title align-center"><text></text>报名截止时间</view>
 				<view class="flex-row item-value align-center"><text></text>{{ info.deadline_time | date('yyyy.mm.dd hh:MM') }}</view>
 			</view>
-			<view class="apply-list" v-if="applyList.length>0">
+			<!-- <view class="apply-list" v-if="applyList.length>0">
 				<view class="list-title">报名名单</view>
-				<view class="item-list flex-row justify-between" v-for="(item, index) in applyList" :key="index">
-					<text>{{ item.name }}</text>
-					<text>{{ item.phone }}</text>
-				</view>
-			</view>
+				
+				<swiper
+					:vertical="true"
+					:circular="true"
+					:autoplay="true"
+					:interval="3000"
+					 style="height: 220rpx;"
+				>
+					<swiper-item v-for="(item, i) in applyList" :key="index">
+						<view class="item-list flex-row justify-between">
+							<text>{{ i.name }}</text>
+							<text>{{ i.phone }}</text>
+						</view>
+					</swiper-item>
+				</swiper>
+			</view> -->
 		</view>
+		<view class="apply-tips" v-if="applyTipMsg" :style="{bottom: $u.util.isIphoneX() ? '138rpx' : '80rpx' }">{{ applyTipMsg }}</view>
 		<view class="bottom-button-box">
-			<view class="bottom-button-group justify-center align-center" @click="apply" v-if="info.deadline_time>timestamp">
+			<view class="bottom-button-group justify-center align-center" @click="apply" v-if="info.deadline_time>timestamp" :class="statusClass">
 				{{ getStatus() }}
 			</view>
 			<u-safe-bottom></u-safe-bottom>
@@ -70,7 +82,10 @@
 	export default {
 		data() {
 			return {
+				timer: null,  // 定时器名称
+				applyTipMsg: '5分钟前，张*提交了报名申请',
 				timestamp: 0,
+				page: 1,
 				shareImg: '',
 				status: 'loadmore',
 				play: false,
@@ -87,6 +102,7 @@
 					isApply: true,
 				},
 				id: '',
+				statusClass: '',
 			};
 		},
 		computed:{
@@ -104,6 +120,11 @@
 				}
 			}
 		},
+		onUnload() {
+			if (this.timer) {
+				clearInterval(this.timer);
+			}
+		},
 		onLoad(options) {
 			this.shareImg = this.$configs.staticUrl + '/uploads/api/icon/fx.svg'
 			let that = this;
@@ -118,29 +139,88 @@
 					}
 				}).then(res => {
 					that.info = res.data;
-					that.applyList = res.data.applyList;
+					that.applyTipMsg = '';
+					that.applyList = [];
+					that.page = 1;
+					that.getApplyList();
 					uni.$u.mpShare.title = that.info.name;
 					uni.$u.mpShare.path = 'pages/activity/detail?id='+that.info.id;
 				})
 				.catch(err => {})
 		},
 		methods:{
+			getApplyList() {
+				
+				let that = this;
+				return new Promise((resolve, reject) => {
+				uni.$u.api.activityApplyList({
+						params: {
+							activity_id: that.id,
+							page: that.page,
+						}
+					}).then(res => {
+						console.log(res.data);
+						if(that.page==res.data.last_page) {
+							// 最后一页数据，则继续从第一页开始请求
+							that.page = 0;
+						}
+						that.page++;
+						that.applyList = res.data.data;
+						if(that.applyList.length>0) {
+							// 有申请数据，则进行播报
+							that.showApplyTips(0);
+						}
+						resolve();
+					})
+					.catch(err => {
+						
+					})
+				})
+			},
+			showApplyTips(i) {
+				let that = this;
+				that.timer = setTimeout(()=>{
+					that.applyTipMsg = uni.$u.timeFrom(that.applyList[i].create_time)+'，'+that.applyList[i].name+'（'+that.applyList[i].phone+'）提交了报名申请';
+					// 如果已经播报到最后一条，则请求下一页的申请列表数据
+					if(i==that.applyList.length-1){
+						clearTimeout(that.timer);
+						that.timer = setTimeout(()=>{
+							clearTimeout(that.timer);
+							that.applyTipMsg = '';
+							that.getApplyList();
+						},3000)
+					}
+					else {
+						clearTimeout(that.timer);
+						let nextI = ++i;
+						that.timer = setTimeout(()=>{
+							clearTimeout(that.timer);
+							that.applyTipMsg = '';
+							that.showApplyTips(nextI);
+						},3000)
+					}
+				},3000)
+			},
 			getStatus() {
 				let status = '';
-				if(Object.keys(this.info.applyInfo).length>0) {
+				if(this.info.applyInfo&&Object.keys(this.info.applyInfo).length>0) {
 					status = '已报名';
 					if(this.info.applyInfo.status==0) {
 						status+= ',审核中';
+						this.statusClass="audit";
 					}
 					else if(this.info.applyInfo.status==1) {
-						status+= ',已审核';
+						status+= ',审核已通过';
+						this.statusClass="success";
 					}
 					else {
-						status+= ',未通过';
+						status+= ',审核未通过';
+						this.statusClass="fail";
 					}
 				}
 				else {
 					status+= '我要报名';
+					this.statusClass="";
 				}
 				return status;
 			},
@@ -255,6 +335,19 @@
 	  width: 100%;
 	}
 	
+	.apply-tips {
+		color: #ffffff;
+		position: fixed;
+		bottom: 0rpx;
+		left: 0rpx;
+		right: 0;
+		margin: 30rpx;
+		font-size: 24rpx;
+		padding: 18rpx 40rpx;
+		background: #000000;
+		border-radius: 10rpx;
+		opacity: 0.8;
+	}
 	.image-box {
 		position: relative;
 		margin: 20rpx 30rpx 32rpx 30rpx;
@@ -361,6 +454,15 @@
 			.u-button--square {
 				border-radius: 0;
 			}
+		}
+		.audit {
+			background: linear-gradient(270deg, #A5B8E6 0%, #44598B 100%);
+		}
+		.fail {
+			background: linear-gradient(270deg, #898989 0%, #464646 100%);
+		}
+		.success {
+			opacity: 0.8;
 		}
 	}
 	.show-buy {

@@ -10,7 +10,7 @@
 			</view>
 			<view class="item-bottom align-center flex-row justify-between">
 				<view class="apply-time flex-row">报名截止时间：<text>{{ item.deadline_time | date('yyyy.mm.dd hh:MM') }}</text></view>
-				<view @click.stop="apply(item)" class="tips" :class="item.deadline_time>timestamp?'apply-btn':''">{{ (item.deadline_time>timestamp)?'立即报名':(item.deadline_time<=timestamp&&item.end_time>timestamp)?'报名已截止':'活动已结束' }}</view>
+				<view @click.stop="apply(item)" class="tips" :class="item.deadline_time>timestamp?'apply-btn':''"><u-icon v-if="item.deadline_time>timestamp" size="16" space="5" labelColor="#F35917" labelSize="14" :bold="true" label="火热报名中" :name="huoImg"></u-icon><text v-else>{{ (item.deadline_time<=timestamp&&item.end_time>timestamp)?'报名已截止':'活动已结束' }}</text></view>
 			</view>
 		</view>
 	</view>
@@ -28,11 +28,13 @@
 		},
 		mounted() {
 			this.timestamp = Date.parse(new Date())/1000;
+			this.huoImg = this.$configs.staticUrl + '/uploads/api/icon/icon_qbt_huo.svg'
 		},
 		data() {
 			return {
 				timestamp: '',
-				btnName: '立即报名'
+				btnName: '立即报名',
+				huoImg: ''
 			};
 		},
 		methods:{
@@ -84,15 +86,11 @@
 				}
 				.tips {
 					color: #434E5E;
+					font-weight: bold;
 				}
 				.apply-btn {
-					width: 180rpx;
-					height: 60rpx;
-					background: linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);
-					border-radius: 40rpx;
-					color: #FFFFFF;
-					text-align: center;
-					line-height: 60rpx;
+					flex-direction: row;
+					align-items: center;
 				}
 			}
 			.activity-title {

@@ -119,6 +119,7 @@
 							params: {
 								company_name: res.data.company_name,
 								service_type_id: 1,
+								service_type_name: '约聊',
 								service_id: that.serviceId,
 								service_name: that.serviceName,
 								teacher_id: item.id,
