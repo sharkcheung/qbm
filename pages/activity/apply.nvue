@@ -26,7 +26,7 @@
 		</view>
 		
 		<u-modal :show="showConfirm"  @cancel="showConfirm=false;" @confirm="confirmMsg" :title="title" :content='content' :showCancelButton="showCancelButton">
-			<u-button slot="confirmButton" :text="confirmText" type="primary" shape="circle" @click="confirmClick">
+			<u-button slot="confirmButton" :text="confirmText" color="linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);" shape="circle" @click="confirmClick">
 			</u-button>
 		</u-modal>
 	</view>

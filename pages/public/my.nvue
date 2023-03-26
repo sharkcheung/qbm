@@ -18,6 +18,7 @@
 				
 				<u-cell :icon="orderIcon" title="我的订单" @click="goPage('/pages/my/order/order')" :border="false" :isLink="true"></u-cell>
 				<u-cell :icon="advisorIcon" title="我的顾问" @click="goPage('/pages/my/advisor')" :border="false" :isLink="true"></u-cell>
+				<u-cell :icon="applyIcon" title="我的报名" @click="goPage('/pages/my/apply/apply')" :border="false" :isLink="true"></u-cell>
 				<u-cell :icon="inviteIcon" v-if="vuex_token&&vuex_user.agent" title="我的邀请" @click="goPage('/pages/my/invite/invite')" :border="false" :isLink="true"></u-cell>
 				<u-cell :icon="settingIcon" title="系统设置" url="/pages/my/setting" :border="false" :isLink="true"></u-cell>
 				
@@ -36,6 +37,7 @@
 				profitsIcon: '',
 				orderIcon: '',
 				advisorIcon: '',
+				applyIcon: '',
 				inviteIcon: '',
 				settingIcon: '',
 				tabList: [
@@ -80,6 +82,7 @@
 			this.advisorIcon = this.$configs.staticUrl + '/uploads/api/icon/advisor.png';
 			this.inviteIcon = this.$configs.staticUrl + '/uploads/api/icon/invite.png';
 			this.settingIcon = this.$configs.staticUrl + '/uploads/api/icon/setting.png';
+			this.applyIcon = this.$configs.staticUrl + '/uploads/api/icon/icon_qbt_hdbm.svg';
 			this.tabList = this.$configs.tabList;
 		},
 		methods: {

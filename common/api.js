@@ -39,9 +39,12 @@ module.exports = (vm) => {
 	let myadvisor = (params, config = {}) => http.get('/Membe/myadvisor', params, config)
 	let inviteList = (params, config = {}) => http.get('/Membe/myinvite', params, config)
 	let activityList = (params, config = {}) => http.get('/Activity/index', params, config)
+	let articleList = (params, config = {}) => http.get('/Content/index', params, config)
 	let activityDetail = (params, config = {}) => http.get('/Activity/detail', params, config)
+	let articleDetail = (params, config = {}) => http.get('/Content/detail', params, config)
 	let activityApply = (params, config = {}) => http.post('/Activity/apply', params, config)
 	let activityApplyList = (params, config = {}) => http.get('/Activity/applyList', params, config)
+	let myActivityApplyList = (params, config = {}) => http.get('/Activity/myApplyList', params, config)
 	uni.$u.api = {
 		homeData,
 		configData,
@@ -82,8 +85,11 @@ module.exports = (vm) => {
 		myadvisor,
 		inviteList,
 		activityList,
+		articleList,
 		activityDetail,
+		articleDetail,
 		activityApply,
 		activityApplyList,
+		myActivityApplyList,
 	}
 }

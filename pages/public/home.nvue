@@ -1,8 +1,9 @@
 <template>
 	<div>
 		<view class="swiper-container">
-			<u-swiper height="200" :list="bannerList" radius="0" keyName="logo" @click="bannerClick" :autoplay="false"></u-swiper>
+			<u-swiper height="210" :list="bannerList" radius="0" keyName="logo" @click="bannerClick" indicatorMode="line" :indicator="true" interval="5000" :circular="true"></u-swiper>
 		</view>
+		
 		<view class="notice-bar-container">
 			<u-notice-bar direction="column" duration="3000" @click="noticeClick" :text="noticeList"></u-notice-bar>
 		</view>
@@ -42,17 +43,18 @@
 		  </view>
 		</view>
 		<u-gap height="10" bgColor="#F6F9FE"></u-gap>
-		<u-tabs :list="serviceList" :inactiveStyle="{color: '#737D96'}" :activeStyle="{color: '#434E5E'}" itemStyle="height:100rpx;font-size:28rpx;font-weight:bold;" lineColor="#F35917" lineWidth="30" @click="changeService" :current="current"></u-tabs>
+		<u-sticky bgColor="#ffffff" zIndex="1">
+		<u-tabs :list="serviceList" :inactiveStyle="{color: '#737D96'}" :activeStyle="{color: '#434E5E',fontWeight: 'bold'}" itemStyle="height:100rpx;font-size:32rpx;" lineColor="#F35917" lineWidth="30" @click="changeService" :current="current"></u-tabs></u-sticky>
 		<view class="teacher-container" :style="{marginBottom: $u.util.isIphoneX() ? '128rpx' : '80rpx' }">
 			<u-loading-icon :show="status=='loading'"></u-loading-icon>
 			<teacher-list :serviceId="serviceId" :serviceName="serviceName" :listData="teacherList"></teacher-list>
 			<u-loadmore :status="status" marginBottom="10"/>
 		</view>
-		<u-modal :show="show" :closeOnClickOverlay="true" title="温馨提示" :content="showContent">
-			<u-button slot="confirmButton" :text="confirmText" type="primary" shape="circle" @click="confirmClick">
+		
+		<u-modal :show="show" :closeOnClickOverlay="true" title="温馨提示" :content="showContent" @close="show=false">
+			<u-button slot="confirmButton" :text="confirmText" color="linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);" shape="circle" @click="confirmClick">
 			</u-button>
 		</u-modal>
-		<!-- <u-modal :show="showConfirm" @confirm="confirmMsg" @cancel="showConfirm=false;" :title="title" :content='content' :showCancelButton="true"></u-modal> -->
 		<cu-tabbar :currentTab="0" :tabList="tabList"></cu-tabbar>
 	</div>
 </template>
@@ -101,16 +103,19 @@
 			if(this.vuex_token&&!this.vuex_user.mobile) {
 				this.show = true;
 			}
-		},
-		created() {
-			this.tabList = this.$configs.tabList;
+			this.teacherList = [];
+			this.liveList = [];
+			this.status = 'loadmore';
+			this.params.page = 1;
 			this.getHomeData()
 			this.getLiveList();
-			// this.getServiceType();
-			// this.getServiceList();
+			
 			this.params.order = 'desc';
 			this.params.sort = 'mark';
 			this.getTeacherList();
+		},
+		created() {
+			this.tabList = this.$configs.tabList;
 		},
 		onPullDownRefresh() {
 			console.log('refresh');
@@ -203,7 +208,7 @@
 					that.bannerList = res.data.bannerList
 					that.noticeList = res.data.notice.map(item=>item.title);
 					that.height = res.data.banner_height||'130';
-					uni.$u.vuex('vuex_base_config', res.data.baseConfig);
+					// uni.$u.vuex('vuex_base_config', res.data.baseConfig);
 				})
 				.catch(err=>{
 					uni.hideLoading()

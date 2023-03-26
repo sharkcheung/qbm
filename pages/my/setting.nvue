@@ -10,7 +10,7 @@
 		</u-cell-group>
 		</view>
 		<view class="button-box" v-if="vuex_token">
-			<u-button type="primary" size="normal" shape="circle" text="退出" @click="logout"></u-button>
+			<view class="bottom-button-group justify-center align-center"><button @click="logout">退出</button></view>
 		</view>
 	</view>
 </template>
@@ -57,6 +57,7 @@
 			logout(){
 				uni.$u.vuex('vuex_user', {});
 				uni.$u.vuex('vuex_token', '');
+				uni.navigateBack()
 			},
 			changeTab(item) {
 				uni.$u.route({
@@ -98,5 +99,20 @@
 	}
 	.button-box {
 		padding: 32rpx ;
+		margin-top: 52rpx;
+		.bottom-button-group {
+			width: 100%;
+			button {
+				color: #FFFFFF;
+				margin: 10rpx 0 8rpx 0;
+				height: 80rpx;
+				font-size: 32rpx;
+				width: 67%;
+				background: linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);
+				border-radius: 40rpx;
+				line-height: 80rpx;
+			}
+			
+		}
 	}
 </style>

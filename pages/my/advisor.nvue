@@ -21,7 +21,7 @@
 			</view>
 		</view>
 		<view class="button-group">
-			<u-button type="primary" text="联系Ta" @click="showModule"></u-button>
+			<view class="bottom-button-group justify-center align-center"><button @click="showModule">联系Ta</button></view>
 		</view>
 		<u-popup :show="show" :closeable="true" @close="close">
 			<view class="show-box">
@@ -133,6 +133,20 @@
 }
 .button-group {
 	flex-direction: row;
-	margin-top: 20rpx;
+	margin-top: 52rpx;
+	.bottom-button-group {
+		width: 100%;
+		button {
+			color: #FFFFFF;
+			margin: 10rpx 0 8rpx 0;
+			height: 80rpx;
+			font-size: 32rpx;
+			width: 67%;
+			background: linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);
+			border-radius: 40rpx;
+			line-height: 80rpx;
+		}
+		
+	}
 }
 </style>

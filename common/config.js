@@ -8,8 +8,8 @@ module.exports = {
 	staticUrl: 'https://test-static.miniapp.qbt.qebang.cn', // 测试环境接口域名
 	// #endif
 	
-	// baseUrl: 'https://console-qbt.qebang.cn/api',
-	// staticUrl: 'https://static.miniapp.qbt.qebang.cn',
+	baseUrl: 'https://console-qbt.qebang.cn/api',
+	staticUrl: 'https://static.miniapp.qbt.qebang.cn',
 	
 	meeting_tmpl_id: 'Nk3i7CsWS-xGXcoo4yWVMEqvHrYrrGjxHJ9_drZiULA',
 	withdraw_tmpl_id: 'pWYHyS7YptDQqfIhAPYh5EjL-7qRfTGCnPjO_Xfcazg',

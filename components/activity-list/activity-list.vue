@@ -3,14 +3,15 @@
 		<view class="activity-item" v-for="(item, index) in listData" :key="index" @click="openPage('/pages/activity/detail',item)">
 			<view class="item-top flex-row justify-between">
 				<u--image :showLoading="true" radius="4" :src="item.pic" width="268rpx" height="164rpx"></u--image>
-				<view class="item-right">
+				<view class="item-right justify-between">
 					<view class="activity-title">{{ item.name }}</view>
 					<view class="activity-time align-center flex-row"><text>{{ item.start_time | date('mm/dd') }}~{{ item.end_time | date('mm/dd') }}</text>{{ item.city }}</view>
 				</view>
 			</view>
 			<view class="item-bottom align-center flex-row justify-between">
 				<view class="apply-time flex-row">报名截止时间：<text>{{ item.deadline_time | date('yyyy.mm.dd hh:MM') }}</text></view>
-				<view @click.stop="apply(item)" class="tips" :class="item.deadline_time>timestamp?'apply-btn':''"><u-icon v-if="item.deadline_time>timestamp" size="16" space="5" labelColor="#F35917" labelSize="14" :bold="true" label="火热报名中" :name="huoImg"></u-icon><text v-else>{{ (item.deadline_time<=timestamp&&item.end_time>timestamp)?'报名已截止':'活动已结束' }}</text></view>
+				<view v-if="!isMy" @click.stop="apply(item)" class="tips" :class="item.deadline_time>timestamp?'apply-btn':''"><u-icon v-if="item.deadline_time>timestamp" size="16" space="5" labelColor="#F35917" labelSize="14" :bold="true" label="火热报名中" :name="huoImg"></u-icon><text v-else>{{ (item.deadline_time<=timestamp&&item.end_time>timestamp)?'报名已截止':'活动已结束' }}</text></view>
+				<view v-if="isMy" @click.stop="view(item)" class="status" :class="(item.status==0)?'audit':(item.status==2)?'fail':''">{{ (item.status==0)?'审核中':((item.status==1)?'已审核':'审核不通过') }}</view>
 			</view>
 		</view>
 	</view>
@@ -22,6 +23,10 @@
 		props: {
 			listData: Array,
 			showTeacher: {
+				type: Boolean,
+				default: false
+			},
+			isMy: {
 				type: Boolean,
 				default: false
 			},
@@ -53,6 +58,9 @@
 				else {
 					this.openPage('pages/activity/detail',{id:item.id})
 				}
+			},
+			view(item) {
+				this.openPage('pages/my/apply/detail',{id:item.id})
 			}
 		}
 	}
@@ -88,6 +96,23 @@
 					color: #434E5E;
 					font-weight: bold;
 				}
+				.status {
+					width: 180rpx;
+					height: 60rpx;
+					font-size: 28rpx;
+					border-radius: 40rpx;
+					color: #F35917;
+					line-height: 60rpx;
+					text-align: center;
+				}
+				.audit {
+					color: #FFFFFF;
+					background: linear-gradient(270deg, #A5B8E6 0%, #44598B 100%);
+				}
+				.fail {
+					color: #FFFFFF;
+					background: linear-gradient(270deg, #898989 0%, #464646 100%);
+				}
 				.apply-btn {
 					flex-direction: row;
 					align-items: center;
@@ -99,8 +124,7 @@
 				overflow-wrap: break-word;
 			}
 			.activity-time {
-				margin-top: 44rpx;
-				font-size: 20rpx;
+				font-size: 24rpx;
 				color: #868E9D;
 				text {
 					margin-right: 20rpx;

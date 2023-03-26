@@ -40,9 +40,14 @@
 			this.tabList = this.$configs.tabList;	
 			this.getServiceList();
 		},
+		onShow() {
+			this.teacherList = [];
+			this.params.page = 1;
+			this.status = 'loadmore';
+			this.getTeacherList();
+		},
 		onLoad(options) {
 			this.params.type = options.type;
-			this.getTeacherList();
 		},
 		onPullDownRefresh() {
 			console.log('refresh');

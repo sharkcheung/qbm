@@ -1,0 +1,161 @@
+<template>
+	<view>
+		<view class="activity-content">
+			<view class="result-bg">提交成功，待主办方审核！</view>
+			<view class="activity-content-box">
+				<view class="item-box">
+					<view class="activity-title">{{ info.name }}</view>
+					<view class="item">
+						<view class="flex-row item-title align-center"><text></text>活动时间</view>
+						<view class="flex-row item-value align-center"><text></text>{{ info.start_time | date('yyyy.mm.dd ') }}~{{ info.end_time | date('yyyy.mm.dd ') }}</view>
+					</view>
+					<view class="item">
+						<view class="flex-row item-title align-center"><text></text>活动地点</view>
+						<view class="flex-row item-value align-center"><text></text>{{ info.address }}</view>
+					</view>
+				</view>
+				<view class="button-group flex-row justify-between">
+					<view class="share-btn"><button openType="share" class="u-reset-button">分享活动</button></view>
+					<view class="view-btn"><button class="u-reset-button" @click="viewApply">查看报名</button></view>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				activity_id: 0,
+				info: {
+					name: '',
+					views: 0,
+					pic: '',
+					sale_price: 0,
+					detail:'',
+					flow: '',
+					isApply: true,
+				},
+			};
+		},
+		onLoad(options) {
+			let that = this;
+			that.activity_id = options.activity_id;
+			uni.$u.api.activityDetail({
+				params: {
+					id: that.activity_id
+				}
+			}).then(res => {
+				that.info = res.data;
+				uni.$u.mpShare.title = that.info.name;
+				uni.$u.mpShare.path = 'pages/activity/detail?id='+that.activity_id;
+			})
+			.catch(err => {})
+		},
+		methods: {
+			viewApply() {
+				uni.$u.route({
+					url: 'pages/my/activity/activity'
+				})
+			}
+		}
+	}
+</script>
+
+<style>
+	page {
+		background: #F6F9FE;
+	}
+</style>
+
+<style lang="scss">
+	.activity-content {
+		.result-bg {
+			position: absolute;
+			width: 100%;
+			height: 340rpx;
+			background: linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);
+			padding-top: 100rpx;
+			text-align: center;
+			color: #FFFFFF;
+			font-size: 36rpx;
+		}
+		.activity-content-box {
+			margin: 250rpx 30rpx 60rpx 30rpx;
+			.item-box {
+				padding: 40rpx 30rpx;
+				background: #FFFFFF;
+				box-shadow: 0rpx 4rpx 20rpx 0rpx rgba(85,112,105,0.1);
+				border-radius: 20rpx;
+				
+				.activity-title {
+					margin-bottom: 60rpx;
+					color: #434E5E;
+					font-size: 36rpx;
+					font-weight: bold;
+					line-height: 50rpx;
+				}
+				.apply-list {
+					color:#434E5E;
+					margin-bottom: 70rpx;
+					.list-title {
+						background: #F5F5F5;
+						height: 72rpx;
+						line-height: 72rpx;
+						text-align: center;
+						font-size: 32rpx;
+						font-weight: bold;
+					}
+					.item-list {
+						padding: 20rpx 0;
+						border-bottom: solid 1rpx #DDDDDD;
+					}
+				}
+				.item-title {
+					color: #434E5E;
+					font-size: 32rpx;
+					font-weight: bold;
+					text {
+						width: 18rpx;
+						height: 18rpx;
+						background: #FF8E01;
+						border-radius: 6rpx;
+						margin-right: 12rpx;
+					}
+				}
+				.item-value {
+					margin-top: 16rpx;
+					margin-bottom: 40rpx;
+					font-size: 28rpx;
+					text {
+						width: 18rpx;
+						height: 18rpx;
+						background: #FFFFFF;
+						border-radius: 6rpx;
+						margin-right: 12rpx;
+					}
+				}
+			}
+			
+			.button-group {
+				margin-top: 60rpx;
+				view {
+					background: #FFFFFF;
+					box-shadow: 0rpx 4rpx 20rpx 0rpx rgba(85,112,105,0.1);
+					border-radius: 40rpx;
+					width: 320rpx;
+					height: 80rpx;
+					line-height: 80rpx;
+					text-align: center;
+					font-size: 32rpx;
+					color: #F35917;
+				}
+				.view-btn {
+					background: linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);
+					color: #FFFFFF;
+				}
+			}
+		}
+	}
+</style>

@@ -1,0 +1,107 @@
+<template>
+	<view>
+		<view class="video-box" :style="{marginBottom: $u.util.isIphoneX() ? '148rpx' : '120rpx' }">
+			<activity-list :isMy="true" :listData="activityList" :showTeacher="true"></activity-list>
+			<u-loadmore v-if="activityList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
+			<u-gap height="10" bgColor="#F6F9FE" v-if="activityList.length==0"></u-gap>
+			<u-empty mode="data" :text="emptyTitle" :icon="emptyIcon" marginTop="40" :show="activityList.length==0">
+			</u-empty>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				emptyIcon: '',
+				emptyTitle: '暂无记录',
+				status: 'loadmore',
+				current: 0,
+				activityList: [
+				],
+				tabsList: [
+					{
+						id: 0,
+						name: '线下活动'
+					},
+					{
+						id: 1,
+						name: '活动回顾'
+					},
+				],
+				tabList: [
+				],
+				currentTab: 2,
+				params: {
+					page: 1,
+					order: '',
+					sort: '',
+					type: '',
+				},
+			};
+		},
+		created() {
+			this.emptyIcon = this.$configs.staticUrl + '/uploads/api/icon/img_qbt_kym.svg'
+			this.getActivityList();
+		},
+		onPullDownRefresh() {
+			console.log('refresh');
+			this.activityList = [];
+			this.params.page = 1;
+			this.status = 'loadmore';
+			this.getActivityList();
+			setTimeout(function () {
+				uni.stopPullDownRefresh();
+			}, 1000);
+		},
+		onReachBottom() {
+			if(this.status !== 'noMore') {
+				this.status = 'loading';
+				this.params.page++;
+				this.getActivityList()
+			}
+		},
+		methods:{
+			loadmore() {
+				if(this.status !== 'noMore') {
+					this.status = 'loading';
+					this.params.page++;
+					this.getActivityList()
+				}
+			},
+			getActivityList() {
+				let that=this;
+				uni.$u.api.myActivityApplyList({ params: that.params}).then(res=>{
+					console.log(res)
+					if(that.activityList.length>0) {
+						that.activityList = that.activityList.concat(res.data.data);
+					}
+					else {
+						that.activityList = res.data.data;
+					}
+					if(res.data.current_page == res.data.last_page) {
+						that.status = 'noMore';
+					}
+					else {
+						that.status = 'loadmore';
+					}
+					console.log(that.status)
+				})
+				.catch(err=>{
+					uni.hideLoading()
+				})
+			},
+		}
+	}
+</script>
+<style>
+	page {
+		background-color:#F6F9FE;
+	}
+</style>
+<style lang="scss">
+	.video-box {
+		
+	}
+</style>

@@ -14,9 +14,9 @@
 				"navigationBarTitleText": "企帮通",
 				"enablePullDownRefresh": true,
 				"mp-weixin": {
-				    "usingComponents": {
-				        "subscribe": "plugin-private://wx2b03c6e691cd7370/components/subscribe/subscribe"
-				    }
+					"usingComponents": {
+						"subscribe": "plugin-private://wx2b03c6e691cd7370/components/subscribe/subscribe"
+					}
 				}
 			}
 		}, {
@@ -46,6 +46,15 @@
 			}
 
 		}
+	    ,{
+            "path" : "pages/public/protocol",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "企帮通隐私协议",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"subPackages": [{
 		"root": "pages/teacher",
@@ -100,7 +109,7 @@
 			}
 
 		}]
-	},{
+	}, {
 		"root": "pages/live",
 		"pages": [{
 			"path": "index",
@@ -118,22 +127,39 @@
 		}]
 	}, {
 		"root": "pages/activity",
-		"pages": [ {
+		"pages": [{
 			"path": "detail",
 			"style": {
 				"navigationBarTitleText": "活动详情",
 				"enablePullDownRefresh": false
 			}
 
-		},{
+		}, {
 			"path": "apply",
 			"style": {
 				"navigationBarTitleText": "活动报名",
 				"enablePullDownRefresh": false
 			}
 
+		}, {
+			"path": "apply_result",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
 		}]
-	},   {
+	}, {
+		"root": "pages/article",
+		"pages": [{
+			"path": "detail",
+			"style": {
+				"navigationBarTitleText": "内容详情",
+				"enablePullDownRefresh": false
+			}
+
+		}]
+	}, {
 		"root": "pages/my",
 		"pages": [{
 			"path": "info",
@@ -237,52 +263,56 @@
 				"enablePullDownRefresh": false
 			}
 
-		}    ,{
-                    "path" : "advisor",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "我的数字顾问",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "setting",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "系统设置",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "perfection",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "完善资料",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "verify",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "edit",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "用户信息修改",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-            ]
+		}, {
+			"path": "advisor",
+			"style": {
+				"navigationBarTitleText": "我的数字顾问",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "setting",
+			"style": {
+				"navigationBarTitleText": "系统设置",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "perfection",
+			"style": {
+				"navigationBarTitleText": "完善资料",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "verify",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "edit",
+			"style": {
+				"navigationBarTitleText": "用户信息修改",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "apply/apply",
+			"style": {
+				"navigationBarTitleText": "我的报名",
+				"enablePullDownRefresh": true
+			}
+
+		}, {
+			"path": "apply/detail",
+			"style": {
+				"navigationBarTitleText": "报名详情",
+				"enablePullDownRefresh": false
+			}
+
+		}]
 	}],
 	// 原生的导航
 	"tabBar": {

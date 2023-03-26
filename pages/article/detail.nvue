@@ -1,0 +1,103 @@
+<template>
+	<view>
+		<view class="activity-intro">
+			<view class="activity-title">{{ info.article_name }}</view>
+			<view class="activity-tip align-center justify-between">
+				<view class="activity-sub flex-row align-center">
+					<text class="time">{{ info.create_time | date('yyyy.mm.dd hh:MM') }}</text>
+					<u-icon color="#868E9D" size="18" name="eye" labelSize="12" labelColor="#868E9D" :label="'浏览数 '+info.views" space="10"></u-icon>
+				</view>
+				
+				<button openType="share" class="u-reset-button"><u-icon size="20" color="" :name="shareImg"></u-icon></button>
+			</view>
+		</view>
+		<view class="activity-content-box">
+		<u-parse :content="info.detail"></u-parse>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				id: '',
+				shareImg: '',
+				info: {
+					article_name: '',
+					views: '',
+					create_time: '',
+					detail: '',
+				}
+			};
+		},
+		onLoad(options) {
+			
+			this.shareImg = this.$configs.staticUrl + '/uploads/api/icon/fx.svg';
+			this.id = options.id;
+			if(options.from) {
+				if(options.from = 'activity') {
+					uni.setNavigationBarTitle({
+						title: '活动回顾'
+					});
+				}
+			}
+		},
+		
+		onShow() {
+			let that = this;
+			if(that.id) {
+				setTimeout(()=>{
+					uni.$u.api.articleDetail({
+							params: {
+								id: that.id
+							}
+						}).then(res => {
+							that.info = res.data;
+							uni.$u.mpShare.title = that.info.article_name;
+							uni.$u.mpShare.path = 'pages/article/detail?id='+that.info.id;
+						})
+						.catch(err => {})
+				},500)
+			}
+		}
+	}
+</script>
+<style lang="scss">
+	.activity-intro {
+		margin: 20rpx 30rpx 0 30rpx;
+		.activity-title {
+			margin-bottom: 46rpx;
+			color: #434E5E;
+			font-size: 36rpx;
+			font-weight: bold;
+			line-height: 140%;
+		}
+		.activity-tip {
+			color: #868E9D;
+			font-size: 24rpx;
+			margin-bottom: 60rpx;
+			flex-direction: row;
+			justify-content: space-between;
+			.activity-sub {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+			}
+			.time {
+				margin-right: 38rpx;
+				color: #868E9D;
+				font-size: 24rpx;
+			}
+		}
+		.activity-teacher {
+			color: #565656;
+			font-size: 28rpx;
+			margin-top: 12rpx;
+		}
+	}
+	
+	.activity-content-box {
+		padding: 0rpx 30rpx 40rpx 30rpx;
+	}
+</style>

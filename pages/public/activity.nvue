@@ -4,11 +4,20 @@
 		<u-tabs :list="tabsList" :scrollable="false" :inactiveStyle="{color: '#737D96'}" :activeStyle="{color: '#434E5E',fontWeight: 'bold'}" itemStyle="height:100rpx;font-size:32rpx;" lineColor="#F35917" lineWidth="30" @click="changeStatus" :current="current"></u-tabs>
 		</u-sticky>
 		<view class="video-box" :style="{marginBottom: $u.util.isIphoneX() ? '148rpx' : '120rpx' }">
+			<template v-if="current==0">
 			<activity-list :listData="activityList" :showTeacher="true"></activity-list>
 			<u-loadmore v-if="activityList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
 			<u-gap height="10" bgColor="#F6F9FE" v-if="activityList.length==0"></u-gap>
 			<u-empty mode="data" :text="emptyTitle" :icon="emptyIcon" marginTop="40" :show="activityList.length==0">
 			</u-empty>
+			</template>
+			<template v-else>
+				<article-list from="activity" :listData="articleList"></article-list>
+				<u-loadmore v-if="articleList.length>0" :status="status" marginBottom="18" @loadmore="loadmoreArticle"/>
+				<u-gap height="10" bgColor="#F6F9FE" v-if="articleList.length==0"></u-gap>
+				<u-empty mode="data" :text="emptyTitle" :icon="emptyIcon" marginTop="40" :show="articleList.length==0">
+				</u-empty>
+			</template>
 		</view>
 		<cu-tabbar :currentTab="currentTab" :tabList="tabList"></cu-tabbar>
 	</view>
@@ -21,8 +30,11 @@
 				emptyIcon: '',
 				emptyTitle: '暂无记录',
 				status: 'loadmore',
+				statusArticle: 'loadmore',
 				current: 0,
 				activityList: [
+				],
+				articleList: [
 				],
 				tabsList: [
 					{
@@ -43,36 +55,74 @@
 					sort: '',
 					type: '',
 				},
+				paramsArticle: {
+					page: 1,
+					order: '',
+					sort: '',
+				},
 			};
 		},
-		created() {
+		onShow() {
 			this.emptyIcon = this.$configs.staticUrl + '/uploads/api/icon/img_qbt_kym.svg'
 			this.tabList = this.$configs.tabList;
-			this.getActivityList();
+			if(this.current==0) {
+				this.activityList = [];
+				this.params.page = 1;
+				this.status = 'loadmore';
+				this.getActivityList();
+			}
+			else {
+				this.articleList = [];
+				this.paramsArticle.page = 1;
+				this.statusArticle = 'loadmore';
+				this.getArticleList();
+			}
 		},
 		onPullDownRefresh() {
 			console.log('refresh');
-			this.activityList = [];
-			this.params.page = 1;
-			this.status = 'loadmore';
-			this.getActivityList();
+			if(this.current==0) {
+				this.activityList = [];
+				this.params.page = 1;
+				this.status = 'loadmore';
+				this.getActivityList();
+			}
+			else {
+				this.articleList = [];
+				this.paramsArticle.page = 1;
+				this.statusArticle = 'loadmore';
+				this.getArticleList();
+			}
 			setTimeout(function () {
 				uni.stopPullDownRefresh();
 			}, 1000);
 		},
 		onReachBottom() {
 			if(this.status !== 'noMore') {
-				this.status = 'loading';
-				this.params.page++;
-				this.getActivityList()
+				if(this.current==0) {
+					this.status = 'loading';
+					this.params.page++;
+					this.getActivityList()
+				}
+				else {
+					this.statusArticle = 'loading';
+					this.paramsArticle.page++;
+					this.getArticleList()
+				}
 			}
 		},
 		methods:{
 			loadmore() {
 				if(this.status !== 'noMore') {
-					this.status = 'loading';
-					this.params.page++;
-					this.getActivityList()
+					if(this.current==0) {
+						this.status = 'loading';
+						this.params.page++;
+						this.getActivityList()
+					}
+					else {
+						this.statusArticle = 'loading';
+						this.paramsArticle.page++;
+						this.getArticleList()
+					}
 				}
 			},
 			getActivityList() {
@@ -97,20 +147,58 @@
 					uni.hideLoading()
 				})
 			},
+			getArticleList() {
+				let that=this;
+				uni.$u.api.articleList({ params: that.params}).then(res=>{
+					console.log(res)
+					if(that.articleList.length>0) {
+						that.articleList = that.articleList.concat(res.data.data);
+					}
+					else {
+						that.articleList = res.data.data;
+					}
+					if(res.data.current_page == res.data.last_page) {
+						that.statusArticle = 'noMore';
+					}
+					else {
+						that.statusArticle = 'loadmore';
+					}
+					console.log(that.statusArticle)
+				})
+				.catch(err=>{
+					uni.hideLoading()
+				})
+			},
 			changeStatus(e) {
+				this.current = e.id;
 				console.log(e);
-				this.liveList = [];
-				this.status = 'loadmore';
-				this.params.live_status = e.id;
-				this.params.page = 1;
-				this.params.sort = '';
-				this.params.order = '';
-				this.getLiveList()
+				if(e.id == 0) {
+					this.activityList = [];
+					this.status = 'loadmore';
+					this.params.page = 1;
+					this.params.sort = '';
+					this.params.order = '';
+					this.getActivityList()
+				}
+				else {
+					this.articleList = [];
+					this.statusArticle = 'loadmore';
+					this.paramsArticle.page = 1;
+					this.paramsArticle.sort = '';
+					this.paramsArticle.order = '';
+					this.getArticleList()
+				}
+				console.log(this.current)
 			},
 		}
 	}
 </script>
 
+<style>
+	page {
+		background-color:#F6F9FE;
+	}
+</style>
 <style lang="scss">
 	.video-box {
 		

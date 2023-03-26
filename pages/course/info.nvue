@@ -19,13 +19,16 @@
 			<video-list :listData="courseList"></video-list>
 			<u-loadmore :status="status" marginBottom="18" @loadmore="loadmore"/>
 		</view>
+		
 		<view class="bottom-button-box">
-			<view class="bottom-button-group">
-				<u-button icon="share" type="primary" openType="share" text="推荐好友"></u-button>
-				<u-button icon="coupon" type="warning" text="立即购买" @click="buy" v-if="info.sale_price>0&&!info.isBuy"></u-button>
+			<view class="bottom-button-group flex-row justify-between align-center">
+				<button class="u-reset-button share" :style="info.isBuy||info.sale_price==0?'width:100%':''" openType="share"><u-icon :name="shareImg" size="20" label="推荐好友" labelColor="#5B7EA9" labelSize="16" :bold="true"></u-icon></button>
+				<button class="u-reset-button" @click="buy" v-if="info.sale_price>0&&!info.isBuy"><u-icon :name="buyImg" size="20" label="立即购买" labelColor="#ffffff" labelSize="16" :bold="true"></u-icon></button>
 			</view>
 			<u-safe-bottom></u-safe-bottom>
 		</view>
+		
+		
 		<u-popup :show="showBuy" round="16" :closeable="true" @close="closeBuy">
 			<view class="show-buy">
 				<view class="item-box"><text>课程费用</text>￥{{ info.sale_price }}</view>
@@ -52,6 +55,8 @@
 	export default {
 		data() {
 			return {
+				shareImg: '',
+				buyImg: '',
 				status: 'loadmore',
 				play: false,
 				showBuy: false,
@@ -90,6 +95,8 @@
 			}
 		},
 		onLoad(options) {
+			this.shareImg = this.$configs.staticUrl + '/uploads/api/icon/icon_qbt_tjhy.svg';
+			this.buyImg = this.$configs.staticUrl + '/uploads/api/icon/icon_qbt_ljgm.svg';
 			let that = this;
 			that.id = options.id;
 		},
@@ -175,10 +182,7 @@
 			payTypeChange(e) {
 				if(e==1) {
 					if(Number(this.info.sale_price)>Number(this.vuex_user.balance)) {
-						uni.showToast({
-							icon:'error',
-							title: '余额不足'
-						})
+						this.$u.util.showErr('余额不足')
 					}
 				}
 			},
@@ -197,10 +201,7 @@
 			},
 			buy() {
 				if(!this.vuex_token) {
-					uni.showToast({
-						icon:'error',
-						title: '请先登录'
-					})
+					this.$u.util.showErr('请先登录')
 					setTimeout(()=>{
 						this.$u.util.goLogin();
 					}, 1000)
@@ -233,6 +234,9 @@
 			playVideo(){
 				if(!this.vuex_token){
 					this.$u.util.showErr('请先登录')
+					setTimeout(()=>{
+						this.$u.util.goLogin();
+					}, 1000)
 					return false;
 				}
 				if(this.info.sale_price>0&&!this.info.isBuy){
@@ -311,8 +315,26 @@
 		background-color: #ffffff;
 	
 		.bottom-button-group {
-			flex-direction: row;
-	
+			color: #FFFFFF;
+			height: 98rpx;
+			padding:  10rpx 48rpx;
+			button {
+				height: 80rpx;
+				font-size: 32rpx;
+				background: linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);
+				border-radius: 40rpx;
+				display: flex;
+				width: 300rpx;
+				flex-direction: row;
+				justify-content: center;
+				align-items: center;
+				font-weight: bold;
+			}
+			.share {
+				background: #ffffff;
+				border: 2rpx solid #BECCE7;
+			}
+			
 			.u-button--square {
 				border-radius: 0;
 			}

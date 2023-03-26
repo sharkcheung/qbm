@@ -3,7 +3,7 @@
 		<view class="order-box">
 			<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
 			<u--form labelPosition="left" :model="modelOrder" ref="formOrder" labelWidth="100">
-				<u-form-item label="姓名" prop="teacher_name" ref="item1">
+				<u-form-item label="预约老师" prop="teacher_name" ref="item1">
 					<u--input v-model="modelOrder.teacher_name" border="none" disabled disabledColor="#ffffff"></u--input>
 				</u-form-item>
 				<u-form-item
@@ -20,27 +20,26 @@
 				</u-form-item>
 				<u-form-item label="公司名称" prop="company_name" ref="itemCompanyName"><u--input v-model="modelOrder.company_name"></u--input></u-form-item>
 				<u-form-item label="行业" prop="industry" ref="itemIndustry"><u--input v-model="modelOrder.industry"></u--input></u-form-item>
-				<u-form-item label="团队情况" prop="team_info" ref="item3"><u--textarea placeholder="不低于3个字" v-model="modelOrder.team_info" count></u--textarea></u-form-item>
+				<u-form-item label="公司核心优势" prop="team_info" ref="item3"><u--textarea placeholder="不低于3个字" v-model="modelOrder.team_info" count></u--textarea></u-form-item>
 				<u-form-item
-					label="项目启动时间"
+					label="期望沟通日期"
 					prop="start_time"
 					@click="
 						show = true;
 					"
 				>
-					<u--input v-model="modelOrder.start_time" disabled disabledColor="#ffffff" placeholder="请选择项目启动时间" border="none"></u--input>
+					<u--input v-model="modelOrder.start_time" disabled disabledColor="#ffffff" placeholder="请选择期望沟通日期" border="none"></u--input>
 					<u-icon slot="right" name="arrow-right"></u-icon>
 				</u-form-item>
-				<u-form-item label="咨询简述" prop="intro" ref="item3"><u--textarea placeholder="不低于3个字" v-model="modelOrder.intro" count></u--textarea></u-form-item>
+				<u-form-item label="主要咨询问题" prop="intro" ref="item3"><u--textarea placeholder="不低于3个字" v-model="modelOrder.intro" count></u--textarea></u-form-item>
 			</u--form>
 		</view>
 		<view class="bottom-button-box">
-			<view class="bottom-button-group"><u-button type="primary" text="确认预约" @click="submit"></u-button></view>
+			<view class="bottom-button-group"><button class="u-reset-button" @click="submit">确认预约</button></view>
 			<u-safe-bottom></u-safe-bottom>
 		</view>
 
 		<u-action-sheet :show="showService" :actions="actions" title="请选择预约服务" @close="showService = false" @select="serviceSelect"></u-action-sheet>
-		<!-- <u-calendar :show="showCalendar" minDate="1950-01-01" defaultDate="" @confirm="calendarConfirm" @close="calendarClose"></u-calendar> -->
 		<u-datetime-picker
 		ref="datetimePicker"
 				:show="show"
@@ -269,11 +268,14 @@ export default {
 	z-index: 999;
 	background-color: #ffffff;
 	.bottom-button-group {
-		margin: 0 32rpx;
-		margin-bottom: 16rpx;
-		flex-direction: row;
-		.u-button--square {
-			border-radius: 20rpx;
+		button {
+			color: #FFFFFF;
+			margin: 10rpx 126rpx 8rpx 126rpx;
+			height: 80rpx;
+			font-size: 32rpx;
+			background: linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);
+			border-radius: 40rpx;
+			line-height: 80rpx;
 		}
 	}
 }

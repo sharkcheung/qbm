@@ -7,16 +7,14 @@
 					<view class="teacher-item-title">
 						{{ item.teacher_name }}
 						<u-rate size="15" :value="item.mark" :gutter="0" readonly activeColor="#F8AE42"></u-rate>
-						
 					</view>
 					<view class="titles flex-row justify-between">
 						<view class="title-text">
-							<text v-for="(item_title, idx) in item.title.split(',')" :key="idx">{{ item_title }}</text>
+							<text v-for="(item_title, idx) in item.resume.split(',')" :key="idx">{{ item_title }}</text>
 						</view>
 						<view class="chat-btn flex-row justify-center align-center" @click.stop="order(item)"><u-icon label="约聊" labelPos="right" size="23" :name="chatImg" labelColor="#fff" labelSize="14"></u-icon></view>
 					</view>
 				</view>
-				
 			</view>
 			<u-gap height="1" bgColor="#E5E5E5"></u-gap>
 			<view class="teacher-item-skill">
@@ -27,13 +25,12 @@
 				</view>
 			</view>
 		</view>
-		<u-modal :show="show" :closeOnClickOverlay="true" title="温馨提示" :content="content">
-			<u-button slot="confirmButton" :text="confirmText" type="primary" shape="circle" @click="confirmClick">
+		<u-modal :show="show" :closeOnClickOverlay="true" title="温馨提示" :content="content" @close="show=false">
+			<u-button slot="confirmButton" :text="confirmText" color="linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);" shape="circle" @click="confirmClick">
 			</u-button>
 		</u-modal>
 	</view>
 </template>
-
 <script>
 	export default {
 		name:"teacher-list",
@@ -96,7 +93,6 @@
 					this.confirmText = '去完善';
 					return false;
 				}
-
 				uni.showLoading({
 					title: '数据请求中...'
 				})

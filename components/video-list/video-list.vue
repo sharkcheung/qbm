@@ -3,7 +3,7 @@
 		<view class="video-item" v-for="(item, index) in listData" :key="index" @click="openPage('/pages/course/info',item)">
 			<u--image :showLoading="true" radius="4" :src="item.pic" width="100%" height="180rpx"></u--image>
 			<view class="video-title">{{ item.course_name }}</view>
-			<view class="video-study-num"><text>{{ item.views||0 }}人已学</text><text>{{ item.sale_price ? item.sale_price : '免费' }}</text></view>
+			<view class="video-study-num"><text>{{ item.views||0 }}人已学</text><text>{{ item.sale_price>0 ? item.sale_price : '免费' }}</text></view>
 			<text v-if="showTeacher" class="teacher-name">{{ item.teacher.teacher_name}}</text>
 		</view>
 	</view>

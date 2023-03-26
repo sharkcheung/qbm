@@ -1,9 +1,9 @@
 <template>
 	<div>
 		<u-sticky bgColor="#fff">
-			<u-tabs :list="listTab" lineColor="#F35917" lineWidth="30" :inactiveStyle="{color: '#737D96'}" :activeStyle="{color: '#434E5E'}" itemStyle="height:100rpx;font-size:28rpx;font-weight:bold;" @click="clickTab"></u-tabs>
+			<u-tabs :list="listTab" :inactiveStyle="{color: '#737D96'}" :activeStyle="{color: '#434E5E',fontWeight: 'bold'}" itemStyle="height:100rpx;font-size:32rpx;padding-left: 40rpx; padding-right: 40rpx;" lineColor="#F35917" lineWidth="30" @click="clickTab"></u-tabs>
 		</u-sticky>
-		<view :style="{marginBottom: $u.util.isIphoneX() ? '168rpx' : '80rpx' }">
+		<view :style="{marginBottom: $u.util.isIphoneX() ? '148rpx' : '60rpx' }">
 			<template v-if="current==0">
 				<u-gap height="10" bgColor="#F6F9FE"></u-gap>
 				<view class="teacher-container">
@@ -12,7 +12,7 @@
 						</u-avatar>
 						<view class="teacher-top-title">
 							<view class="teacher-name flex-row justify-between">{{ info.teacher_name }}<view class="share flex-row align-center" v-if="vuex_user.agent" @click="showShare=true"><u-icon label="分享" color="#00b500" size="22" name="weixin-fill" labelSize="12"></u-icon></view></view>
-							<text class="tag-title" v-for="(item_title, idx) in info.title" :key="idx">{{ item_title }}</text>
+							<text class="tag-title" v-for="(item_title, idx) in info.resume" :key="idx">{{ item_title }}</text>
 						</view>
 					</view>
 					<view class="line-view"><text></text></view>
@@ -23,14 +23,15 @@
 								<u-rate :value="info.mark" readonly activeColor="#f9ae3d"></u-rate>
 							</view>
 						</view>
-						<view class="item-box flex-row">
+						<!-- <view class="item-box flex-row">
 							<view class="item-title">个人履历：</view>
 							<view class="item-value resume">{{ info.resume }}</view>
-						</view>
-						<view class="item-box flex-row">
-							<view class="item-title">荣誉称号：</view>
-							<view class="item-value honor flex-row"><text v-for="(item_item, index_item) in info.honor" :key="index_item">{{ item_item }}</text></view>
-						</view>
+						</view> -->
+						<!-- <view class="item-box flex-row">
+							<view class="item-title">个人履历：</view>
+							<view class="item-value honor flex-row"><text v-for="(item_item, index_item) in info.resume" :key="index_item">{{ item_item }}</text></view>
+						</view> -->
+						
 						<view class="item-box flex-row teacher-skill">
 							<view class="item-title">擅长项目：</view>
 							<view class="item-value">
@@ -103,17 +104,15 @@
 		<view class="bottom-button-box">
 			<view class="bottom-button-group">
 				<template v-for="(item,index) in info.service_type">
-				<view :key="index" class="chat-button-view flex-row justify-center" v-if="item.id==1" @click="order(item)"><u-icon labelPos="right" labelColor="#fff" :label="item.name" size="36" :name="chatImg" labelSize="16" @click="order(item)"></u-icon></view>
+				<view :key="index" :style="info.service_type.length==1?'width:100%':''" class="chat-button-view flex-row justify-center" v-if="item.id==1" @click="order(item)"><u-icon labelPos="right" labelColor="#fff" :label="item.name" size="36" :name="chatImg" labelSize="16" @click="order(item)"></u-icon></view>
 				<view :key="index" v-else class="button-view"><u-icon labelPos="bottom" :label="item.name" size="29" :name="item.picture" labelColor="#868E9D" labelSize="12" space="0" @click="order(item)"></u-icon></view>
 				</template>
-				
-				<!-- <u-button icon="share" type="primary" openType="share" text="推荐好友"></u-button>
-				<u-button icon="coupon" type="warning" v-if="vuex_token&&vuex_user.agent" text="生成海报" @click="generatePoster"></u-button> -->
 			</view>
 			<u-safe-bottom></u-safe-bottom>
 		</view>
+		
 		<u-modal :show="show" :closeOnClickOverlay="true" title="温馨提示" @close="close" :content="content">
-			<u-button slot="confirmButton" :text="confirmText" type="primary" shape="circle" @click="confirmClick">
+			<u-button slot="confirmButton" color="linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);" :text="confirmText" shape="circle" @click="confirmClick">
 			</u-button>
 		</u-modal>
 		<u-popup :show="showShare" @close="closeShare" round="16">
@@ -315,11 +314,72 @@
 			closeshowPoster() {
 				this.showPoster = false;
 			},
+			/* 授权提示 ，这里就是重复提示用户去授权*/
+			opensit() {
+			    uni.showModal({
+			        content: '由于您还没有允许保存图片到您相册里,这无法进行分享操作点击确定去允许授权',
+			        success: function(res) {
+			            if (res.confirm) {
+			                /* 这个就是打开设置的API*/
+			                uni.openSetting({
+			                    success(res) {
+			                        console.log(res.authSetting);
+			                    }
+			                });
+			            } else if (res.cancel) {
+			                uni.showModal({
+			                    cancelText: '依然取消',
+			                    confirmText: '重新授权',
+			                    content: '很遗憾你点击了取消，这将无法进行分享操作，请慎重考虑',
+			                    success: function(res) {
+			                        if (res.confirm) {
+			                            uni.openSetting({
+			                                success(res) {
+			                                    console.log(res.authSetting);
+			                                }
+			                            });
+			                        } else if (res.cancel) {
+			                            console.log('用户不授权');
+			                        }
+			                    }
+			                });
+			            }
+			        }
+			    });
+			},
 			savePhoto() {
+				let that = this;
+				/* 如果是这么写的，可以不使用button设置open-type属性*/
+				/* 判断是否授权 */
+				uni.authorize({
+				    /* 这个就是保存相册的 */
+				    scope: 'scope.writePhotosAlbum',
+				    success() {
+				        /* 保存图片方法 */
+						
+				        that.save();
+				    },
+				    complete(res) {
+				        console.log(res);
+				        /* 这里判断一下如果没有授权重新打开设置选项 */
+				        uni.getSetting({
+				            success(res) {
+				                if (!res.authSetting['scope.writePhotosAlbum']) {
+				                    /* 打开设置的方法 */
+				                    that.opensit();
+				                }
+				            }
+				        });
+				    }
+				});
+			},
+			save() {
 				let that = this
 				uni.downloadFile({
 					url: that.poster,
 					success: function(res) {
+						console.log(res);
+						
 						uni.saveImageToPhotosAlbum({
 						 filePath: res.tempFilePath,
 							success(res) {
@@ -330,6 +390,7 @@
 								})
 							},
 							fail(err) {
+								console.log(err);
 								if(err.errMsg=='saveImageToPhotosAlbum:fail auth deny') {
 									that.showPoster = false;
 									that.show = true;
@@ -338,7 +399,6 @@
 									that.confirmText = '去授权';
 									return false;
 								}
-								console.log(err);
 							}
 						})
 					}
@@ -510,7 +570,6 @@
 <style lang="scss">
 	.teacher-container {
 		background-color: #fff;
-		margin-bottom: 20rpx;
 
 		.item-box {
 			margin-top: 20rpx;
@@ -578,9 +637,7 @@
 
 		.teacher-skill {
 			margin-top: 20rpx;
-			padding-bottom: 20rpx;
 			flex-direction: row;
-
 			.item-value {
 				flex-direction: row;
 
@@ -653,18 +710,17 @@
 		left: 0;
 		z-index: 999;
 		background-color: #ffffff;
-
 		.bottom-button-group {
 			flex-direction: row;
 			align-items: center;
 			.chat-button-view {
-				width: 66.7%;
+				flex: 1;
 				background: linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);
 				border-radius: 40rpx;
-				margin: 10rpx 0rpx 10rpx 30rpx;
+				margin: 10rpx 30rpx 10rpx 30rpx;
 			}
 			.button-view {
-				margin-left: 34rpx;
+				margin-right: 30rpx;
 			}
 			.u-button--square {
 				border-radius: 0;
