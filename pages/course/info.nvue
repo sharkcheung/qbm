@@ -14,7 +14,7 @@
 			<view class="video-tip"><text>{{ info.views||0 }}人已学</text><text>{{ info.sale_price ? info.sale_price : '免费' }}</text></view>
 		</view>
 		<u-gap height="10" bgColor="#efefef"></u-gap>
-		<view class="video-list-box" :style="{marginBottom: $u.util.isIphoneX() ? '168rpx' : '120rpx' }">
+		<view class="video-list-box" :style="{marginBottom: $u.util.isIphoneX() ? '84px' : '50px' }">
 			<view class="videl-else">其他课程</view>
 			<video-list :listData="courseList" v-if="courseList.length>0"></video-list>
 			<u-loadmore v-if="courseList.length>0" color="#868E9D" fontSize="12" :status="status" marginTop="20" marginBottom="20" @loadmore="loadmore"/>

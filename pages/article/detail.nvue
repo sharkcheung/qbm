@@ -33,7 +33,7 @@
 			};
 		},
 		onLoad(options) {
-			this.marginBottom = uni.$u.util.isIphoneX() ? '68rpx' : '0';
+			this.marginBottom = uni.$u.util.isIphoneX() ? '34px' : '0';
 			this.shareImg = this.$configs.staticUrl + '/uploads/api/icon/fx.svg';
 			this.id = options.id;
 			if(options.from) {

@@ -1,8 +1,12 @@
 <template>
 	<view>
 		<view class="activity-content">
-			<view class="result-bg">提交成功，待主办方审核！</view>
-			<view class="activity-content-box">
+			<view class="result-bg" :class="info.applyInfo.status==2?'fail':''">
+				<template v-if="info.applyInfo.status==0">提交成功，待主办方审核！</template>
+				<template class="" v-if="info.applyInfo.status==1">已审核通过</template>
+				<view v-if="info.applyInfo.status==2">审核不通过原因：<text>{{ info.applyInfo.reason }}</text></view>
+			</view>
+			<view class="activity-content-box" :class="info.applyInfo.status==2?'fail-content-box':''">
 				<view class="item-box">
 					<view class="activity-title">{{ info.name }}</view>
 					<view class="item">
@@ -27,6 +31,7 @@
 	export default {
 		data() {
 			return {
+				resultTips: '提交成功，待主办方审核！',
 				activity_id: 0,
 				info: {
 					name: '',
@@ -35,13 +40,17 @@
 					sale_price: 0,
 					detail:'',
 					flow: '',
+					status: 0,
 					isApply: true,
+					applyInfo: {
+						
+					}
 				},
 			};
 		},
 		onLoad(options) {
 			let that = this;
-			that.activity_id = options.activity_id;
+			that.activity_id = options.id;
 			uni.$u.api.activityDetail({
 				params: {
 					id: that.activity_id
@@ -80,6 +89,23 @@
 			text-align: center;
 			color: #FFFFFF;
 			font-size: 36rpx;
+		}
+		.fail {
+			height: auto;
+			position: inherit;
+			text-align: left;
+			padding-top: 40rpx;
+			background: #F6F9FE;
+			color: #16202E;
+			font-weight: bold;
+			margin: 0 30rpx;
+			font-size: 32rpx;
+			text {
+				margin-top: 20rpx;
+				color: #434E5E;
+				font-size: 28rpx;
+				font-weight: normal;
+			}
 		}
 		.activity-content-box {
 			margin: 250rpx 30rpx 60rpx 30rpx;
@@ -157,5 +183,9 @@
 				}
 			}
 		}
+		.fail-content-box {
+			margin: 40rpx 30rpx 60rpx 30rpx;
+		}
+		
 	}
 </style>

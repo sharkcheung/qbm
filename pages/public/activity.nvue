@@ -3,7 +3,7 @@
 		<u-sticky bgColor="#fff">
 		<u-tabs :list="tabsList" :scrollable="false" :inactiveStyle="{color: '#737D96'}" :activeStyle="{color: '#434E5E',fontWeight: 'bold'}" itemStyle="height:100rpx;font-size:32rpx;" lineColor="#F35917" lineWidth="30" @click="changeStatus" :current="current"></u-tabs>
 		</u-sticky>
-		<view class="video-box" :style="{marginBottom: $u.util.isIphoneX() ? '148rpx' : '120rpx' }">
+		<view class="video-box" :style="{marginBottom: $u.util.isIphoneX() ? '84px' : '50px' }">
 			<template v-if="current==0">
 				<activity-list :listData="activityList" :showTeacher="true"></activity-list>
 				<u-loadmore v-if="activityList.length>0" :status="status" marginBottom="20" marginTop="20" @loadmore="loadmore"/>

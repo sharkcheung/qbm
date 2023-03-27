@@ -1,9 +1,9 @@
 <template>
 	<view>
-		<view class="video-box" :style="{marginBottom: $u.util.isIphoneX() ? '148rpx' : '100rpx' }">
+		<view class="video-box" :style="{marginBottom: $u.util.isIphoneX() ? '84px' : '50px' }">
 			<video-list :listData="courseList" :showTeacher="true"></video-list>
 			<u-loadmore v-if="courseList.length>0" color="#868E9D" fontSize="12" :status="status" marginTop="20" marginBottom="20" @loadmore="loadmore"/>
-			<u-empty mode="data" :text="emptyTitle" :icon="emptyIcon" :show="courseList.length==0">
+			<u-empty mode="data" :text="emptyTitle" marginTop="40" :icon="emptyIcon" :show="courseList.length==0">
 			</u-empty>
 		</view>
 		<cu-tabbar :currentTab="currentTab" :tabList="tabList"></cu-tabbar>

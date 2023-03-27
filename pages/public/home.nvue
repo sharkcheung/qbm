@@ -45,10 +45,10 @@
 		<u-gap height="10" bgColor="#F6F9FE"></u-gap>
 		<u-sticky bgColor="#ffffff" zIndex="1">
 		<u-tabs :list="serviceList" :inactiveStyle="{color: '#737D96'}" :activeStyle="{color: '#434E5E',fontWeight: 'bold'}" itemStyle="height:100rpx;font-size:32rpx;" lineColor="#F35917" lineWidth="30" @click="changeService" :current="current"></u-tabs></u-sticky>
-		<view class="teacher-container" :style="{marginBottom: $u.util.isIphoneX() ? '128rpx' : '80rpx' }">
-			<teacher-list :serviceId="serviceId" :serviceName="serviceName" :listData="teacherList"></teacher-list>
+		<view class="teacher-container" :style="{marginBottom: $u.util.isIphoneX() ? '84px' : '50px' }">
+			<teacher-list v-if="teacherList.length>0" :serviceId="serviceId" :serviceName="serviceName" :listData="teacherList"></teacher-list>
 			<u-loadmore v-if="teacherList.length>0" color="#868E9D" fontSize="12" :status="status" marginTop="20" marginBottom="20"/>
-			<u-empty mode="data" :text="emptyTitle" :icon="emptyIcon" :show="teacherList.length==0">
+			<u-empty mode="data" :text="emptyTitle" :icon="emptyIcon" marginTop="40" :show="teacherList.length==0">
 			</u-empty>
 		</view>
 		
@@ -320,7 +320,7 @@
 		}
 	}
 	.teacher-container {
-		padding: 0 30rpx 32rpx 30rpx;
+		padding: 0 30rpx;
 		background-color: #F6F9FE;
 	}
 	

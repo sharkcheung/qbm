@@ -8,7 +8,7 @@
 			<view class="activity-tip align-center justify-between"><u-icon color="#868E9D" size="24" name="eye" labelColor="#868E9D" :label="'浏览数 '+info.views" space="10"></u-icon><button openType="share" class="u-reset-button"><u-icon size="20" color="" :name="shareImg"></u-icon></button></view>
 		</view>
 		<u-gap height="10" bgColor="#efefef"></u-gap>
-		<view class="activity-content-box" :style="{marginBottom: $u.util.isIphoneX() ? '128rpx' : '80rpx' }">
+		<view class="activity-content-box" :style="{marginBottom: marginBottom }">
 			<!-- <view class="activity-fee">免费</view> -->
 			<view class="item">
 				<view class="flex-row item-title align-center"><text></text>活动时间</view>
@@ -49,7 +49,7 @@
 				</swiper>
 			</view> -->
 		</view>
-		<view class="apply-tips" v-show="applyTipMsg" :style="{bottom: $u.util.isIphoneX() ? '138rpx' : '80rpx' }">{{ applyTipMsg }}</view>
+		<view class="apply-tips" v-show="applyTipMsg" :style="{bottom: bottom }">{{ applyTipMsg }}</view>
 		<view class="bottom-button-box">
 			<view class="bottom-button-group justify-center align-center" @click="apply" v-if="info.deadline_time>timestamp" :class="statusClass">
 				{{ getStatus() }}
@@ -82,6 +82,8 @@
 	export default {
 		data() {
 			return {
+				bottom: '0',
+				marginBottom: '0',
 				timer: null,  // 定时器名称
 				applyTipMsg: '',
 				timestamp: 0,
@@ -125,6 +127,11 @@
 				clearInterval(this.timer);
 			}
 		},
+		onHide() {
+			if (this.timer) {
+				clearInterval(this.timer);
+			}
+		},
 		onLoad(options) {
 			this.shareImg = this.$configs.staticUrl + '/uploads/api/icon/fx.svg'
 			let that = this;
@@ -142,6 +149,14 @@
 					that.applyTipMsg = '';
 					that.applyList = [];
 					that.page = 1;
+					if(that.info.deadline_time>this.timestamp) {
+						that.marginBottom = uni.$u.util.isIphoneX() ? '84px' : '34px';
+						that.bottom = uni.$u.util.isIphoneX() ? '94px' : '44px';
+					}
+					else {
+						that.marginBottom = uni.$u.util.isIphoneX() ? '34px' : '0';
+						that.bottom = uni.$u.util.isIphoneX() ? '44px' : '10px';
+					}
 					if(that.info.deadline_time>that.timestamp) {
 						that.getApplyList();
 					}
@@ -343,9 +358,11 @@
 		bottom: 0rpx;
 		left: 0rpx;
 		right: 0;
-		margin: 30rpx;
+		margin: 0 30rpx;
 		font-size: 24rpx;
-		padding: 18rpx 40rpx;
+		padding: 0rpx 40rpx;
+		height: 70rpx;
+		line-height: 70rpx;
 		background: #000000;
 		border-radius: 10rpx;
 		opacity: 0.8;

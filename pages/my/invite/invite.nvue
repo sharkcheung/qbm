@@ -1,6 +1,6 @@
 <template>
 	<view class="">
-		<view class="invite-container" :style="{marginBottom: $u.util.isIphoneX() ? '68rpx' : '0' }">
+		<view class="invite-container" :style="{marginBottom: $u.util.isIphoneX() ? '34px' : '0' }">
 			<invite-list v-if="dataList.length>0" :listData="dataList"></invite-list>
 			<u-loadmore v-if="dataList.length>0" color="#868E9D" fontSize="12" :status="status" marginTop="20" marginBottom="20" @loadmore="loadmore"/>
 			<u-empty mode="data" text="暂无邀请用户" :icon="emptyIcon" marginTop="40" :show="dataList.length==0">

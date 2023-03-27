@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<view class="video-box" :style="{marginBottom: $u.util.isIphoneX() ? '68rpx' : '0' }">
+		<view class="video-box" :style="{marginBottom: $u.util.isIphoneX() ? '34px' : '0' }">
 			<activity-list v-if="activityList.length>0" :isMy="true" :listData="activityList" :showTeacher="true"></activity-list>
 			<u-loadmore v-if="activityList.length>0" color="#868E9D" fontSize="12" :status="status" marginTop="20" marginBottom="20" @loadmore="loadmore"/>
 			<u-gap height="10" bgColor="#F6F9FE" v-if="activityList.length==0"></u-gap>

@@ -204,12 +204,18 @@ export default {
 			uni.$u.api.activityApply(that.model).then(result=>{
 				console.log(result)
 				uni.hideLoading()
-				uni.showToast({
-					title: result.msg
+				uni.$u.route({
+					url: 'pages/activity/apply_result',
+					params: {
+						activity_id: result.data
+					}
 				})
-				setTimeout(()=>{
-					uni.navigateBack()
-				},1500)
+				// uni.showToast({
+				// 	title: result.msg
+				// })
+				// setTimeout(()=>{
+				// 	uni.navigateBack()
+				// },1500)
 			})
 			.catch(err=>{
 				uni.hideLoading()
