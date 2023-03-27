@@ -19,7 +19,7 @@
 					<view class="padding-box">
 						<view class="item-box flex-row teacher-mark">
 							<view class="item-title">星级评分：</view>
-							<view class="item-value">
+							<view class="item-value justify-center">
 								<u-rate :value="info.mark" readonly activeColor="#f9ae3d"></u-rate>
 							</view>
 						</view>
@@ -68,7 +68,7 @@
 			</template>
 			<template v-if="current==1">
 
-				<view class="comment-box comment-item" v-for="(item, index) in commentList" :key="index">
+				<view v-if="commentList.length>0" class="comment-box comment-item" v-for="(item, index) in commentList" :key="index">
 					<view class="comment-top">
 						<view class="comment-top-left">
 							<u-avatar shape="circle" size="20" :src="item.pic" customStyle="margin: 0px 5px 0px 0px">
@@ -82,22 +82,23 @@
 				<u-empty
 					text='暂无评价'
 					:show="commentList.length==0"
-					mode="comment"
-					:icon="commentPng"
+					mode="data"
+					:icon="emptyIcon"
 				>
 				</u-empty>
+				<u-loadmore v-if="commentList.length>0" color="#868E9D" fontSize="12" :status="statusComment" marginBottom="20" marginTop="20" @loadmore="loadmoreComment"/>
 			</template>
 			<template v-if="current==2">
-				<view class="video-box">
+				<u-empty
+					text='暂无课程'
+					:show="courseList.length==0"
+					mode="data"
+					:icon="emptyIcon"
+				>
+				</u-empty>
+				<view class="video-box" v-if="courseList.length>0">
 					<video-list :listData="courseList"></video-list>
-					<u-empty
-						text='暂无课程'
-						:show="courseList.length==0"
-						mode="list"
-						:icon="listPng"
-					>
-					</u-empty>
-					<u-loadmore v-if="courseList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
+					<u-loadmore v-if="courseList.length>0" color="#868E9D" fontSize="12" :status="status" marginBottom="20" marginTop="20" @loadmore="loadmore"/>
 				</view>
 			</template>
 		</view>
@@ -157,7 +158,7 @@
 				status: 'loadmore',
 				statusComment: 'loadmore',
 				poster: '',
-				commentPng: '',
+				emptyIcon: '',
 				listPng: '',
 				modalType: 0,
 				showPoster: false,
@@ -237,8 +238,7 @@
 		},
 		onShow() {
 			this.chatImg = this.$configs.staticUrl + '/uploads/api/icon/icon_qbt_yl.svg'
-			this.commentPng = this.$configs.staticUrl + '/uploads/api/icon/comment.png';
-			this.listPng = this.$configs.staticUrl + '/uploads/api/icon/list.png';
+			this.emptyIcon = this.$configs.staticUrl + '/uploads/api/icon/img_qbt_kym.svg'
 			this.showShare = false;
 			this.showPoster = false;
 			uni.showLoading({
@@ -644,15 +644,16 @@
 				.scroll-list {
 					width: 100%;
 					text {
+						color: #5B7EA9;
 						border: solid 2rpx #BECCE7;
 						color: #5B7EA9;
-						padding: 6rpx 12rpx;
-						border-radius: 24rpx;
+						padding: 8rpx 14rpx;
+						border-radius: 25rpx;
 						font-size: 24rpx;
 						margin-bottom: 20rpx;
 					}
 					
-					text:not(:nth-child(4n)) {
+					text:not(:nth-child(3n)) {
 						margin-right: 20rpx;
 					}
 				}
@@ -729,7 +730,7 @@
 	}
 
 	.video-box {
-		padding: 24rpx;
+		padding: 0 30rpx;
 	}
 
 	.show-box {

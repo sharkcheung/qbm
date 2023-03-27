@@ -9,7 +9,7 @@
 				<view class="customer-item-top-left">
 					<u-avatar shape="circle" size="48" :src="item.membe_pic" customStyle="margin: 0 15px -3px 0"></u-avatar>
 					<view class="customer-item-top-left-title">
-						{{ item.service_type_name }}-{{ item.service_name }}{{ Object.keys(vuex_user.teacher).length>0 ?'':'-'+item.teacher_name }}
+						{{ item.service_type_name }}-{{ item.service_name }}{{ vuex_user.teacher&&Object.keys(vuex_user.teacher).length>0 ?'':'-'+item.teacher_name }}
 						<text>{{ item.membe_name }}</text>
 					</view>
 				</view>
@@ -129,7 +129,7 @@ export default {
 	padding: 32rpx;
 	bcustomer-radius: 16rpx;
 	background-color: #f9f9f9;
-	margin-bottom: 24rpx;
+	margin-top: 24rpx;
 	.customer-item-top {
 		display: flex;
 		flex-direction: row;

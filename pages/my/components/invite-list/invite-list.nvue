@@ -101,7 +101,7 @@ export default {
 	padding: 32rpx;
 	binvite-radius: 16rpx;
 	background-color: #f9f9f9;
-	margin-bottom: 24rpx;
+	margin-top: 24rpx;
 	.invite-item-top {
 		display: flex;
 		flex-direction: row;

@@ -5,17 +5,17 @@
 		</u-sticky>
 		<view class="video-box" :style="{marginBottom: $u.util.isIphoneX() ? '148rpx' : '120rpx' }">
 			<template v-if="current==0">
-			<activity-list :listData="activityList" :showTeacher="true"></activity-list>
-			<u-loadmore v-if="activityList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
-			<u-gap height="10" bgColor="#F6F9FE" v-if="activityList.length==0"></u-gap>
-			<u-empty mode="data" :text="emptyTitle" :icon="emptyIcon" marginTop="40" :show="activityList.length==0">
-			</u-empty>
+				<activity-list :listData="activityList" :showTeacher="true"></activity-list>
+				<u-loadmore v-if="activityList.length>0" :status="status" marginBottom="20" marginTop="20" @loadmore="loadmore"/>
+				<u-gap height="10" bgColor="#F6F9FE" v-if="activityList.length==0"></u-gap>
+				<u-empty mode="data" :text="emptyTitle" :icon="emptyIcon" marginTop="20" :show="activityList.length==0">
+				</u-empty>
 			</template>
 			<template v-else>
 				<article-list from="activity" :listData="articleList"></article-list>
-				<u-loadmore v-if="articleList.length>0" :status="status" marginBottom="18" @loadmore="loadmoreArticle"/>
+				<u-loadmore v-if="articleList.length>0" :status="status" marginBottom="20" marginTop="20" @loadmore="loadmoreArticle"/>
 				<u-gap height="10" bgColor="#F6F9FE" v-if="articleList.length==0"></u-gap>
-				<u-empty mode="data" :text="emptyTitle" :icon="emptyIcon" marginTop="40" :show="articleList.length==0">
+				<u-empty mode="data" :text="emptyTitle" :icon="emptyIcon" marginTop="20" :show="articleList.length==0">
 				</u-empty>
 			</template>
 		</view>

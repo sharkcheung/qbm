@@ -8,7 +8,7 @@
 			<view class="activity-tip align-center justify-between"><u-icon color="#868E9D" size="24" name="eye" labelColor="#868E9D" :label="'浏览数 '+info.views" space="10"></u-icon><button openType="share" class="u-reset-button"><u-icon size="20" color="" :name="shareImg"></u-icon></button></view>
 		</view>
 		<u-gap height="10" bgColor="#efefef"></u-gap>
-		<view class="activity-content-box" :style="{marginBottom: $u.util.isIphoneX() ? '128rpx' : '80rpx' }">
+		<view class="activity-content-box" :style="{marginBottom: marginBottom }">
 			<!-- <view class="activity-fee">免费</view> -->
 			<view class="item">
 				<view class="flex-row item-title align-center"><text></text>活动时间</view>
@@ -52,8 +52,8 @@
 		
 		<u-transition :show="applyTipMsg"><view class="apply-tips" :style="{bottom: $u.util.isIphoneX() ? '138rpx' : '80rpx' }">{{ applyTipMsg }}</view></u-transition>
 		
-		<view class="bottom-button-box">
-			<view class="bottom-button-group justify-center align-center" @click="apply" v-if="info.deadline_time>timestamp" :class="statusClass">
+		<view class="bottom-button-box" v-if="info.deadline_time>timestamp">
+			<view class="bottom-button-group justify-center align-center" @click="apply" :class="statusClass">
 				{{ getStatus() }}
 			</view>
 			<u-safe-bottom></u-safe-bottom>
@@ -85,6 +85,7 @@
 	export default {
 		data() {
 			return {
+				marginBottom: '0',
 				timer: null,  // 定时器名称
 				applyTipMsg: '',
 				timestamp: 0,
@@ -145,6 +146,12 @@
 					that.applyTipMsg = '';
 					that.applyList = [];
 					that.page = 1;
+					if(that.info.deadline_time>this.timestamp) {
+						that.marginBottom = uni.$u.util.isIphoneX() ? '168rpx' : '100rpx';
+					}
+					else {
+						that.marginBottom = uni.$u.util.isIphoneX() ? '68rpx' : '0';
+					}
 					if(that.info.deadline_time>that.timestamp) {
 						that.getApplyList();
 					}
@@ -400,7 +407,7 @@
 	}
 	
 	.activity-content-box {
-		padding: 40rpx 30rpx;
+		padding: 40rpx 30rpx 0 30rpx;
 		.activity-fee {
 			margin-bottom: 40rpx;
 			color: #F35917;

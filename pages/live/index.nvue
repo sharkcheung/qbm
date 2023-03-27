@@ -5,8 +5,8 @@
 		<u-gap height="3" bgColor="#F6F9FE"></u-gap>
 		</u-sticky>
 		<view class="live-container" :style="{marginBottom: $u.util.isIphoneX() ? '168rpx' : '120rpx' }">
-			<live-list :listData="liveList"></live-list>
-			<u-loadmore v-if="liveList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
+			<live-list :listData="liveList" v-if="liveList.length>0"></live-list>
+			<u-loadmore v-if="liveList.length>0" color="#868E9D" fontSize="12" :status="status" marginBottom="20" marginTop="20" @loadmore="loadmore"/>
 			<u-empty mode="data" :text="emptyTitle" :icon="emptyIcon" :show="liveList.length==0">
 			</u-empty>
 		</view>

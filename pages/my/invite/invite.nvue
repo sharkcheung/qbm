@@ -1,9 +1,9 @@
 <template>
 	<view class="">
-		<view class="invite-container">
-			<invite-list :listData="dataList"></invite-list>
-			<u-loadmore v-if="dataList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
-			<u-empty mode="data" text="暂无邀请用户" :show="dataList.length==0">
+		<view class="invite-container" :style="{marginBottom: $u.util.isIphoneX() ? '68rpx' : '0' }">
+			<invite-list v-if="dataList.length>0" :listData="dataList"></invite-list>
+			<u-loadmore v-if="dataList.length>0" color="#868E9D" fontSize="12" :status="status" marginTop="20" marginBottom="20" @loadmore="loadmore"/>
+			<u-empty mode="data" text="暂无邀请用户" :icon="emptyIcon" marginTop="40" :show="dataList.length==0">
 			</u-empty>
 		</view>
 	</view>
@@ -17,6 +17,7 @@ export default {
 	},
 	data() {
 		return {
+			emptyIcon: '',
 			dataList:[],
 			status: 'loadmore',
 			params: {
@@ -25,7 +26,11 @@ export default {
 			}
 		};
 	},
+	created() {
+		this.emptyIcon = this.$configs.staticUrl + '/uploads/api/icon/img_qbt_kym.svg';
+	},
 	onShow() {
+		this.status = 'loadmore';
 		this.dataList = [];
 		this.params.page = 1;
 		this.getInviteList();
@@ -75,6 +80,6 @@ export default {
 
 <style lang="scss">
 .invite-container {
-	padding: 24rpx;
+	padding: 0 30rpx;
 }
 </style>

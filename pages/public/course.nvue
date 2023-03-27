@@ -1,9 +1,9 @@
 <template>
 	<view>
-		<view class="video-box">
+		<view class="video-box" :style="{marginBottom: $u.util.isIphoneX() ? '148rpx' : '100rpx' }">
 			<video-list :listData="courseList" :showTeacher="true"></video-list>
-			<u-loadmore v-if="courseList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
-			<u-empty mode="data" :text="emptyTitle" :show="courseList.length==0">
+			<u-loadmore v-if="courseList.length>0" color="#868E9D" fontSize="12" :status="status" marginTop="20" marginBottom="20" @loadmore="loadmore"/>
+			<u-empty mode="data" :text="emptyTitle" :icon="emptyIcon" :show="courseList.length==0">
 			</u-empty>
 		</view>
 		<cu-tabbar :currentTab="currentTab" :tabList="tabList"></cu-tabbar>
@@ -15,6 +15,7 @@
 		data() {
 			return {
 				emptyTitle: '暂无课程',
+				emptyIcon: '',
 				status: 'loadmore',
 				courseList: [
 				],
@@ -31,6 +32,11 @@
 		},
 		created() {
 			this.tabList = this.$configs.tabList;
+		},
+		onShow() {
+			this.courseList = [];
+			this.params.page = 1;
+			this.status = 'loadmore';
 			this.getCourseList();
 		},
 		onPullDownRefresh() {
@@ -93,6 +99,6 @@
 <style lang="scss">
 
 .video-box {
-	padding: 24rpx;
+	padding: 0 30rpx;
 }
 </style>

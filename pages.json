@@ -212,7 +212,7 @@
 			"path": "customer/customer",
 			"style": {
 				"navigationBarTitleText": "我的服务",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": true
 			}
 
 		}, {
@@ -226,14 +226,14 @@
 			"path": "reward/reward",
 			"style": {
 				"navigationBarTitleText": "我的收益",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": true
 			}
 
 		}, {
 			"path": "profits/profits",
 			"style": {
 				"navigationBarTitleText": "我的收益",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": true
 			}
 		}, {
 			"path": "profits/withdraw",

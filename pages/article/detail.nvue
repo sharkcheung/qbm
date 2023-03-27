@@ -11,7 +11,7 @@
 				<button openType="share" class="u-reset-button"><u-icon size="20" color="" :name="shareImg"></u-icon></button>
 			</view>
 		</view>
-		<view class="activity-content-box">
+		<view class="activity-content-box" :style="{marginBottom: marginBottom }">
 		<u-parse :content="info.detail"></u-parse>
 		</view>
 	</view>
@@ -21,6 +21,7 @@
 	export default {
 		data() {
 			return {
+				marginBottom: '0',
 				id: '',
 				shareImg: '',
 				info: {
@@ -32,7 +33,7 @@
 			};
 		},
 		onLoad(options) {
-			
+			this.marginBottom = uni.$u.util.isIphoneX() ? '68rpx' : '0';
 			this.shareImg = this.$configs.staticUrl + '/uploads/api/icon/fx.svg';
 			this.id = options.id;
 			if(options.from) {
@@ -98,6 +99,6 @@
 	}
 	
 	.activity-content-box {
-		padding: 0rpx 30rpx 40rpx 30rpx;
+		padding: 0rpx 30rpx;
 	}
 </style>

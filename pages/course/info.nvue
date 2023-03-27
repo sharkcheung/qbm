@@ -16,8 +16,10 @@
 		<u-gap height="10" bgColor="#efefef"></u-gap>
 		<view class="video-list-box" :style="{marginBottom: $u.util.isIphoneX() ? '168rpx' : '120rpx' }">
 			<view class="videl-else">其他课程</view>
-			<video-list :listData="courseList"></video-list>
-			<u-loadmore :status="status" marginBottom="18" @loadmore="loadmore"/>
+			<video-list :listData="courseList" v-if="courseList.length>0"></video-list>
+			<u-loadmore v-if="courseList.length>0" color="#868E9D" fontSize="12" :status="status" marginTop="20" marginBottom="20" @loadmore="loadmore"/>
+			<u-empty mode="data" :text="emptyTitle" :icon="emptyIcon" :show="courseList.length==0">
+			</u-empty>
 		</view>
 		
 		<view class="bottom-button-box">
@@ -55,6 +57,8 @@
 	export default {
 		data() {
 			return {
+				emptyIcon: '',
+				emptyTitle: '暂无课程',
 				shareImg: '',
 				buyImg: '',
 				status: 'loadmore',
@@ -95,6 +99,7 @@
 			}
 		},
 		onLoad(options) {
+			this.emptyIcon = this.$configs.staticUrl + '/uploads/api/icon/img_qbt_kym.svg'
 			this.shareImg = this.$configs.staticUrl + '/uploads/api/icon/icon_qbt_tjhy.svg';
 			this.buyImg = this.$configs.staticUrl + '/uploads/api/icon/icon_qbt_ljgm.svg';
 			let that = this;

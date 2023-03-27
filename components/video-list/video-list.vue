@@ -64,7 +64,7 @@
 					color:#c00;
 				}
 			}
-			margin-bottom: 24rpx;
+			margin-top: 30rpx;
 			.teacher-name {
 				position: absolute;
 				left: 16rpx;

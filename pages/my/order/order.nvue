@@ -1,27 +1,12 @@
 <template>
 	<view>
 		<u-sticky bgColor="#fff">
-			<u-tabs
-				:list="tabList"
-				lineWidth="30"
-				lineColor="#f56c6c"
-				:activeStyle="{
-					color: '#303133',
-					fontWeight: 'bold',
-					transform: 'scale(1.05)'
-				}"
-				:inactiveStyle="{
-					color: '#606266',
-					transform: 'scale(1)'
-				}"
-				@change="tabChange"
-				itemStyle="padding-left: 15px; padding-right: 15px; height: 34px;"
-			></u-tabs>
+			<u-tabs :list="tabList" :inactiveStyle="{color: '#737D96'}" :activeStyle="{color: '#434E5E',fontWeight: 'bold'}" itemStyle="height:100rpx;font-size:32rpx;padding-left: 40rpx; padding-right: 40rpx;" lineColor="#F35917" lineWidth="30" @change="tabChange"></u-tabs>
 		</u-sticky>
-		<view class="order-container">
-			<order-list :listData="dataList"></order-list>
-			<u-loadmore v-if="dataList.length>0" :status="status" marginBottom="18" @loadmore="loadmore"/>
-			<u-empty mode="order" :text="emptyTitle" :show="dataList.length==0">
+		<view class="order-container" :style="{marginBottom: $u.util.isIphoneX() ? '68rpx' : '0' }">
+			<order-list v-if="dataList.length>0" :listData="dataList"></order-list>
+			<u-loadmore v-if="dataList.length>0" color="#868E9D" fontSize="12" :status="status" marginTop="20" marginBottom="20" @loadmore="loadmore"/>
+			<u-empty mode="data" :text="emptyTitle" :icon="emptyIcon" marginTop="40" :show="dataList.length==0">
 			</u-empty>
 		</view>
 	</view>
@@ -35,6 +20,7 @@ export default {
 	},
 	data() {
 		return {
+			emptyIcon: '',
 			tabList: [
 				{
 					id: 1,
@@ -61,6 +47,9 @@ export default {
 				service_type_id: '',
 			}
 		};
+	},
+	created() {
+		this.emptyIcon = this.$configs.staticUrl + '/uploads/api/icon/img_qbt_kym.svg';
 	},
 	onShow() {
 		this.dataList = [];
@@ -126,6 +115,6 @@ export default {
 
 <style lang="scss">
 .order-container {
-	padding: 24rpx;
+	padding: 0 30rpx;
 }
 </style>
