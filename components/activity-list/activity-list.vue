@@ -60,7 +60,7 @@
 				}
 			},
 			view(item) {
-				this.openPage('pages/my/apply/detail',{id:item.id})
+				this.openPage('pages/activity/detail',{id:item.id})
 			}
 		}
 	}

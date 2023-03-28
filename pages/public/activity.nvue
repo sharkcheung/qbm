@@ -59,6 +59,7 @@
 					page: 1,
 					order: '',
 					sort: '',
+					class_name: '活动回顾'
 				},
 			};
 		},
@@ -149,7 +150,7 @@
 			},
 			getArticleList() {
 				let that=this;
-				uni.$u.api.articleList({ params: that.params}).then(res=>{
+				uni.$u.api.articleList({ params: that.paramsArticle}).then(res=>{
 					console.log(res)
 					if(that.articleList.length>0) {
 						that.articleList = that.articleList.concat(res.data.data);

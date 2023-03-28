@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<view class="profits-item" v-for="(item, index) in listData" :key="index" @click="openPage('/pages/my/order/info')">
+		<view class="profits-item" v-for="(item, index) in listData" :key="index">
 			<view class="profits-item-top">
 				<view class="profits-item-top-left">
 					<!-- <u-avatar shape="circle" size="48" :src="item.avatar_url" customStyle="margin: 0 15px -3px 0"></u-avatar> -->

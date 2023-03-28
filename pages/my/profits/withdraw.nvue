@@ -13,7 +13,7 @@
 			</u--form>
 		</view>
 		<view class="button-box">
-			<u-button type="primary" size="normal" shape="circle" text="提现" @click="submit"></u-button>
+			<u-button color="linear-gradient(to right, rgb(66, 83, 216), rgb(255, 85, 0))" size="normal" shape="circle" text="提现" @click="submit"></u-button>
 		</view>
 		<view class="tips">单日最高可提现300元，超过300元，请隔日再提现。每日仅限提现一次。</view>
 	</view>
@@ -63,8 +63,8 @@
 				this.$refs.formAppraise
 					.validate()
 					.then(res => {
-						if(!parseFloat(that.modelApply.money)) {
-							uni.$u.util.showErr('提现金额必须大于0');
+						if(parseFloat(that.modelApply.money).toFixed(2)<0.1) {
+							uni.$u.util.showErr('提现金额必须大于0.1元');
 							return false;
 						}
 						if(parseFloat(that.modelApply.money)>that.info.balance) {

@@ -562,12 +562,10 @@
 		.item-box {
 			margin-top: 20rpx;
 			.item-title {
-				font-weight: bold;
 				color: rgba(67, 78, 94, 1)
 			}
 			.item-value {
 				flex: 1;
-				font-weight: bold;
 				color: #434E5E;
 			}
 			.resume {

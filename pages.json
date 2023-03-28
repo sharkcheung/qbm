@@ -144,7 +144,14 @@
 		}, {
 			"path": "apply_result",
 			"style": {
-				"navigationBarTitleText": "",
+				"navigationBarTitleText": "活动报名",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "apply_info",
+			"style": {
+				"navigationBarTitleText": "报名详情",
 				"enablePullDownRefresh": false
 			}
 
@@ -303,13 +310,6 @@
 			"style": {
 				"navigationBarTitleText": "我的报名",
 				"enablePullDownRefresh": true
-			}
-
-		}, {
-			"path": "apply/detail",
-			"style": {
-				"navigationBarTitleText": "报名详情",
-				"enablePullDownRefresh": false
 			}
 
 		}]

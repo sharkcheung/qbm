@@ -145,7 +145,8 @@
 			this.timestamp = Date.parse(new Date())/1000;
 			uni.$u.api.activityDetail({
 					params: {
-						id: that.id
+						id: that.id,
+						from: 'detail'
 					}
 				}).then(res => {
 					that.info = res.data;
@@ -339,17 +340,17 @@
 				}
 				else {
 					let url = 'pages/activity/apply';
-					if(this.info.applyInfo&&Object.keys(this.info.applyInfo).length>0) {
-						if(this.info.applyInfo.status==0) {
-							return ;
-						}
-						else if(this.info.applyInfo.status==1) {
-							return ;
-						}
-						else {
-							url = 'pages/activity/apply_result';
-						}
-					}
+					// if(this.info.applyInfo&&Object.keys(this.info.applyInfo).length>0) {
+					// 	if(this.info.applyInfo.status==0) {
+					// 		return ;
+					// 	}
+					// 	else if(this.info.applyInfo.status==1) {
+					// 		return ;
+					// 	}
+					// 	else {
+					// 		url = 'pages/activity/apply';
+					// 	}
+					// }
 					uni.$u.route({
 						url: url,
 						params: {

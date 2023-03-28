@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<view class="withdraw-item" v-for="(item, index) in listData" :key="index" @click="openPage('/pages/my/order/info',item)">
+		<view class="withdraw-item" v-for="(item, index) in listData" :key="index">
 			<view class="withdraw-item-top">
 				<view class="withdraw-item-top-left">
 					<view class="withdraw-item-top-left-title">

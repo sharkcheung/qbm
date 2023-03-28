@@ -1,24 +1,35 @@
 <template>
 	<view>
 		<view class="activity-content">
-			<view class="result-bg">
-				提交成功，待主办方审核！
+			<view class="result-bg" :class="info.applyInfo.status==2?'fail':''">
+				<template v-if="info.applyInfo.status==0">提交成功，待主办方审核！</template>
+				<template class="" v-if="info.applyInfo.status==1">已审核通过</template>
+				<view v-if="info.applyInfo.status==2">审核不通过原因：<text>{{ info.applyInfo.reason }}</text></view>
 			</view>
-			<view class="activity-content-box">
+			<view class="activity-content-box" :class="info.applyInfo.status==2?'fail-content-box':''">
 				<view class="item-box">
-					<view class="activity-title">{{ info.name }}</view>
-					<view class="item">
-						<view class="flex-row item-title align-center"><text></text>活动时间</view>
-						<view class="flex-row item-value align-center"><text></text>{{ info.start_time | date('yyyy.mm.dd ') }}~{{ info.end_time | date('yyyy.mm.dd ') }}</view>
-					</view>
-					<view class="item">
-						<view class="flex-row item-title align-center"><text></text>活动地点</view>
-						<view class="flex-row item-value align-center"><text></text>{{ info.address }}</view>
-					</view>
+					<u--form labelAlign="center" :model="model" ref="form" :labelStyle="{color:'#434E5E'}">
+						<u-form-item label="姓名" :required="true" prop="name" ref="item1">
+							<view class="input-class"><u--input v-model="model.name" placeholder="请输入您的姓名" :border="false"></u--input></view>
+						</u-form-item>
+						<u-form-item label="职位" :required="true" prop="position" ref="itemPosition">
+							<view class="input-class"><u--input v-model="model.position" placeholder="请输入您的职位" :border="false"></u--input></view>
+						</u-form-item>
+						<u-form-item label="手机" :required="true" prop="phone" ref="itemPhone">
+							<view class="input-class"><u--input v-model="model.phone" placeholder="请输入您的手机" :border="false"></u--input></view>
+						</u-form-item>
+						<u-form-item label="公司" :required="true" prop="company" ref="itemCompanyName">
+							<view class="input-class"><u--input v-model="model.company" placeholder="请输入您的公司" :border="false"></u--input></view>
+						</u-form-item>
+						<u-form-item label="行业" :required="true" prop="industry" ref="itemIndustry">
+							<view class="input-class"><u--input v-model="model.industry" placeholder="请输入您的行业" :border="false"></u--input></view>
+						</u-form-item>
+					</u--form>
 				</view>
 				<view class="button-group flex-row justify-between">
 					<view class="share-btn"><button openType="share" class="u-reset-button">分享活动</button></view>
-					<view class="view-btn"><button class="u-reset-button" @click="viewApply">查看报名</button></view>
+					<view class="view-btn"><button class="u-reset-button" @click="viewApply" v-if="info.applyInfo.status">查看报名</button></view>
+					<view class="view-btn"><button class="u-reset-button" @click="reApply">重新提交</button></view>
 				</view>
 			</view>
 		</view>
@@ -29,6 +40,7 @@
 	export default {
 		data() {
 			return {
+				resultTips: '提交成功，待主办方审核！',
 				activity_id: 0,
 				info: {
 					name: '',
@@ -47,7 +59,7 @@
 		},
 		onLoad(options) {
 			let that = this;
-			that.activity_id = options.activity_id;
+			that.activity_id = options.id;
 			uni.$u.api.activityDetail({
 				params: {
 					id: that.activity_id
@@ -62,8 +74,7 @@
 		methods: {
 			viewApply() {
 				uni.$u.route({
-					type: 'redirectTo',
-					url: 'pages/my/apply/apply'
+					url: 'pages/my/activity/activity'
 				})
 			}
 		}
@@ -87,6 +98,23 @@
 			text-align: center;
 			color: #FFFFFF;
 			font-size: 36rpx;
+		}
+		.fail {
+			height: auto;
+			position: inherit;
+			text-align: left;
+			padding-top: 40rpx;
+			background: #F6F9FE;
+			color: #16202E;
+			font-weight: bold;
+			margin: 0 30rpx;
+			font-size: 32rpx;
+			text {
+				margin-top: 20rpx;
+				color: #434E5E;
+				font-size: 28rpx;
+				font-weight: normal;
+			}
 		}
 		.activity-content-box {
 			margin: 250rpx 30rpx 60rpx 30rpx;
@@ -163,6 +191,9 @@
 					color: #FFFFFF;
 				}
 			}
+		}
+		.fail-content-box {
+			margin: 40rpx 30rpx 60rpx 30rpx;
 		}
 		
 	}

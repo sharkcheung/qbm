@@ -1,7 +1,12 @@
 <template>
 	<view>
+		<view class="result-bg" :class="model.status===2?'fail':''">
+			<template v-if="model.status===0">待主办方审核！</template>
+			<template class="" v-if="model.status===1">已审核通过</template>
+			<view v-if="model.status===2">审核不通过原因：<text>{{ model.reason }}</text></view>
+		</view>
 		<view class="order-box">
-			<view class="apply-title">我要报名</view>
+			<view class="apply-title">{{ getApplyTitle() }}</view>
 			<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
 			<u--form labelAlign="center" :model="model" ref="form" :labelStyle="{color:'#434E5E'}">
 				<u-form-item label="姓名" :required="true" prop="name" ref="item1">
@@ -20,8 +25,8 @@
 					<view class="input-class"><u--input v-model="model.industry" placeholder="请输入您的行业" :border="false"></u--input></view>
 				</u-form-item>
 			</u--form>
-			<view class="bottom-button-box">
-				<view class="bottom-button-group justify-center align-center" @click="!submiting&&submit()">我要报名</view>
+			<view class="bottom-button-box" v-if="model.status===''||model.status===2">
+				<view class="bottom-button-group justify-center align-center" @click="!submiting&&submit()">{{ model.status===''?'我要报名':'重新提交'}}</view>
 			</view>
 		</view>
 		
@@ -46,7 +51,24 @@ export default {
 			actions: [
 			],
 			showCalendar: false,
+			activity_id: 0,
+			info: {
+				reason: '',
+				status: '',
+				name: '',
+				views: 0,
+				pic: '',
+				sale_price: 0,
+				detail:'',
+				flow: '',
+				status: 0,
+				isApply: true,
+				applyInfo: {
+					
+				}
+			},
 			model: {
+				status: '',
 				activity_id: '',
 				name: '',
 				position: '',
@@ -55,6 +77,9 @@ export default {
 				company: '',
 				membe_name: '',
 				membe_pic: '',
+				applyInfo: {
+					
+				}
 			},
 			rules: {
 				name: {
@@ -114,8 +139,32 @@ export default {
 		console.log(options);
 		this.model.activity_id = options.id;
 		
+		let that = this;
+		uni.$u.api.activityDetail({
+			params: {
+				id: that.model.activity_id
+			}
+		}).then(res => {
+			console.log(res.data)
+			if(res.data.applyInfo&&Object.keys(res.data.applyInfo).length>0) {
+				that.model = res.data.applyInfo;
+				console.log(that.model)
+			}
+		})
+		.catch(err => {})
 	},
 	methods: {
+		getApplyTitle() {
+			if (this.model.status === '') {
+				return '我要报名';
+			}
+			else if(this.model.status===2) {
+				return '请修改信息并重新提交';
+			}
+			else {
+				return '报名信息';
+			}
+		},
 		confirmClick() {
 			this.showConfirm = false;
 			if (this.modalType == 0) {
@@ -202,12 +251,14 @@ export default {
 				title: '正在提交数据'
 			})
 			uni.$u.api.activityApply(that.model).then(result=>{
+				that.submiting = false;
 				console.log(result)
 				uni.hideLoading()
 				uni.$u.route({
+					type: 'redirectTo',
 					url: 'pages/activity/apply_result',
 					params: {
-						activity_id: result.data
+						activity_id: that.model.activity_id
 					}
 				})
 				// uni.showToast({
@@ -219,7 +270,7 @@ export default {
 			})
 			.catch(err=>{
 				uni.hideLoading()
-				uni.$u.util.showErr('报名失败');
+				uni.$u.util.showErr(err.msg);
 				that.submiting = false;
 			})
 		},
@@ -254,6 +305,29 @@ export default {
 	.input-class {
 		background: #F8F8F8;
 		border-radius: 10rpx;
+	}
+}
+
+.result-bg {
+	margin: 0 30rpx;
+	font-weight: bold;
+	color: #16202E;
+	width: 100%;
+	font-size: 36rpx;
+	padding-top: 40rpx;
+}
+.fail {
+	height: auto;
+	position: inherit;
+	text-align: left;
+	background: #F6F9FE;
+	color: #16202E;
+	font-size: 32rpx;
+	text {
+		margin-top: 20rpx;
+		color: #434E5E;
+		font-size: 28rpx;
+		font-weight: normal;
 	}
 }
 .bottom-button-box {
