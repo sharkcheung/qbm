@@ -26,6 +26,12 @@
 				"enablePullDownRefresh": true
 			}
 		}, {
+			"path": "pages/public/chat",
+			"style": {
+				"navigationBarTitleText": "数字助理",
+				"enablePullDownRefresh": false
+			}
+		}, {
 			"path": "pages/public/activity",
 			"style": {
 				"navigationBarTitleText": "线下活动",
@@ -326,7 +332,7 @@
 				"pagePath": "pages/public/home"
 			},
 			{
-				"pagePath": "pages/public/course"
+				"pagePath": "pages/public/chat"
 			},
 			{
 				"pagePath": "pages/public/activity"

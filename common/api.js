@@ -45,6 +45,8 @@ module.exports = (vm) => {
 	let activityApply = (params, config = {}) => http.post('/Activity/apply', params, config)
 	let activityApplyList = (params, config = {}) => http.get('/Activity/applyList', params, config)
 	let myActivityApplyList = (params, config = {}) => http.get('/Activity/myApplyList', params, config)
+	let chat = (params, config = {}) => http.post('/Chat/chat', params, config)
+	let chatList = (params, config = {}) => http.get('/Chat/chatList', params, config)
 	uni.$u.api = {
 		homeData,
 		configData,
@@ -91,5 +93,7 @@ module.exports = (vm) => {
 		activityApply,
 		activityApplyList,
 		myActivityApplyList,
+		chat,
+		chatList,
 	}
 }

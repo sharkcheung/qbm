@@ -1,0 +1,197 @@
+<template>
+	<view>
+		<view>
+			<view class="content" id="content" :style="{height:style.contentViewHeight+'px'}">
+				<scroll-view id="scrollview" scroll-y="true" :style="{height:style.contentViewHeight+'px'}" :scroll-with-animation="true"
+					:scroll-top="scrollTop">
+					<message-show v-for="(message,index) in messages" :key="index" v-bind:message="message" :messageId="index"></message-show>
+					<view id="bottom"></view>
+				</scroll-view>
+			</view>
+		</view>
+		<view class="foot" :style="{bottom: $u.util.isIphoneX() ? '84px' : '50px' }">
+			<chat-input @send-message="getInputMessage" ></chat-input>
+		</view>
+		<cu-tabbar :border="false" currentTab="1" :tabList="tabList"></cu-tabbar>
+	</view>
+</template>
+<script>
+	export default {
+		data() {
+			return {
+				tabList: [
+				],
+				style: {
+					pageHeight: 0,
+					contentViewHeight: 0,
+					footViewHeight: 90,
+					mitemHeight: 0,
+				},
+				scrollTop: 0,
+				messages: [],
+				params: {
+					page: 1,
+				},
+			}
+		},
+		created: function () { 
+			this.tabList = this.$configs.tabList;
+			let height = uni.$u.util.isIphoneX()?84:50;
+			var that = this;
+			
+			if(this.vuex_token) {
+				setTimeout(()=>{
+					that.getChatList();
+				}, 1000)
+			}
+			else {
+				that.messages.push({
+					user: 'home',
+					type: 'head', //input,content 
+					content: '你好！我是企帮通数字助理，请问有什么可以帮你？'
+				})
+			}
+			this.$nextTick(()=>{
+				const res = uni.getSystemInfoSync();
+				that.style.pageHeight = res.windowHeight-height;
+				that.style.contentViewHeight = res.windowHeight - uni.getSystemInfoSync().screenWidth / 750 * (100)-height; //像素
+			})
+		},
+		methods: {
+			getChatList() {
+				let that=this;
+				uni.$u.api.chatList({ params: that.params}).then(res=>{
+					console.log(res)
+					if(that.messages.length>0) {
+						that.messages = that.messages.concat(res.data.data);
+					}
+					else {
+						that.messages = res.data.data;
+					}
+					if(res.data.current_page == res.data.last_page) {
+						that.status = 'noMore';
+					}
+					else {
+						that.status = 'loadmore';
+					}
+					if(that.messages.length==0) {
+						that.messages.push({
+							user: 'home',
+							type: 'head', //input,content 
+							content: '你好！我是企帮通数字助理，请问有什么可以帮你？'
+						})
+					}
+					that.messages.reverse();
+					that.scrollToBottom();
+					console.log(that.status)
+				})
+				.catch(err=>{
+					uni.hideLoading()
+				})
+			},
+			getInputMessage: function (message) { //获取子组件的输入数据
+				if(!this.vuex_token) {
+					
+					uni.showToast({
+						icon: 'error',
+						title: '请先登录',
+					});
+					setTimeout(()=>{
+						uni.$u.route({
+							url: '/pages/public/login'
+						})
+					}, 1000)
+					return;
+				}
+				// console.log(message);
+				this.addMessage('customer', message.content, false);
+				this.toRobot(message.content);
+			},
+			addMessage: function (user, content, hasSub, subcontent) {
+				var that = this;
+				that.messages.push({
+					user: user,
+					content: content,
+					hasSub: hasSub,
+					subcontent: subcontent
+				});
+			},
+			scrollToBottom: function () {
+				var that = this;
+				that.scrollTop=that.scrollTop+9999;
+				// that.style.mitemHeight = 0;
+				// const query = uni.createSelectorQuery().in(this);
+				// query.select('#scrollview').boundingClientRect(data => {
+				// 	that.style.mitemHeight = that.style.mitemHeight + data.height + 40;
+				// 	let top = data.height-that.style.contentViewHeight;
+				// 	console.info(top);
+				// }).exec();
+			},
+			toRobot: function (info) {
+				uni.showLoading({
+					title: '努力思考中',
+					mask: true
+				})
+				let that=this;
+				uni.$u.api.chat({ question: info }).then(res=>{
+					uni.hideLoading()
+					console.log(res)
+					this.addMessage('home', res.data, false);
+					this.scrollToBottom();
+					console.log('request success:' + res.data);
+				})
+				.catch(err=>{
+					uni.hideLoading()
+					console.log('request fail', err);
+					uni.showModal({
+						content: err.msg,
+						showCancel: false
+					})
+				})
+				
+				// this.addMessage('home', info, false);
+				// var apiUrl = 'http://www.tuling123.com/openapi/api';
+				// uni.request({
+				// 	url: apiUrl,
+				// 	data: {
+				// 		"key": 'acfbca724ea1b5db96d2eef88ce677dc',
+				// 		"info": info,
+				// 		"userid": 'uni-test'
+				// 	},
+				// 	success: (res) => {
+				// 		this.addMessage('home', res.data.text, false);
+				// 		this.scrollToBottom();
+				// 		console.log('request success:' + res.data.text);
+				// 	},
+				// 	fail: (err) => {
+				// 		console.log('request fail', err);
+				// 		uni.showModal({
+				// 			content: err.errMsg,
+				// 			showCancel: false
+				// 		})
+				// 	}
+				// });
+			}
+		}
+	}
+</script>
+<style>
+	.uni-column {
+		display: flex;
+		flex-direction: column;
+	}
+	.content {
+		display: flex;
+		flex: 1;
+		margin-bottom: 100px;
+		 
+	}
+	.foot {
+		position: fixed;
+		width: 100%;
+		height: 90rpx;
+		min-height: 90rpx;
+		left: 0px;
+		overflow: hidden;
+	}
+</style>

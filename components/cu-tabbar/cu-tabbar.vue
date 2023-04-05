@@ -1,6 +1,6 @@
 <template>
 	<view class="tabbar-box">
-		<u-tabbar :value="currentTab" :placeholder="false" activeColor="#F35917" inactiveColor="#868E9D">
+		<u-tabbar :value="currentTab" :border='border' :placeholder="false" activeColor="#F35917" inactiveColor="#868E9D">
 			<u-tabbar-item v-for="(item,index) in tabList" @click="changeTab(item)" :text="item.name" :key="index">
 				<image
 					class="tabbar-box__slot-icon"
@@ -24,6 +24,10 @@
 			currentTab: {
 				type: Number,
 				default: 0
+			},
+			border: {
+				type: Boolean,
+				default: true
 			},
 			tabList: {
 				type: Array,

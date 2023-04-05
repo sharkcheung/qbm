@@ -226,7 +226,7 @@ export default {
 			})
 			.catch(err=>{
 				uni.hideLoading()
-				uni.$u.util.showErr('下单失败');
+				uni.$u.util.showErr(err.msg);
 			})
 		},
 		serviceSelect(e) {

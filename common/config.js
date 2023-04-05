@@ -22,10 +22,10 @@ module.exports = {
 			path: 'pages/public/home'
 		},
 		{
-			name: '精选课程',
-			activeIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/icon_qbt_jxkc2@1x.png',
-			inactiveIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/icon_qbt_jxkc@1x.png',
-			path: 'pages/public/course'
+			name: '数字助理',
+			activeIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/assistant-active.png',
+			inactiveIcon: 'https://static.miniapp.qbt.qebang.cn/uploads/api/icon/assistant.png',
+			path: 'pages/public/chat'
 		},
 		{
 			name: '线下活动',
