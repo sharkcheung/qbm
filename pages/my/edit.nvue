@@ -3,14 +3,14 @@
 		<view class="perfection-box">
 			<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
 			<u--form :model="model" ref="form" labelWidth="60">
-				<u-form-item label="头像" prop="username">
+				<u-form-item label="头像" prop="pic">
 					<view style="flex-direction: row;align-items: center;">
-					<button class="avatar-wrapper" open-type="chooseAvatar" plain="true" style="border: 0;padding: 0;" @chooseavatar="onChooseAvatar">
+					<button class="avatar-wrapper u-reset-button" open-type="chooseAvatar" plain="true" style="border: 0;padding: 0;" @chooseavatar="onChooseAvatar">
 						<u-avatar :src="model.pic" size="50"></u-avatar>
 					</button> <text class="tips">点击头像更换</text>
 					</view>
 				</u-form-item>
-				<u-form-item label="昵称" prop="username">
+				<u-form-item label="昵称" prop="nickname">
 					<u--input :clearable="true" type="nickname" v-model="model.nickname" placeholder="请输入昵称" ></u--input>
 				</u-form-item>
 				<u-form-item label="姓名" prop="username">
@@ -38,6 +38,26 @@ export default {
 				username: '',
 			},
 			rules: {
+				pic: {
+					type: 'string',
+					required: true,
+					message: '请上传头像',
+					trigger: ['blur', 'change']
+				},
+				nickname: {
+					type: 'string',
+					required: true,
+					message: '昵称不少于3个字',
+					min: 3,
+					trigger: ['change']
+				},
+				username: {
+					type: 'string',
+					required: true,
+					message: '姓名不少于2个字',
+					min: 2,
+					trigger: ['change']
+				},
 			}
 		};
 	},
@@ -89,26 +109,34 @@ export default {
 		},
 		submit() {
 			let that=this;
-			uni.$u.api.infoEdit(that.model).then(result=>{
-				console.log(result)
-				let user = that.vuex_user;
-				user.nickname = that.model.nickname;
-				user.username = that.model.username;
-				user.pic = that.model.pic;
-				uni.$u.vuex('vuex_user', user)
-				uni.hideLoading()
-				uni.showToast({
-					title: result.msg,
-					duration: 2000
-				});
-				setTimeout(()=>{
-					uni.navigateBack()
-				}, 2000)
+			// 如果有错误，会在catch中返回报错信息数组，校验通过则在then中返回true
+			this.$refs.form
+				.validate()
+				.then(res => {
+				uni.$u.api.infoEdit(that.model).then(result=>{
+					console.log(result)
+					let user = that.vuex_user;
+					user.nickname = that.model.nickname;
+					user.username = that.model.username;
+					user.pic = that.model.pic;
+					uni.$u.vuex('vuex_user', user)
+					uni.hideLoading()
+					uni.showToast({
+						title: result.msg,
+						duration: 2000
+					});
+					setTimeout(()=>{
+						uni.navigateBack()
+					}, 2000)
+				})
+				.catch(err=>{
+					uni.hideLoading()
+					uni.$u.util.showErr('保存失败');
+				})
 			})
-			.catch(err=>{
-				uni.hideLoading()
-				uni.$u.util.showErr('保存失败');
-			})
+			.catch(errors => {
+				console.log(errors)
+			});
 		},
 	},
 	onReady() {

@@ -27,7 +27,7 @@
 					page: 1,
 					order: '',
 					sort: '',
-					type: '',
+					service_type: '',
 				},
 				serviceTypeName: '',
 				status: 'loadmore',
@@ -71,7 +71,7 @@
 			uni.setNavigationBarTitle({
 				title: title
 			});
-			this.params.type = options.type;
+			this.params.service_type = options.type;
 			this.getTeacherList();
 		},
 		methods: {

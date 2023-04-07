@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<view class="swiper-container">
-			<u-swiper height="210" :list="bannerList" radius="0" keyName="logo" @click="bannerClick" indicatorMode="line" :indicator="true" interval="5000" :circular="true"></u-swiper>
+			<u-swiper height="210" width="375" :list="bannerList" radius="0" keyName="logo" @click="bannerClick" indicatorMode="line" :indicator="true" interval="5000" :circular="true"></u-swiper>
 		</view>
 		
 		<view class="notice-bar-container">
@@ -35,7 +35,7 @@
 			  class="image-text_5 flex-col"
 			  v-for="(item, index) in serviceListAll"
 			  :key="index"
-			  @click="goService(index)"
+			  @click="goService(index,item.id)"
 			>
 			  <u--image :src="item.picture" width="80rpx" height="80rpx"></u--image>
 			  <text class="text-group_5">{{ item.name }}</text>
@@ -65,6 +65,7 @@
 		options: { styleIsolation: 'shared' },
 		data() {
 			return {
+				loading: false,
 				emptyTitle: '暂无数据',
 				emptyIcon: '',
 				serviceId: 0,
@@ -137,18 +138,18 @@
 			}, 1000);
 		},
 		onReachBottom() {
-			if(this.status !== 'noMore') {
+			if(this.status !== 'noMore'&&!this.loading) {
 				this.status = 'loading';
 				this.params.page++;
 				this.getTeacherList()
 			}
 		},
 		methods: {
-			goService(index) {
+			goService(index,id) {
 				this.current = index+1;
 				this.teacherList = [];
 				this.status = 'loadmore';
-				this.params.type = this.current;
+				this.params.type = id;
 				this.params.page = 1;
 				this.params.sort = '';
 				this.params.order = '';
@@ -259,6 +260,7 @@
 			},
 			getTeacherList() {
 				let that=this;
+				this.loading = true;
 				uni.$u.api.teacherList({ params: that.params}).then(res=>{
 					console.log(res)
 					if(that.teacherList.length>0) {
@@ -273,8 +275,10 @@
 					else {
 						that.status = 'loadmore';
 					}
+					that.loading = false;
 				})
 				.catch(err=>{
+					that.loading = false;
 					uni.hideLoading()
 				})
 			},

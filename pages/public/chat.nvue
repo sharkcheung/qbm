@@ -1,12 +1,11 @@
 <template>
 	<view>
 		<view>
-			<view class="content" id="content" :style="{height:style.contentViewHeight+'px'}">
-				<scroll-view id="scrollview" scroll-y="true" :style="{height:style.contentViewHeight+'px'}" :scroll-with-animation="true"
-					:scroll-top="scrollTop">
+			<view class="content" id="content" :style="{marginBottom:$u.util.isIphoneX() ? '129px' : '95px'}">
+				<view id="scrollview">
 					<message-show v-for="(message,index) in messages" :key="index" v-bind:message="message" :messageId="index"></message-show>
 					<view id="bottom"></view>
-				</scroll-view>
+				</view>
 			</view>
 		</view>
 		<view class="foot" :style="{bottom: $u.util.isIphoneX() ? '84px' : '50px' }">
@@ -21,6 +20,8 @@
 			return {
 				tabList: [
 				],
+				_freshing: false,
+				triggered: false,
 				style: {
 					pageHeight: 0,
 					contentViewHeight: 0,
@@ -34,11 +35,12 @@
 				},
 			}
 		},
-		created: function () { 
-			this.tabList = this.$configs.tabList;
+		onShow() {
+			this._freshing = false;
 			let height = uni.$u.util.isIphoneX()?84:50;
 			var that = this;
-			
+			that.params.page = 1;
+			that.messages = [];
 			if(this.vuex_token) {
 				setTimeout(()=>{
 					that.getChatList();
@@ -57,16 +59,51 @@
 				that.style.contentViewHeight = res.windowHeight - uni.getSystemInfoSync().screenWidth / 750 * (100)-height; //像素
 			})
 		},
+		created: function () { 
+			this.tabList = this.$configs.tabList;
+		},
+		onPullDownRefresh() {
+			var that = this;
+			console.log('refresh');
+			if(this.status !== 'noMore'&&!this.loading) {
+				
+				that.$nextTick(() => {
+					const query = uni.createSelectorQuery().in(that);
+					query.select('#scrollview').boundingClientRect(data => {
+						console.info('下拉刷新时');
+						that.scrollTop=data.height-that.scrollTop;
+					}).exec();
+				
+				})
+				
+				this.params.page++;
+				this.getChatList();
+			}
+			setTimeout(function () {
+				uni.stopPullDownRefresh();
+			}, 1000);
+		},
+		onPageScroll(e) {
+			console.log(e);
+		},
 		methods: {
+			scrolltoupper(e) {
+				console.log(e);
+				if(this.status !== 'noMore'&&!this.loading) {
+					this.params.page++;
+					this.getChatList();
+				}
+			},
 			getChatList() {
 				let that=this;
+				that.loading = true;
 				uni.$u.api.chatList({ params: that.params}).then(res=>{
 					console.log(res)
 					if(that.messages.length>0) {
-						that.messages = that.messages.concat(res.data.data);
+						that.messages = res.data.data.reverse().concat(that.messages);
 					}
 					else {
-						that.messages = res.data.data;
+						that.messages = res.data.data.reverse();
 					}
 					if(res.data.current_page == res.data.last_page) {
 						that.status = 'noMore';
@@ -81,11 +118,30 @@
 							content: '你好！我是企帮通数字助理，请问有什么可以帮你？'
 						})
 					}
-					that.messages.reverse();
-					that.scrollToBottom();
+					that.loading = false;
 					console.log(that.status)
+					
+					if(that.params.page>1) {
+						that.$nextTick(() => {
+							const query = uni.createSelectorQuery().in(that);
+							query.select('#scrollview').boundingClientRect(data => {
+								console.info('请求翻页后，高度：'+(data.height/2 + (uni.$u.util.isIphoneX()?34:0)));
+								uni.pageScrollTo({
+									duration: 20,
+									scrollTop: (data.height/2 + (uni.$u.util.isIphoneX()?34:0)-that.scrollTop)
+								})
+							}).exec();
+						
+						})
+					}
+					else {
+						setTimeout(()=>{
+							that.scrollToBottom();
+						}, 20)
+					}
 				})
 				.catch(err=>{
+					that.loading = false;
 					uni.hideLoading()
 				})
 			},
@@ -118,7 +174,19 @@
 			},
 			scrollToBottom: function () {
 				var that = this;
-				that.scrollTop=that.scrollTop+9999;
+				this.$nextTick(() => {
+					const query = uni.createSelectorQuery().in(this);
+					query.select('#scrollview').boundingClientRect(data => {
+						that.scrollTop=data.height/2 + (uni.$u.util.isIphoneX()?34:0);
+						uni.pageScrollTo({
+							duration: 100,
+							scrollTop: that.scrollTop
+						})
+						console.info('首次加载页面高度：'+that.scrollTop);
+					}).exec();
+				
+				})
+				
 				// that.style.mitemHeight = 0;
 				// const query = uni.createSelectorQuery().in(this);
 				// query.select('#scrollview').boundingClientRect(data => {
@@ -136,7 +204,7 @@
 				uni.$u.api.chat({ question: info }).then(res=>{
 					uni.hideLoading()
 					console.log(res)
-					this.addMessage('home', res.data, false);
+					this.addMessage('home', res.data + '\n\n有关企业数字化运营的问题，如果您觉得还需要更专业的老师指导，请您点击企帮通小程序首页，找到更适合您的数字化运营导师一对一约聊。', false);
 					this.scrollToBottom();
 					console.log('request success:' + res.data);
 				})
@@ -180,17 +248,21 @@
 		display: flex;
 		flex-direction: column;
 	}
+	#scrollview {
+		/* overflow-y: scroll; */
+	}
 	.content {
 		display: flex;
 		flex: 1;
+		height: 100vh;
 		margin-bottom: 100px;
 		 
 	}
 	.foot {
 		position: fixed;
 		width: 100%;
-		height: 90rpx;
-		min-height: 90rpx;
+		height: 45px;
+		min-height: 45px;
 		left: 0px;
 		overflow: hidden;
 	}

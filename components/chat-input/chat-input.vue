@@ -59,7 +59,7 @@
 		display: flex;
 		flex-direction: row;
 		width: 100%;
-		height: 90rpx;
+		height: 45px;
 		border-top: solid 1rpx #eef1f5;
 		overflow: hidden;
 		background-color: #fff;

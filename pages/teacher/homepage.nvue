@@ -108,7 +108,7 @@
 			<view class="show-share-box">
 				<view class="show-main-box">
 					<view class="show-main-item">
-						<button openType="share">
+						<button clas="u-reset-button" openType="share">
 						<view class="show-main-icon">
 							
 							<u-icon color="#00b500" size="32" name="weixin-fill"></u-icon>
@@ -252,10 +252,26 @@
 				})
 		},
 		onLoad(options) {
-			console.log(options);
-			this.id = options.id;
-			if(options.invite_id) {
-				uni.$u.vuex('invite_id', options.invite_id);
+			this.$u.util.showErr(options.scene);
+			let scene = options ?. scene ?? '';
+			if(scene) {
+				scene = decodeURIComponent(scene);
+				var vars = scene.split("&");
+				let params = {};
+				for (var i = 0; i < vars.length; i++) {
+					var pair = vars[i].split("=");
+					params[pair[0]] = pair[1];
+				}
+				this.id = params.id;
+				if(params.invite_id) {
+					uni.$u.vuex('invite_id', options.invite_id);
+				}
+			}
+			else {
+				this.id = options.id;
+				if(options.invite_id) {
+					uni.$u.vuex('invite_id', options.invite_id);
+				}
 			}
 		},
 		methods: {
@@ -401,7 +417,7 @@
 				let that = this;
 				uni.$u.api.generatePoster({
 						params: {
-							id: that.info.id
+							id: that.info.id,
 						}
 					}).then(res => {
 						console.log(res)

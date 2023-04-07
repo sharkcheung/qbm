@@ -21,7 +21,7 @@
 			</view>
 		</view>
 		<view class="button-group">
-			<view class="bottom-button-group justify-center align-center"><button @click="showModule">联系Ta</button></view>
+			<view class="bottom-button-group justify-center align-center"><button class="u-reset-button" @click="showModule">联系Ta</button></view>
 		</view>
 		<u-popup :show="show" :closeable="true" @close="close">
 			<view class="show-box">

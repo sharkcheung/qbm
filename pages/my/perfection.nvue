@@ -5,7 +5,7 @@
 			<u--form labelPosition="left" :model="model" ref="form" labelWidth="100">
 				<u-form-item label="头像" prop="username">
 					<view style="flex-direction: row;align-items: center;">
-					<button class="avatar-wrapper" open-type="chooseAvatar" plain="true" style="border: 0;padding: 0;" @chooseavatar="onChooseAvatar">
+					<button class="avatar-wrapper u-reset-button" open-type="chooseAvatar" plain="true" style="border: 0;padding: 0;" @chooseavatar="onChooseAvatar">
 						<u-avatar :src="model.pic" size="50"></u-avatar>
 					</button> <text class="tips">点击头像更换</text>
 					</view>
@@ -48,6 +48,33 @@ export default {
 				mobile: '',
 			},
 			rules: {
+				
+				pic: {
+					type: 'string',
+					required: true,
+					message: '请上传头像',
+					trigger: ['blur', 'change']
+				},
+				nickname: {
+					type: 'string',
+					required: true,
+					message: '昵称不少于3个字',
+					min: 3,
+					trigger: ['change']
+				},
+				username: {
+					type: 'string',
+					required: true,
+					message: '姓名不少于2个字',
+					min: 2,
+					trigger: ['change']
+				},
+				mobile: {
+					type: 'string',
+					required: true,
+					message: '请获取手机号',
+					trigger: ['change']
+				}
 			}
 		};
 	},
@@ -119,30 +146,38 @@ export default {
 		},
 		submit() {
 			let that=this;
-			uni.$u.api.perfection(that.model).then(result=>{
-				console.log(result)
-				let user = that.vuex_user;
-				user.mobile = that.model.mobile;
-				user.nickname = that.model.nickname;
-				user.username = that.model.username;
-				user.pic = that.model.pic;
-				uni.$u.vuex('vuex_user', user)
-				uni.hideLoading()
-				uni.showToast({
-					title: result.msg,
-					duration: 2000
-				});
-				setTimeout(()=>{
-					uni.$u.route({
-						type: 'reLaunch',
-						url: '/pages/public/home'
-					})
-				}, 2000)
+			// 如果有错误，会在catch中返回报错信息数组，校验通过则在then中返回true
+			this.$refs.form
+				.validate()
+				.then(res => {
+				uni.$u.api.perfection(that.model).then(result=>{
+					console.log(result)
+					let user = that.vuex_user;
+					user.mobile = that.model.mobile;
+					user.nickname = that.model.nickname;
+					user.username = that.model.username;
+					user.pic = that.model.pic;
+					uni.$u.vuex('vuex_user', user)
+					uni.hideLoading()
+					uni.showToast({
+						title: result.msg,
+						duration: 2000
+					});
+					setTimeout(()=>{
+						uni.$u.route({
+							type: 'reLaunch',
+							url: '/pages/public/home'
+						})
+					}, 2000)
+				})
+				.catch(err=>{
+					uni.hideLoading()
+					uni.$u.util.showErr('保存失败');
+				})
 			})
-			.catch(err=>{
-				uni.hideLoading()
-				uni.$u.util.showErr('保存失败');
-			})
+			.catch(errors => {
+				console.log(errors)
+			});
 		},
 	},
 	onReady() {

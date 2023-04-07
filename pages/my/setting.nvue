@@ -10,7 +10,7 @@
 		</u-cell-group>
 		</view>
 		<view class="button-box" v-if="vuex_token">
-			<view class="bottom-button-group justify-center align-center"><button @click="logout">退出</button></view>
+			<view class="bottom-button-group justify-center align-center"><button class="u-reset-button" @click="logout">退出</button></view>
 		</view>
 	</view>
 </template>
@@ -23,37 +23,23 @@
 					{
 						icon: 'http://qebang.cn/uploads/image/20230208/c732039a121abe41803acf0cdb148a3c.png',
 						title: '隐私协议',
-						url: '/pages/my/privacy',
+						url: '/pages/public/privacy',
 						border: true,
 						value: ''
 					},
 					{
 						icon: 'http://qebang.cn/uploads/image/20230208/873e1d5eed628d6737ac17de544a6101.png',
 						title: '服务协议',
-						url: '/pages/my/servive',
+						url: '/pages/public/protocol',
 						border: false,
 						value: ''
 					},
 				],
-				tabList: [
-				],
-				currentTab: 3,
-				info: {
-					avatar_url: 'https://p7.itc.cn/q_70/images03/20210910/f51daa64ddc144d49f152fe34a9a9d45.png',
-					nick_name: '马小云',
-					mobile: '13888888888'
-				}
 			};
 		},
 		created() {
-			this.tabList = this.$configs.tabList;
 		},
 		methods: {
-			goInfo() {
-				uni.$u.route({
-					url: '/pages/my/info'
-				})
-			},
 			logout(){
 				uni.$u.vuex('vuex_user', {});
 				uni.$u.vuex('vuex_token', '');

@@ -29,7 +29,7 @@
 			"path": "pages/public/chat",
 			"style": {
 				"navigationBarTitleText": "数字助理",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": true
 			}
 		}, {
 			"path": "pages/public/activity",
@@ -54,6 +54,15 @@
 		}
 	    ,{
             "path" : "pages/public/protocol",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "企帮通服务协议",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+	    ,{
+            "path" : "pages/public/privacy",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "企帮通隐私协议",

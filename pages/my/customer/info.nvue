@@ -36,8 +36,8 @@
 				<u-cell :border="false" title="订单号" :value="info.order_num"></u-cell>
 				<u-cell :border="false" title="服务类型" :value="info.service_type_name"></u-cell>
 				<u-cell :border="false" title="服务内容" :value="info.service_name"></u-cell>
-				<u-cell :border="false" title="服务老师" :value="info.teacher_name" v-if="Object.keys(vuex_user.advisor).length>0"></u-cell>
-				<u-cell :border="false" title="服务顾问" :value="info.advisor_name" v-if="Object.keys(vuex_user.teacher).length>0"></u-cell>
+				<u-cell :border="false" title="服务老师" :value="info.teacher_name" v-if="vuex_user.advisor&&Object.keys(vuex_user.advisor).length>0"></u-cell>
+				<u-cell :border="false" title="服务顾问" :value="info.advisor_name" v-if="vuex_user.teacher&&Object.keys(vuex_user.teacher).length>0"></u-cell>
 
 				<u-cell :border="false" title="公司名称" :value="info.company_name"></u-cell>
 				<u-cell :border="false" title="行业" :value="info.industry"></u-cell>

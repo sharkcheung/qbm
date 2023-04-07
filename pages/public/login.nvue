@@ -4,7 +4,7 @@
 		<view class="login-tip">未登录</view>
 		<u-button text="登录" color="linear-gradient(270deg, #FFC37C 0%, #EE5929 100%);" :customStyle="{borderRadius: '40rpx'}" :plain="false" @tap="login">微信授权登录</u-button>
 		<u-button text="取消" @click="goBack" :customStyle="{borderRadius: '40rpx', marginTop: '20rpx'}" :plain="false"></u-button>
-		<view class="protocol">登录即代表您同意<text @click="$u.route('pages/public/protocol')">《企帮通隐私协议》</text></view>
+		<view class="protocol">登录即代表您同意<text @click="$u.route('pages/public/privacy')">《企帮通隐私协议》</text></view>
 	</view>
 </template>
 <script>
