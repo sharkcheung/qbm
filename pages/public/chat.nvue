@@ -1,13 +1,11 @@
 <template>
 	<view>
-		<view>
-			<view class="content" id="content" :style="{marginBottom:$u.util.isIphoneX() ? '129px' : '95px'}">
-				<view id="scrollview">
-					<message-show v-for="(message,index) in messages" :key="index" v-bind:message="message" :messageId="index"></message-show>
-					<view id="bottom"></view>
-				</view>
+		<scroll-view :upper-threshold="40" :scroll-top="scrollTop" :scroll-y="true" :style="{height: style.contentViewHeight+'px'}" @scrolltoupper="scrolltoupper" @scroll="scroll">
+			<view class="content" id="scrollview">
+				<message-show v-for="(message,index) in messages" :key="index" v-bind:message="message" :messageId="message.id"></message-show>
+				<view id="bottom"></view>
 			</view>
-		</view>
+		</scroll-view>
 		<view class="foot" :style="{bottom: $u.util.isIphoneX() ? '84px' : '50px' }">
 			<chat-input @send-message="getInputMessage" ></chat-input>
 		</view>
@@ -20,6 +18,7 @@
 			return {
 				tabList: [
 				],
+				toView: '',
 				_freshing: false,
 				triggered: false,
 				style: {
@@ -28,7 +27,10 @@
 					footViewHeight: 90,
 					mitemHeight: 0,
 				},
+				newHeight: 0,
+				oldHeight: 0,
 				scrollTop: 0,
+				topIndex:0,
 				messages: [],
 				params: {
 					page: 1,
@@ -57,6 +59,7 @@
 				const res = uni.getSystemInfoSync();
 				that.style.pageHeight = res.windowHeight-height;
 				that.style.contentViewHeight = res.windowHeight - uni.getSystemInfoSync().screenWidth / 750 * (100)-height; //像素
+				console.log(that.style)
 			})
 		},
 		created: function () { 
@@ -67,14 +70,14 @@
 			console.log('refresh');
 			if(this.status !== 'noMore'&&!this.loading) {
 				
-				that.$nextTick(() => {
-					const query = uni.createSelectorQuery().in(that);
-					query.select('#scrollview').boundingClientRect(data => {
-						console.info('下拉刷新时');
-						that.scrollTop=data.height-that.scrollTop;
-					}).exec();
+				// that.$nextTick(() => {
+				// 	const query = uni.createSelectorQuery().in(that);
+				// 	query.select('#scrollview').boundingClientRect(data => {
+				// 		console.info('下拉刷新时');
+				// 		that.scrollTop=data.height-that.scrollTop;
+				// 	}).exec();
 				
-				})
+				// })
 				
 				this.params.page++;
 				this.getChatList();
@@ -83,19 +86,29 @@
 				uni.stopPullDownRefresh();
 			}, 1000);
 		},
-		onPageScroll(e) {
-			console.log(e);
-		},
 		methods: {
+			scroll(e) {
+				// console.log(e);
+				// this.newScrollTop = e.detail.scrollHeight-that;
+			},
 			scrolltoupper(e) {
 				console.log(e);
+				let that=this;
+				
+				
 				if(this.status !== 'noMore'&&!this.loading) {
 					this.params.page++;
 					this.getChatList();
 				}
 			},
 			getChatList() {
+				
 				let that=this;
+				let viewId = '';
+				if(that.params.page>1) {
+					viewId = that.messages&&that.messages.length>0?that.messages[0].id:'';
+					console.log(viewId);
+				}
 				that.loading = true;
 				uni.$u.api.chatList({ params: that.params}).then(res=>{
 					console.log(res)
@@ -122,17 +135,18 @@
 					console.log(that.status)
 					
 					if(that.params.page>1) {
+						setTimeout(()=>{
 						that.$nextTick(() => {
+							
 							const query = uni.createSelectorQuery().in(that);
 							query.select('#scrollview').boundingClientRect(data => {
-								console.info('请求翻页后，高度：'+(data.height/2 + (uni.$u.util.isIphoneX()?34:0)));
-								uni.pageScrollTo({
-									duration: 20,
-									scrollTop: (data.height/2 + (uni.$u.util.isIphoneX()?34:0)-that.scrollTop)
-								})
+								console.log(data);
+								that.scrollTop = data.height-that.oldHeight-20;
+								that.oldHeight = data.height;
 							}).exec();
 						
 						})
+						}, 20)
 					}
 					else {
 						setTimeout(()=>{
@@ -177,12 +191,13 @@
 				this.$nextTick(() => {
 					const query = uni.createSelectorQuery().in(this);
 					query.select('#scrollview').boundingClientRect(data => {
-						that.scrollTop=data.height/2 + (uni.$u.util.isIphoneX()?34:0);
-						uni.pageScrollTo({
-							duration: 100,
-							scrollTop: that.scrollTop
-						})
-						console.info('首次加载页面高度：'+that.scrollTop);
+						that.oldHeight = data.height;
+						let top = data.height-that.style.contentViewHeight;
+						console.log(data);
+						if(top>0){
+							that.scrollTop=top;
+						}
+						// that.scrollTop = that.style.pageHeight;
 					}).exec();
 				
 				})
@@ -253,10 +268,7 @@
 	}
 	.content {
 		display: flex;
-		flex: 1;
-		height: 100vh;
-		margin-bottom: 100px;
-		 
+		overflow-y: scroll;
 	}
 	.foot {
 		position: fixed;
