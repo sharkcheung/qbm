@@ -114,7 +114,8 @@
                 "version" : "1.3.5",
                 "provider" : "wx2b03c6e691cd7370"
             }
-        }
+        },
+		"requiredBackgroundModes": ["audio"]
     },
     "mp-alipay" : {
         "usingComponents" : true,

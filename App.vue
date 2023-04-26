@@ -10,12 +10,14 @@
 				})
 				.catch(err => {
 					uni.hideLoading()
-					that.$u.util.showErr('头像上传失败');
+					// that.$u.util.showErr('头像上传失败');
 				})
+			
 		},
 		onShow: function(options) {
 			console.log("show",options)  
 			console.log('App Show') 
+			
 		},
 		onHide: function() {
 			
