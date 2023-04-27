@@ -19,6 +19,7 @@
 				<u-cell :icon="orderIcon" title="我的订单" @click="goPage('/pages/my/order/order')" :border="false" :isLink="true"></u-cell>
 				<u-cell :icon="advisorIcon" title="我的顾问" @click="goPage('/pages/my/advisor')" :border="false" :isLink="true"></u-cell>
 				<u-cell :icon="applyIcon" title="我的报名" @click="goPage('/pages/my/apply/apply')" :border="false" :isLink="true"></u-cell>
+				<u-cell :icon="posterIcon" v-if="vuex_token&&vuex_user.agent" title="推广海报" @click="goPage('/pages/my/invite/poster')" :border="false" :isLink="true"></u-cell>
 				<u-cell :icon="inviteIcon" v-if="vuex_token&&vuex_user.agent" title="我的邀请" @click="goPage('/pages/my/invite/invite')" :border="false" :isLink="true"></u-cell>
 				<u-cell :icon="settingIcon" title="系统设置" url="/pages/my/setting" :border="false" :isLink="true"></u-cell>
 				
@@ -39,6 +40,7 @@
 				advisorIcon: '',
 				applyIcon: '',
 				inviteIcon: '',
+				posterIcon: '',
 				settingIcon: '',
 				tabList: [
 				],
@@ -76,13 +78,14 @@
 			}
 		},
 		created() {
-			this.customerIcon = this.$configs.staticUrl + '/uploads/api/icon/customer.png';
-			this.orderIcon = this.$configs.staticUrl + '/uploads/api/icon/order.png';
-			this.profitsIcon = this.$configs.staticUrl + '/uploads/api/icon/profits.png';
-			this.advisorIcon = this.$configs.staticUrl + '/uploads/api/icon/advisor.png';
-			this.inviteIcon = this.$configs.staticUrl + '/uploads/api/icon/invite.png';
-			this.settingIcon = this.$configs.staticUrl + '/uploads/api/icon/setting.png';
-			this.applyIcon = this.$configs.staticUrl + '/uploads/api/icon/icon_qbt_hdbm.svg';
+			this.customerIcon = this.$configs.staticUrl + '/uploads/api/icon/customer.svg';
+			this.orderIcon = this.$configs.staticUrl + '/uploads/api/icon/order.svg';
+			this.profitsIcon = this.$configs.staticUrl + '/uploads/api/icon/profits.svg';
+			this.advisorIcon = this.$configs.staticUrl + '/uploads/api/icon/advisor.svg';
+			this.inviteIcon = this.$configs.staticUrl + '/uploads/api/icon/invite.svg';
+			this.settingIcon = this.$configs.staticUrl + '/uploads/api/icon/setting.svg';
+			this.applyIcon = this.$configs.staticUrl + '/uploads/api/icon/applylist.svg';
+			this.posterIcon = this.$configs.staticUrl + '/uploads/api/icon/icon_qbt_poster.svg';
 			this.tabList = this.$configs.tabList;
 		},
 		methods: {
