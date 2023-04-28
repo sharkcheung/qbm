@@ -1,14 +1,14 @@
 <template>
 	<view class="advisor">
 		<view class="advisor-container">
-			<u--image :showLoading="true" mode="aspectFit" :src="poster" width="100%" height="470px"></u--image>
+			<u--image :showLoading="true" :radius="8" mode="heightFix" :src="poster" width="100%" height="470px"></u--image>
 		</view>
 		<view class="button-group">
-			<view class="bottom-button-group justify-center align-center"><button class="u-reset-button" @click="generatePoster">生成海报</button></view>
+			<view class="bottom-button-group justify-center align-center"><button class="u-reset-button" @click="generatePoster">生成海报</button><button class="u-reset-button invite-btn" openType="share">邀请好友</button></view>
 		</view>
 		<u-popup zIndex="10072" :show="showPoster" :closeable="true" @close="closeshowPoster">
 			<view class="show-box">
-				<u--image :showLoading="true" mode="aspectFit" :src="poster" height="360px"></u--image>
+				<u--image :showLoading="true" mode="heightFix" width="100%" :src="posterImg" height="360px"></u--image>
 				<text>保存图片到相册 分享到朋友圈吧</text>
 				<u-button type="warning" shape="circle" text="保存到相册" @click="savePhoto"></u-button>
 			</view>
@@ -23,10 +23,18 @@
 				showPoster: false,
 				show: false,
 				poster: 'https://static.miniapp.qbt.qebang.cn/uploads/extend/qrcode/original/teacher-bg-default.png',
+				posterImg: ''
 			};
 		},
 		created() {
+		},
+		onShow() {
+			uni.hideShareMenu({
+				
+			})
 			let that=this;
+			uni.$u.mpShare.title = that.vuex_base_config.homeShareTitle;
+			uni.$u.mpShare.path = 'pages/public/home?invite_id='+that.vuex_user.membe_id;
 		},
 		methods: {
 			generatePoster() {
@@ -34,13 +42,11 @@
 					title: '正在生成...'
 				})
 				let that = this;
-				uni.$u.api.generatePoster({
-						params: {
-							id: that.info.id,
-						}
-					}).then(res => {
+				uni.$u.api.generatePoster().then(res => {
+					
 						console.log(res)
-						that.poster = res.data + '?r='+ Math.random();
+						this.showPoster = true
+						that.posterImg = res.data + '?r='+ Math.random();
 						uni.hideLoading()
 					})
 					.catch(err => {
@@ -51,6 +57,39 @@
 			},
 			closeshowPoster() {
 				this.showPoster = false;
+			},
+			/* 授权提示 ，这里就是重复提示用户去授权*/
+			opensit() {
+			    uni.showModal({
+			        content: '由于您还没有允许保存图片到您相册里,这无法进行分享操作点击确定去允许授权',
+			        success: function(res) {
+			            if (res.confirm) {
+			                /* 这个就是打开设置的API*/
+			                uni.openSetting({
+			                    success(res) {
+			                        console.log(res.authSetting);
+			                    }
+			                });
+			            } else if (res.cancel) {
+			                uni.showModal({
+			                    cancelText: '依然取消',
+			                    confirmText: '重新授权',
+			                    content: '很遗憾你点击了取消，这将无法进行分享操作，请慎重考虑',
+			                    success: function(res) {
+			                        if (res.confirm) {
+			                            uni.openSetting({
+			                                success(res) {
+			                                    console.log(res.authSetting);
+			                                }
+			                            });
+			                        } else if (res.cancel) {
+			                            console.log('用户不授权');
+			                        }
+			                    }
+			                });
+			            }
+			        }
+			    });
 			},
 			savePhoto() {
 				let that = this;
@@ -117,16 +156,10 @@
 .advisor {
 	padding: 32rpx;
 }
-.show-box {
-	padding: 48rpx 32rpx;
-	align-items: center;
-	text {
-		margin-top: 20rpx;
-	}
-}
 .advisor-container {
-	padding: 32rpx;
-
+	border-radius: 16rpx;
+	box-shadow: 10rpx 10rpx 30rpx 10rpx rgba(255, 155, 124, 0.5);
+	margin: 0 auto;
 	.advisor-bottom {
 		text-align: center;
 		margin-top: 20rpx;
@@ -147,7 +180,18 @@
 			border-radius: 40rpx;
 			line-height: 80rpx;
 		}
-		
+		.invite-btn {
+			background: linear-gradient(270deg, #7bf7b7 0%, #55aa7f 100%);
+		}
+	}
+}
+
+.show-box {
+	padding: 68rpx 32rpx 32rpx 32rpx;
+	align-items: center;
+	text {
+		margin-top: 32rpx;
+		margin-bottom: 32rpx;
 	}
 }
 </style>

@@ -248,11 +248,11 @@
 				})
 				.catch(err => {
 					uni.hideLoading()
-					that.$u.util.showErr('头像上传失败');
+					that.$u.util.showErr('数据获取失败');
 				})
 		},
 		onLoad(options) {
-			this.$u.util.showErr(options.scene);
+			// this.$u.util.showErr(options.scene);
 			let scene = options ?. scene ?? '';
 			if(scene) {
 				scene = decodeURIComponent(scene);
@@ -264,13 +264,13 @@
 				}
 				this.id = params.id;
 				if(params.invite_id) {
-					uni.$u.vuex('invite_id', options.invite_id);
+					uni.$u.vuex('vuex_invite_id', params.invite_id);
 				}
 			}
 			else {
 				this.id = options.id;
 				if(options.invite_id) {
-					uni.$u.vuex('invite_id', options.invite_id);
+					uni.$u.vuex('vuex_invite_id', options.invite_id);
 				}
 			}
 		},

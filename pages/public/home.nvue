@@ -103,6 +103,27 @@
 				}
 			};
 		},
+		onLoad(options) {
+			// this.$u.util.showErr(options.scene);
+			let scene = options ?. scene ?? '';
+			if(scene) {
+				scene = decodeURIComponent(scene);
+				var vars = scene.split("&");
+				let params = {};
+				for (var i = 0; i < vars.length; i++) {
+					var pair = vars[i].split("=");
+					params[pair[0]] = pair[1];
+				}
+				if(params.invite_id) {
+					uni.$u.vuex('vuex_invite_id', params.invite_id);
+				}
+			}
+			else {
+				if(options.invite_id) {
+					uni.$u.vuex('vuex_invite_id', options.invite_id);
+				}
+			}
+		},
 		onShow() {
 			if(this.vuex_token&&!this.vuex_user.mobile) {
 				this.show = true;
@@ -117,6 +138,11 @@
 			this.params.order = 'desc';
 			this.params.sort = 'mark';
 			this.getTeacherList();
+			let that=this;
+			if(that.vuex_token&&that.vuex_user.agent) {
+				// 当前用户是渠道,则自定义分享路径
+				uni.$u.mpShare.path = 'pages/public/home?invite_id='+that.vuex_user.membe_id;
+			}
 		},
 		created() {
 			this.emptyIcon = this.$configs.staticUrl + '/uploads/api/icon/img_qbt_kym.svg'

@@ -7,6 +7,9 @@
 			uni.$u.api.configData().then(res => {
 					console.log(res)
 					uni.$u.vuex('vuex_base_config', res.data);
+					if(that.vuex_token) {
+						uni.$u.vuex('vuex_user', res.data.userinfo)
+					}
 				})
 				.catch(err => {
 					uni.hideLoading()
